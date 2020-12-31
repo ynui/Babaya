@@ -1,0 +1,1 @@
+const COLLECTION_USERS_DETAILS = 'usersDetails'
