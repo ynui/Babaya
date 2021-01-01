@@ -52,7 +52,7 @@ router.post('/register', (req, res, next) => {
             }).catch(() => {
               console.error(`Error deleting ${req.body.email}`)
             })
-          sendError(res, `User data writing error. User ${req.body.email} was not registered\nError: ${error}`)
+          sendError(res, `User ${req.body.email} was not registered. User data writing error.\${error}`)
           console.error(`couldent register ${req.body.email}\nError: ${error.message}`)
           return;
         }
