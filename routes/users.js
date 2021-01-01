@@ -35,20 +35,22 @@ router.post('/register', (req, res, next) => {
           addressStreet: req.body.addressStreet || null,
           addressNumber: req.body.addressNumber || null
         }
-        let userDataWriteSuccess = dbActions.writeToCollection(CONSTANTS.COLLECTION_USERS_DETAILS, req.body.email, userData)
-        if (!userDataWriteSuccess) {
-          sendError(res, 'Error writing data to ' + req.body.email)
+        try {
+          dbActions.writeToCollection(CONSTANTS.COLLECTION_USERS_DETAILS, req.body.email, userData)
+          registeredUser.user.sendEmailVerification()
+            .then(() => {
+              console.log('Verification email sent to ' + registeredUser.user.email)
+            }).catch((error) => {
+              sendError(res, error)
+            });
         }
-        registeredUser.user.sendEmailVerification()
-          .then(() => {
-            console.log('Verivication email sent to ' + registeredUser.user.email)
-          }).catch((error) => {
-            sendError(res, error)
-          });
+        catch (error) {
+          registeredUser.user.delete()
+          sendError(res, 'Error writing data to ' + req.body.email)
+          console.error(`couldent register ${req.body.email}\nError: ${error.message}`)
+          return;
+        }
       }
-      // else{
-      //   sendError(res, 'User registration failed for ' + req.body.email)
-      // }
       firebase.auth().currentUser.getIdToken(true).then((idToken) => {
         res.send(idToken)
         res.end()
@@ -80,7 +82,7 @@ router.get('/logout', (req, res, next) => {
   firebase.auth().signOut().then(() => {
     res.send('Signed Out')
     res.end()
-  }).catch(function (error) {
+  }).catch((error) => {
     sendError(res, error)
   });
 })
@@ -98,7 +100,7 @@ router.get('/facebookLogin', (req, res, next) => {
         res.send(idToken)
         res.end()
 
-      }).catch(function (error) {
+      }).catch((error) => {
         console.log(error.code);
         console.log(error.message);
       });
