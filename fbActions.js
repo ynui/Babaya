@@ -1,8 +1,8 @@
 const { firebase, admin } = require('./fbConfig');
 
 
-
 db = admin.firestore()
+
 
 async function writeToCollection(collection, document, data) {
   try {
