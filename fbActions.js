@@ -24,7 +24,16 @@ function updateDocument(collection, document, data) {
   return true
 }
 
+function getDocument(collection, document){
+  db.collection(collection).doc(document).get()
+    .then((doc) => {
+      if (!doc.exists) return null
+      return doc.data()
+    }).catch((error) => {throw error})
+}
+
 module.exports = {
   writeToCollection,
-  updateDocument
+  updateDocument,
+  getDocument
 };

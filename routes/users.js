@@ -137,4 +137,15 @@ router.post('/resetPassword', (req, res, next) => {
     });
 })
 
+router.get('/:userId', (req, res, next) => {
+  let doc = dbActions.getDocument(CONSTANTS.COLLECTION_USERS_DETAILS, req.body.userId)
+  if (!doc) {
+    res.send(`No document found for ${req.body.userId}`)
+    res.end()
+  } else {
+    res.send(doc.data())
+    res.end()
+  }
+})
+
 module.exports = router;
