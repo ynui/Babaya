@@ -42,10 +42,16 @@ router.post('/register', (req, res, next) => {
               console.log('Verification email sent to ' + registeredUser.user.email)
             }).catch((error) => {
               sendError(res, error)
+              return;
             });
         }
         catch (error) {
           registeredUser.user.delete()
+            .then(() => {
+              console.log(`User ${req.body.email} has been deleted successfully`)
+            }).catch(() => {
+              console.error(`Error deleting ${req.body.email}`)
+            })
           sendError(res, 'Error writing data to ' + req.body.email)
           console.error(`couldent register ${req.body.email}\nError: ${error.message}`)
           return;
