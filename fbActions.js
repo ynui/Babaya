@@ -4,9 +4,9 @@ const { firebase, admin } = require('./fbConfig');
 
 db = admin.firestore()
 
-function writeToCollection(collection, document, data) {
+async function writeToCollection(collection, document, data) {
   try {
-    db.collection(collection).doc(document).set(data)
+    await db.collection(collection).doc(document).set(data)
   } catch (error) {
     console.error(`Error: ${error}\n collection: ${collection} doc: ${document} data: ${data}`)
     throw error
@@ -14,9 +14,9 @@ function writeToCollection(collection, document, data) {
   return true
 }
 
-function updateDocument(collection, document, data) {
+async function updateDocument(collection, document, data) {
   try {
-    db.collection(collection).doc(document).update(data)
+    await db.collection(collection).doc(document).update(data)
   } catch {
     console.error('Error updating ' + collection + document + data)
     return false
@@ -24,12 +24,12 @@ function updateDocument(collection, document, data) {
   return true
 }
 
-function getDocument(collection, document){
-  db.collection(collection).doc(document).get()
-    .then((doc) => {
-      if (!doc.exists) return null
-      return doc.data()
-    }).catch((error) => {throw error})
+async function getDocument(collection, document) {
+  let resault = null
+  let docRef = db.collection(collection).doc(document)
+  let doc = await docRef.get()
+  if (doc.exists) resault = doc.data()
+  return resault
 }
 
 module.exports = {
