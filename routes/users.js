@@ -15,7 +15,7 @@ function sendError(res, error) {
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   admin.auth().listUsers().then((users) => {
-    res.end(JSON.stringify(users.users));
+    res.end(JSON.stringify(users.users, null, '\t'));
   }).catch((error) => console.log(error));
 });
 
