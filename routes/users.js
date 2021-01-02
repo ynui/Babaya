@@ -53,16 +53,16 @@ router.post('/register', (req, res, next) => {
               console.error(`Error deleting ${req.body.email}`)
             })
           sendError(res, `User ${req.body.email} was not registered. User data writing error.\${error}`)
-          console.error(`couldent register ${req.body.email}\nError: ${error.message}`)
+          console.error(`couldent register ${req.body.email}\n${error.message}`)
           return;
         }
+        firebase.auth().currentUser.getIdToken(true).then((idToken) => {
+          res.send(idToken)
+          res.end()
+        }).catch((error) => {
+          sendError(res, error)
+        });
       }
-      firebase.auth().currentUser.getIdToken(true).then((idToken) => {
-        res.send(idToken)
-        res.end()
-      }).catch((error) => {
-        sendError(res, error)
-      });
     }).catch((error) => {
       sendError(res, error)
       //Handle error
@@ -115,14 +115,16 @@ router.get('/facebookLogin', (req, res, next) => {
 
 router.post('/updateProfile', (req, res, next) => {
   let email = firebase.auth().currentUser.email;
-  let updateProfileSuccess = dbActions.updateDocument(CONSTANTS.COLLECTION_USERS_DETAILS, email, req.body);
-  if (updateProfileSuccess) {
-    res.send(email + ' Profile updated successfully')
-    res.end()
-  }
-  else {
-    sendError(res, 'Error updating profile for ' + email)
-  }
+  dbActions.updateDocument(CONSTANTS.COLLECTION_USERS_DETAILS, email, req.body)
+    .then((success) => {
+      if (success) {
+        res.send(email + ' Profile updated successfully')
+        res.end()
+      }
+      else {
+        sendError(res, 'Error updating profile for ' + email)
+      }
+    })
 })
 
 router.post('/resetPassword', (req, res, next) => {
