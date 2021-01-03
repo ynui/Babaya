@@ -149,7 +149,7 @@ router.post('/resetPassword', (req, res, next) => {
 })
 
 router.get('/:userId', (req, res, next) => {
-  dbActions.getDocument(CONSTANTS.COLLECTION_USERS_DETAILS, req.params.userId)
+  dbActions.getDocument(Constants.Collections.USERS_DETAILS, req.params.userId)
     .then((doc) => {
       if (!doc) {
         res.send(`No document found for ${req.params.userId}`)
