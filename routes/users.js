@@ -15,15 +15,18 @@ function sendError(res, error) {
 
 function getUserDataFromRequest(req) {
   let userData = {
-    phoneNumber: req.phoneNumber || null,
-    firstName: req.firstName || null,
-    lastName: req.lastName || null,
-    language: req.language || null,
-    accountType: req.accountType || null,
+    phoneNumber: req.phoneNumber,
+    firstName: req.firstName,
+    lastName: req.lastName,
+    language: req.language,
+    accountType: req.accountType,
     gender: req.gender || null,
     addressCity: req.addressCity || null,
     addressStreet: req.addressStreet || null,
     addressNumber: req.addressNumber || null
+  }
+  for (var field in userData) {
+    if (field === 'undefined') throw (`${field} is undefined`)
   }
   return userData
 }
@@ -58,7 +61,7 @@ router.post('/register', (req, res, next) => {
             }).catch(() => {
               console.error(`Error deleting ${req.body.email}`)
             })
-          sendError(res, `User ${req.body.email} was not registered. User data writing error.\${error}`)
+          sendError(res, `User ${req.body.email} was not registered. User data writing error.\n${error}`)
           console.error(`couldent register ${req.body.email}\n${error.message}`)
           return;
         }
