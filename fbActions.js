@@ -8,7 +8,7 @@ async function writeToCollection(collection, document, data) {
   try {
     await db.collection(collection).doc(document).set(data)
   } catch (error) {
-    console.error(`Error: ${error}\n collection: ${collection} doc: ${document} data: ${data}`)
+    console.error(`${error}\n collection: ${collection} doc: ${document} data: ${data}`)
     throw error
   }
   return true

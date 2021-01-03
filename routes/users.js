@@ -13,13 +13,13 @@ function sendError(res, error) {
   res.end()
 }
 
-function getUserDataFromRequest(req){
+function getUserDataFromRequest(req) {
   let userData = {
-    phoneNumber: req.phoneNumber,
-    firstName: req.firstName,
-    lastName: req.lastName,
-    language: req.language,
-    accountType: req.accountType,
+    phoneNumber: req.phoneNumber || null,
+    firstName: req.firstName || null,
+    lastName: req.lastName || null,
+    language: req.language || null,
+    accountType: req.accountType || null,
     gender: req.gender || null,
     addressCity: req.addressCity || null,
     addressStreet: req.addressStreet || null,
@@ -51,8 +51,7 @@ router.post('/register', (req, res, next) => {
               sendError(res, error)
               return;
             });
-        }
-        catch (error) {
+        } catch (error) {
           registeredUser.user.delete()
             .then(() => {
               console.log(`User ${req.body.email} has been deleted successfully`)
