@@ -1,8 +1,9 @@
 const e = require('express');
 const express = require('express');
 const router = express.Router();
-const { firebase, admin, CONSTANTS } = require('../fbConfig')
+const { firebase, admin } = require('../fbConfig')
 const dbActions = require('../fbActions')
+const Constants = require('../Constants')
 
 db = admin.firestore()
 
@@ -10,6 +11,21 @@ db = admin.firestore()
 function sendError(res, error) {
   res.send(error)
   res.end()
+}
+
+function getUserDataFromRequest(req){
+  let userData = {
+    phoneNumber: req.phoneNumber,
+    firstName: req.firstName,
+    lastName: req.lastName,
+    language: req.language,
+    accountType: req.accountType,
+    gender: req.gender || null,
+    addressCity: req.addressCity || null,
+    addressStreet: req.addressStreet || null,
+    addressNumber: req.addressNumber || null
+  }
+  return userData
 }
 
 /* GET users listing. */
@@ -25,19 +41,9 @@ router.post('/register', (req, res, next) => {
     .createUserWithEmailAndPassword(req.body.email, req.body.password)
     .then((registeredUser) => {
       if (registeredUser.user) {
-        let userData = {
-          phoneNumber: req.body.phoneNumber,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          language: req.body.language,
-          accountType: req.body.accountType,
-          gender: req.body.gender || null,
-          addressCity: req.body.addressCity || null,
-          addressStreet: req.body.addressStreet || null,
-          addressNumber: req.body.addressNumber || null
-        }
         try {
-          dbActions.writeToCollection(CONSTANTS.COLLECTION_USERS_DETAILS, req.body.email, userData)
+          let userData = getUserDataFromRequest(req.body)
+          dbActions.writeToCollection(Constants.Collections.USERS_DETAILS, req.body.email, userData)
           registeredUser.user.sendEmailVerification()
             .then(() => {
               console.log('Verification email sent to ' + registeredUser.user.email)
@@ -116,7 +122,7 @@ router.get('/facebookLogin', (req, res, next) => {
 
 router.post('/updateProfile', (req, res, next) => {
   let email = firebase.auth().currentUser.email;
-  dbActions.updateDocument(CONSTANTS.COLLECTION_USERS_DETAILS, email, req.body)
+  dbActions.updateDocument(Constants.Collections.USERS_DETAILS, email, req.body)
     .then((success) => {
       if (success) {
         res.send(email + ' Profile updated successfully')

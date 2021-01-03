@@ -1,1 +1,8 @@
-const COLLECTION_USERS_DETAILS = 'usersDetails'
+const Collections = {
+    USERS_DETAILS: 'usersDetails'
+}
+
+
+module.exports = {
+    Collections
+}
