@@ -13,14 +13,15 @@ function sendError(res, error) {
 }
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
+router.get('/', (req, res, next) => {
   admin.auth().listUsers().then((users) => {
     res.end(JSON.stringify(users.users, null, '\t'));
   }).catch((error) => console.log(error));
 });
 
 router.post('/register', (req, res, next) => {
-  firebase.auth()
+  firebase
+    .auth()
     .createUserWithEmailAndPassword(req.body.email, req.body.password)
     .then((registeredUser) => {
       if (registeredUser.user) {
