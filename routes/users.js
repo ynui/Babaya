@@ -97,7 +97,7 @@ router.get('/logout', (req, res, next) => {
 router.get('/facebookLogin', (req, res, next) => {
   console.log('FBFBFB')
   var provider = new firebase.auth.FacebookAuthProvider();
-  firebase.auth().signInWithPopup(provider)
+  firebase.auth().signInWithRedirect(provider)
     .then((result) => {
       var token = result.credential.accessToken;
       var user = result.user;
