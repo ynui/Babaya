@@ -26,7 +26,7 @@ function getUserDataFromRequest(req) {
     addressNumber: req.addressNumber || null
   }
   for (var field in userData) {
-    if (field === 'undefined') throw (`${field} is undefined`)
+    if (typeof(userData[field]) === 'undefined') throw (`${field} is undefined`)
   }
   return userData
 }
@@ -62,7 +62,7 @@ router.post('/register', (req, res, next) => {
               console.error(`Error deleting ${req.body.email}`)
             })
           sendError(res, `User ${req.body.email} was not registered. User data writing error.\n${error}`)
-          console.error(`couldent register ${req.body.email}\n${error.message}`)
+          console.error(`couldent register ${req.body.email}\n${error}`)
           return;
         }
         firebase.auth().currentUser.getIdToken(true).then((idToken) => {
