@@ -1,11 +1,9 @@
-const e = require('express');
 const express = require('express');
 const router = express.Router();
 const { firebase, admin } = require('../fbConfig')
 const dbActions = require('../fbActions')
 const Constants = require('../Constants')
 
-db = admin.firestore()
 
 
 function sendError(res, error) {

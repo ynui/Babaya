@@ -1,7 +1,29 @@
 const { firebase, admin } = require('./fbConfig');
+require('firebase/storage');
 
 
-db = admin.firestore()
+const db = admin.firestore()
+const bucket = admin.storage().bucket('aaa')
+
+async function uploadImage(files, id) {
+  let resURL = [];
+  var storageRef = firebase.storage().ref(id);
+  for (const [key, file] of Object.entries(files)) {
+    await storageRef.child(file.name).put(file.data)
+      .then(async (task) => {
+        console.log('uploaded')
+        await task.ref.getDownloadURL()
+          .then((res) => {
+            resURL.push(res)
+          })
+      })
+      .catch((err) => {
+        console.log(err)
+        resURL = 'Error'
+      })
+  }
+  return resURL
+}
 
 
 async function writeToCollection(collection, document, data) {
@@ -35,5 +57,6 @@ async function getDocument(collection, document) {
 module.exports = {
   writeToCollection,
   updateDocument,
-  getDocument
+  getDocument,
+  uploadImage
 };
