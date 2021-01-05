@@ -13,6 +13,7 @@ function sendError(res, error) {
 
 function getUserDataFromRequest(req) {
   let userData = {
+    email: req.email,
     phoneNumber: req.phoneNumber,
     firstName: req.firstName,
     lastName: req.lastName,
@@ -44,7 +45,7 @@ router.post('/register', (req, res, next) => {
       if (registeredUser.user) {
         try {
           let userData = getUserDataFromRequest(req.body)
-          dbActions.writeToCollection(Constants.Collections.USERS_DETAILS, req.body.email, userData)
+          dbActions.writeToCollection(Constants.Collections.USERS_DETAILS, registeredUser.user.uid, userData)
           registeredUser.user.sendEmailVerification()
             .then(() => {
               console.log('Verification email sent to ' + registeredUser.user.email)
@@ -100,36 +101,16 @@ router.get('/logout', (req, res, next) => {
   });
 })
 
-router.get('/facebookLogin', (req, res, next) => {
-  console.log('FBFBFB')
-  var provider = new firebase.auth.FacebookAuthProvider();
-  firebase.auth().signInWithRedirect(provider)
-    .then((result) => {
-      var token = result.credential.accessToken;
-      var user = result.user;
-      console.log(token)
-      console.log(user)
-      firebase.auth().currentUser.getIdToken(true).then((idToken) => {
-        res.send(idToken)
-        res.end()
-
-      }).catch((error) => {
-        console.log(error.code);
-        console.log(error.message);
-      });
-    })
-})
-
 router.post('/updateProfile', (req, res, next) => {
-  let email = firebase.auth().currentUser.email;
-  dbActions.updateDocument(Constants.Collections.USERS_DETAILS, email, req.body)
+  let userId = firebase.auth().currentUser.uid;
+  dbActions.updateDocument(Constants.Collections.USERS_DETAILS, userId, req.body)
     .then((success) => {
       if (success) {
-        res.send(email + ' Profile updated successfully')
+        res.send(userId + ' Profile updated successfully')
         res.end()
       }
       else {
-        sendError(res, 'Error updating profile for ' + email)
+        sendError(res, 'Error updating profile for ' + userId)
       }
     })
 })

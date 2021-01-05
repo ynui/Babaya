@@ -6,7 +6,7 @@ const db = admin.firestore()
 const bucket = admin.storage().bucket('aaa')
 
 async function uploadImage(files, id) {
-  let resURL = [];
+  let resURL = {};
   var storageRef = firebase.storage().ref(id);
   for (const [key, file] of Object.entries(files)) {
     await storageRef.child(file.name).put(file.data)
@@ -14,12 +14,12 @@ async function uploadImage(files, id) {
         console.log('uploaded')
         await task.ref.getDownloadURL()
           .then((res) => {
-            resURL.push(res)
+            resURL[file.name] = res
           })
       })
       .catch((err) => {
         console.log(err)
-        resURL.push('Error')
+        resURL[file.name] = 'Error'
       })
   }
   return resURL
