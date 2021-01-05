@@ -6,12 +6,12 @@ const { firebase, admin } = require('../fbConfig')
 
 
 router.post('/upload', (req, res, next) => {
-    let id = firebase.auth().currentUser.uid;
-    dbActions.uploadImage(req.files, email)
+    let userId = firebase.auth().currentUser.uid;
+    dbActions.uploadImage(req.files, userId)
         .then((url) => {
             res.end(JSON.stringify(url))
         }).catch((error) => {
-            res.end('error upload')
+            res.end('Upload Error ' + error)
         })
 });
 
