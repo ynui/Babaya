@@ -19,7 +19,7 @@ async function uploadImage(files, id) {
       })
       .catch((err) => {
         console.log(err)
-        resURL = 'Error'
+        resURL.push('Error')
       })
   }
   return resURL

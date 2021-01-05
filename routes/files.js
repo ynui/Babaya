@@ -10,7 +10,7 @@ router.post('/upload', (req, res, next) => {
     dbActions.uploadImage(req.files, email)
         .then((url) => {
             console.log('in router ' + url)
-            res.end(url)
+            res.end(JSON.stringify(url))
         }).catch((error) => {
             res.end('error upload')
         })
