@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const dbActions = require('../fbActions')
-const Constants = require('../Constants')
 const { firebase, admin } = require('../fbConfig')
+const filesUpload = require('express-fileupload')
 
 
-router.post('/upload', (req, res, next) => {
+router.post('/upload', filesUpload(), (req, res, next) => {
     let userId = firebase.auth().currentUser.uid;
     dbActions.uploadImage(req.files, userId)
         .then((url) => {

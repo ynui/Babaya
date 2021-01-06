@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { firebase, admin } = require('../fbConfig')
+const { firebase, admin, Constants } = require('../fbConfig')
 const dbActions = require('../fbActions')
-const Constants = require('../Constants')
 
 
 
@@ -25,7 +24,7 @@ function getUserDataFromRequest(req) {
     addressNumber: req.addressNumber || null
   }
   for (var field in userData) {
-    if (typeof(userData[field]) === 'undefined') throw (`${field} is undefined`)
+    if (typeof (userData[field]) === 'undefined') throw (`${field} is undefined`)
   }
   return userData
 }
@@ -117,7 +116,9 @@ router.post('/updateProfile', (req, res, next) => {
 
 router.post('/resetPassword', (req, res, next) => {
   let email = req.body.email
-  firebase.auth().sendPasswordResetEmail(email)
+  firebase
+    .auth()
+    .sendPasswordResetEmail(email)
     .then(() => {
       console.log('Reset password sent to ' + email)
       res.send('Reset Password sent to ' + email)
@@ -129,6 +130,19 @@ router.post('/resetPassword', (req, res, next) => {
 
 router.get('/:userId', (req, res, next) => {
   dbActions.getDocument(Constants.Collections.USERS_DETAILS, req.params.userId)
+    .then((doc) => {
+      if (!doc) {
+        res.send(`No user details document found for ${req.params.userId}`)
+        res.end()
+      } else {
+        res.send(JSON.stringify(doc, null, '\t'))
+        res.end()
+      }
+    })
+})
+
+router.get('/:userId/storage', (req, res, next) => {
+  dbActions.getDocument(Constants.Collections.USER_STORAGE, req.params.userId)
     .then((doc) => {
       if (!doc) {
         res.send(`No document found for ${req.params.userId}`)

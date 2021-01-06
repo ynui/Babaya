@@ -1,27 +1,28 @@
-const { firebase, admin } = require('./fbConfig');
+const { firebase, admin, Constants } = require('./fbConfig');
 require('firebase/storage');
 
 
 const db = admin.firestore()
-const bucket = admin.storage().bucket('aaa')
+const storage = firebase.storage()
 
 async function uploadImage(files, id) {
   let resURL = {};
-  var storageRef = firebase.storage().ref(id);
+  let storageRef = storage.ref(id);
   for (const [key, file] of Object.entries(files)) {
     await storageRef.child(file.name).put(file.data)
       .then(async (task) => {
-        console.log('uploaded')
         await task.ref.getDownloadURL()
-          .then((res) => {
+        .then((res) => {
+            console.log(`File uploaded: ${file.name}`)
             resURL[file.name] = res
           })
-      })
-      .catch((err) => {
-        console.log(err)
+        })
+        .catch((err) => {
+        console.error(`Error Uploading: ${file.name} ${err}`)
         resURL[file.name] = 'Error'
       })
   }
+  writeToCollection(Constants.Collections.USER_STORAGE, id, resURL)
   return resURL
 }
 

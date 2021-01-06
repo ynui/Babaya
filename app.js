@@ -1,12 +1,9 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-// var fbAuth = require('./fbAuth')
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var cors = require('cors')
-const filesUpload = require('express-fileupload')
-global.XMLHttpRequest = require("xhr2");
+var cors = require('cors');
 
 
 var indexRouter = require('./routes/index');
@@ -19,7 +16,6 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(filesUpload())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
