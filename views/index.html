@@ -11,36 +11,45 @@
             /users
             get / -> returns all users
             get /allUsersDetails -> all users + details
-            post /register -> register nner user
-                firstName
-                lastName
-                genderID
-                languageID
-                phoneNumber
+            post /register -> register new user
+            MUST:
                 email
-                cityID
-                dateOfBirth
+                password
+                phoneNumber
+                languageID
+                firstNameEng
+                lastNameEng
             post /login -> logs in user
+            MUST:
                 email
                 password
             get /logout -> logs out user
             post /updateProfile -> updates user profile
                 update params
+                *user must be logged in
             get /:userId -> returns user details
             post /:userId/addGroup -> adds group to user and user to group. returns user
+            MUST:
                 groupId
-                *user must be loged in
+                *user must be logged in
             post /resetPassword -> send password reset email
+            MUST:
                 email
         </pre>
         <pre>
             /groups
             get / -> returns all groups
             get /:groupId -> returns group details
+            post /:groupId -> updates group
+            MUST:
+                update params
             post /create -> creates a new group. returns group
+            MUST:
                 name
-                rules (array of ints)
                 description
+                createUser
+                publicity
+            
         </pre>
     </body>
 </html>
