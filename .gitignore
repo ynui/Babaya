@@ -1,5 +1,3 @@
-node_modules
 .vscode
-serviceAccountKey.json
-fbConfig.js
-Procfile
+node_modules
+firebase

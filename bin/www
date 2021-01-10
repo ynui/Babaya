@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('b:server');
+var debug = require('debug')('babaya:server');
 var http = require('http');
 
 /**
@@ -25,7 +25,7 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port, () =>{
+server.listen(port, () => {
   console.info('Server started on ' + process.env.USERDOMAIN + ':' + port)
 });
 server.on('error', onError);
