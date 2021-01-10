@@ -34,5 +34,14 @@ router.post('/create', async (req, res, next) => {
   }
 });
 
+router.post('/:groupId', async (req, res, next) => {
+  try {
+    let success = await groupUtils.updateGroup(req.params.groupId, req.body)
+    res.send(success)
+    res.end()
+  } catch (error) {
+    next(error)
+  }
+})
 
 module.exports = router;

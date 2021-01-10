@@ -135,7 +135,7 @@ async function getUser(userId) {
             if (found) {
                 user = new User(found)
             } else {
-                throw `No user details document found for ${req.params.userId}`
+                throw `No user details document found for ${userId}`
             }
         })
     return user

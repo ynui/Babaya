@@ -75,10 +75,10 @@ async function addUser(groupId, userId) {
     return group
 }
 
-async function updateGroup(group, data) {
+async function updateGroup(groupId, data) {
     let success = false;
     try {
-        await DB_Utils.updateDocument(COLLECTION_GROUPS, group.groupId, data)
+        await DB_Utils.updateDocument(COLLECTION_GROUPS, groupId, data)
             .then((resault) => {
                 if (resault) success = true
             }).catch((error) => {
