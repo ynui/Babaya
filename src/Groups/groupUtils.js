@@ -1,4 +1,3 @@
-const { firebase, admin } = require('../../firebase/fbConfig');
 const DB_Utils = require('../DB/utils')
 const Group = require('./Group')
 

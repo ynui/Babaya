@@ -27,6 +27,17 @@ router.get('/allUsersDetails', async (req, res, next) => {
 });
 
 
+router.get('/deleteAllUsers', async (req, res, next) => {
+  try {
+    let success = await userUtils.deleteAllUsers()
+    res.send(success)
+    res.end()
+  } catch (error) {
+    res.send(error)
+    res.end()
+  }
+});
+
 router.post('/register', async (req, res, next) => {
   try {
     let newUser = await userUtils.registerUser(req.body)
@@ -115,6 +126,5 @@ router.post('/resetPassword', async (req, res, next) => {
     res.end()
   }
 })
-
 
 module.exports = router;

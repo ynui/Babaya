@@ -1,9 +1,8 @@
 const { firebase, admin } = require('../../firebase/fbConfig');
 const DB_Utils = require('../DB/utils')
 const User = require('./User')
-const groupUtils = require('../Groups/groupUtils')
 
-const COLLECTION_USERS_DETAILS = 'usersDetails1';
+const COLLECTION_USERS_DETAILS = 'usersDetails';
 
 
 async function registerUser(data) {
@@ -196,6 +195,10 @@ async function resetPassword(email) {
     return success
 }
 
+async function deleteAllUsers() {
+
+}
+
 module.exports = {
     registerUser,
     wriewUserDetails,
@@ -207,5 +210,6 @@ module.exports = {
     getAllUsers,
     getAllUsersDetails,
     addGroup,
-    resetPassword
+    resetPassword,
+    deleteAllUsers
 }
