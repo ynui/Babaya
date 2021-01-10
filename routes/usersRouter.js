@@ -10,8 +10,7 @@ router.get('/', async (req, res, next) => {
     res.send(users)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 });
 
@@ -21,8 +20,7 @@ router.get('/allUsersDetails', async (req, res, next) => {
     res.send(users)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 });
 
@@ -33,8 +31,7 @@ router.get('/deleteAllUsers', async (req, res, next) => {
     res.send(success)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 });
 
@@ -50,9 +47,7 @@ router.post('/register', async (req, res, next) => {
     res.send(resault)
     res.end()
   } catch (error) {
-    console.error(`error register user ${error}`)
-    res.send(error)
-    res.end()
+    next(error)
   }
 });
 
@@ -62,8 +57,7 @@ router.post('/login', async (req, res, next) => {
     res.send(token)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 })
 
@@ -73,8 +67,7 @@ router.get('/logout', async (req, res, next) => {
     res.send(success)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 })
 
@@ -84,8 +77,7 @@ router.post('/updateProfile', async (req, res, next) => {
     res.send(success)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 })
 
@@ -95,8 +87,7 @@ router.get('/:userId', async (req, res, next) => {
     res.send(user.data)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 })
 
@@ -104,15 +95,14 @@ router.post('/:userId/addGroup', async (req, res, next) => {
   try {
     let user = await userUtils.addGroup(req.params.userId, req.body.groupId)
     let group = await groupUtils.addUser(req.body.groupId, req.params.userId)
-    // res.send({
-    //   user: user.data,
-    //   group: group
-    // })
-    res.send(user)
+    res.send({
+      user: user.data,
+      group: group
+    })
+    // res.send(user)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 })
 
@@ -122,8 +112,7 @@ router.post('/resetPassword', async (req, res, next) => {
     res.send(success)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 })
 

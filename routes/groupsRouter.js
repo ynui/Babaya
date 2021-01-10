@@ -8,8 +8,7 @@ router.get('/', async (req, res, next) => {
     res.send(groups)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 });
 
@@ -19,8 +18,7 @@ router.get('/:groupId', async (req, res, next) => {
     res.send(groups)
     res.end()
   } catch (error) {
-    res.send(error)
-    res.end()
+    next(error)
   }
 });
 
@@ -32,9 +30,7 @@ router.post('/create', async (req, res, next) => {
     res.send(newGroup.data)
     res.end()
   } catch (error) {
-    console.error(`error creating group ${error}`)
-    res.send(error)
-    res.end()
+    next(error)
   }
 });
 
