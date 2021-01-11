@@ -20,7 +20,7 @@ async function getGroup(groupId) {
             if (found) {
                 group = new Group(found)
             } else {
-                throw `No group details document found for ${groupId}`
+                throw new Error(`No group details document found for ${groupId}`)
             }
         })
     return group
@@ -43,19 +43,12 @@ async function writeGroupDetails(group) {
     let resault = null;
     let data = group.data;
     try {
-        if (group.groupId) await DB_Utils.writeToCollection(COLLECTION_GROUPS, uid, group.data)
-        else {
-            let writeToDB = await DB_Utils.writeToCollectionU(COLLECTION_GROUPS, group.data)
-                .then(async (doc) => {
-                    data.groupId = doc.id
-                    await doc.update({
-                        groupId: doc.id
-                    })
-                    resault = new Group(data)
-                }).catch((error) => {
-                    throw error
-                })
-        }
+        await DB_Utils.writeToCollection(COLLECTION_GROUPS, group.groupId, group.data)
+            .then((doc) => {
+                resault = new Group(data)
+            }).catch((error) => {
+                throw error
+            })
     } catch (error) {
         throw error
     }
@@ -94,9 +87,8 @@ async function addUser(groupId, userId) {
     let group = null
     try {
         group = await getGroup(groupId)
-        if (group.users.includes(userId)) throw `${groupId} already has user ${userId}`
-        group.users.push(userId)
-        let updatedGroup = await updateGroup(group, { users: group.users })
+        group.addToUsersList(userId)
+        let updatedGroup = await updateGroup(group.groupId, { users: group.users })
     } catch (error) {
         throw error
     }

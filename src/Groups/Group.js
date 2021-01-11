@@ -1,15 +1,16 @@
+const Utils = require('../Utils')
+
 class Group {
     constructor(data) {
-        this.groupId = data.groupId || null // ID is grenerated by DB
+        this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
         this.description = data.description
-        // this.createTime = data.createTime
         this.createTime = new Date()
         this.createUser = data.createUser
-        this.groupManager = data.groupManager || [data.createUser] //list of user, role (admin, advisor)
-        this.rulesList = data.rulesList || null // list
-        this.rulesTest = data.rulesTest || null
-        this.publicity = data.publicity
+        this.groupManager = [data.groupManager] || [data.createUser] //list of user, role (admin, advisor)
+        this.publicity = [data.publicity] || []
+        this.rulesList = data.rulesList || [] 
+        this.rulesText = data.rulesText || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
         this.expertise = data.expertise || []  // list of [expertise, subExpertise]. can be only expertise without subExpertise 
@@ -37,6 +38,11 @@ class Group {
             events: this.events,
             discussion: this.discussion
         }
+    }
+
+    addToUsersList(userId){
+        if (this.users.includes(userId)) throw `${this.groupId} already contains user ${userId}`
+        this.users.push(userId) 
     }
 }
 

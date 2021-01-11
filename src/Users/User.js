@@ -4,6 +4,7 @@ class User {
         this.phoneNumber = data.phoneNumber
         this.email = data.email
         this.languageID = data.languageID
+        this.userType = data.userType
         this.firstNameEng = data.firstNameEng
         this.lastNameEng = data.lastNameEng
         this.firstNameHeb = data.firstNameHeb || null
@@ -12,12 +13,12 @@ class User {
         this.lastNameArb = data.lastNameArb || null
         this.genderID = data.genderID || null
         this.maritalStatus = data.maritalStatus || null
-        this.contryID = data.contryID || null
-        this.contyID = data.contyID || null
-        this.cityID = data.cityID || null
+        this.demographic = data.demographic || null
         this.streetID = data.streetID || null
         this.streetNum = data.streetNum || null
         this.dateOfBirth = data.dateOfBirth || null
+        this.demographic = data.demographicOther || []
+        this.demogrephicsOther = data.demogrephicsOther || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
         this.expertise = data.expertise || []  // list of [expertise, subExpertise]. can be only expertise without subExpertise 
@@ -37,9 +38,8 @@ class User {
             lastNameArb: this.lastNameArb,
             genderID: this.genderID,
             maritalStatus: this.maritalStatus,
-            contryID: this.contryID,
-            contyID: this.contyID,
-            cityID: this.cityID,
+            demographic: this.demographic,
+            demographicOther: this.demographicOther,
             streetID: this.streetID,
             streetNum: this.streetNum,
             dateOfBirth: this.dateOfBirth,
@@ -48,6 +48,11 @@ class User {
             expertise: this.expertise,
             groups: this.groups
         }
+    }
+
+    addToGroupsList(groupId) {
+        if (this.groups.includes(groupId)) throw `${userId} is already in group ${groupId}`
+        this.groups.push(groupId)    
     }
 }
 

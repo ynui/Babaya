@@ -44,9 +44,9 @@ async function wriewUserDetails(user) {
             .then(() => {
                 console.log(`User ${user.email} has been deleted successfully`)
             }).catch(() => {
-                throw (`Error deleting ${user.email}\n${error}`)
+                throw new Error(`Error deleting ${user.email}\n${error}`)
             })
-        throw (`couldent write data to ${user.email}\n${error}`)
+        throw new Error(`couldent write data to ${user.email}\n${error}`)
     }
     return userData
 }
@@ -61,7 +61,7 @@ async function getToken() {
             .then((idToken) => {
                 token = idToken
             }).catch((error) => {
-                throw (`Error getting token ${newUser.email}, ${error}`)
+                throw new Error(`Error getting token ${newUser.email}, ${error}`)
             });
     } catch (error) {
         throw error
@@ -76,11 +76,12 @@ async function login(email, password) {
             .auth()
             .signInWithEmailAndPassword(email, password)
             .then(async (user) => {
-                await user.user.getIdToken(true).then((idToken) => {
-                    token = idToken
-                }).catch((error) => {
-                    throw error
-                });
+                await user.user.getIdToken(true)
+                    .then((idToken) => {
+                        token = idToken
+                    }).catch((error) => {
+                        throw error
+                    });
             }).catch((error) => {
                 throw error
             });
@@ -120,7 +121,7 @@ async function updateProfile(data) {
                 })
         }
         else {
-            throw 'User is not signed in!'
+            throw new Error('User is not signed in!')
         }
     } catch (error) {
         throw error
@@ -135,7 +136,7 @@ async function getUser(userId) {
             if (found) {
                 user = new User(found)
             } else {
-                throw `No user details document found for ${userId}`
+                throw new Error(`No user details document found for ${userId}`)
             }
         })
     return user
@@ -169,8 +170,7 @@ async function addGroup(userId, groupId) {
     let user = null
     try {
         user = await getUser(userId)
-        if (user.groups.includes(groupId)) throw `${userId} is already in group ${groupId}`
-        user.groups.push(groupId)
+        user.addToGroupsList(groupId)
         let updateUser = await updateProfile({ groups: user.groups })
     } catch (error) {
         throw error

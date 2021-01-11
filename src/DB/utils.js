@@ -59,9 +59,9 @@ async function writeToCollection(collection, document, data) {
 async function updateDocument(collection, document, data) {
     try {
         await db.collection(collection).doc(document).update(data)
-    } catch {
+    } catch(error){
         console.error('Error updating ' + collection + document + data)
-        return false
+        throw error
     }
     return true
 }

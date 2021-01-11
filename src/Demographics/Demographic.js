@@ -1,3 +1,21 @@
+class Demographic {
+    constructor(data) {
+        this.country = new Country(data.country)
+        this.county = new County(data.county)
+        this.city = new City(data.city)
+        this.street = new Street(data.street)
+    }
+}
+
+class DemographicOther {
+    constructor(data) {
+        this.country = new Country(data.country)
+        this.county = new County(data.county)
+        this.city = new City(data.city)
+        this.street = new Street(data.street)
+    }
+}
+
 class Country {
     constructor(data) {
         this.countryID = data.countryID
@@ -50,7 +68,6 @@ class City {
     }
 }
 
-
 class Street {
     constructor(data) {
         this.streetID = data.streetID
@@ -69,6 +86,8 @@ class Street {
 }
 
 module.exports = {
+    Demographic,
+    DemographicOther,
     Country,
     County,
     City,
