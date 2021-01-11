@@ -1,14 +1,15 @@
 const Utils = require('../Utils')
 
 class Group {
+    static CREATE_FIELDS = ['name', 'description', 'createUser', 'publicity']
     constructor(data) {
         this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
         this.description = data.description
         this.createTime = new Date()
         this.createUser = data.createUser
-        this.groupManager = [data.groupManager] || [data.createUser] //list of user, role (admin, advisor)
-        this.publicity = [data.publicity] || []
+        this.publicity = data.publicity
+        this.groupManager = data.groupManager || [data.createUser] //list of user, role (admin, advisor)
         this.rulesList = data.rulesList || [] 
         this.rulesText = data.rulesText || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
@@ -27,7 +28,7 @@ class Group {
             createTime: this.createTime,
             createUser: this.createUser,
             rulesList: this.rulesList,
-            rulesTest: this.rulesTest,
+            rulesText: this.rulesText,
             publicity: this.publicity,
             workingPlace: this.workingPlace,
             areaOfInterest: this.areaOfInterest,

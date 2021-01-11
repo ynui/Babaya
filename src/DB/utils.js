@@ -1,6 +1,6 @@
 const { firebase, admin, Constants } = require('../../firebase/fbConfig');
 require('firebase/storage');
-
+const Utils = require('../Utils')
 
 const db = admin.firestore()
 const storage = firebase.storage()
@@ -27,27 +27,9 @@ async function uploadImage(files, id) {
 }
 
 
-async function writeToCollectionU(collection, data) {
-    let doc = null
-    try {
-        await db.collection(collection).add(data)
-            .then((docRef) => {
-                if (docRef) {
-                    doc = docRef
-                }else{
-                    //TODO
-                }
-            })
-    } catch (error) {
-        console.error(`${error}\n collection: ${collection} data: ${data}`)
-        throw error
-    }
-    return doc
-}
-
-
 async function writeToCollection(collection, document, data) {
     try {
+        Utils.validateDataWrite(data)
         await db.collection(collection).doc(document).set(data)
     } catch (error) {
         console.error(`${error}\n collection: ${collection} doc: ${document} data: ${data}`)
@@ -58,8 +40,9 @@ async function writeToCollection(collection, document, data) {
 
 async function updateDocument(collection, document, data) {
     try {
+        Utils.validateDataWrite(data)
         await db.collection(collection).doc(document).update(data)
-    } catch(error){
+    } catch (error) {
         console.error('Error updating ' + collection + document + data)
         throw error
     }
@@ -87,32 +70,10 @@ async function getCollection(collection) {
     return resault
 }
 
-// function registerUser(email, password) {
-//   firebase.auth()
-//     .createUserWithEmailAndPassword(email, password)
-//     .then((user) => {
-//       user.user.sendEmailVerification()
-//         .then(() => {
-//           console.log('Verification email sent to ' + user.user.email)
-//         }).catch((error) => {
-//           console.log('Error sending verification email ' + user.user.email)
-//           return;
-//         });
-//       return user.user
-//     })
-//     .catch((error) => {
-//       var errorCode = error.code;
-//       var errorMessage = error.message;
-//       throw error
-//     });
-// }
-
 module.exports = {
     writeToCollection,
-    writeToCollectionU,
     updateDocument,
     getDocument,
     uploadImage,
-    //   registerUser,
     getCollection
 };

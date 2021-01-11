@@ -1,5 +1,6 @@
 const DB_Utils = require('../DB/utils')
 const Group = require('./Group')
+const Utils = require('../Utils')
 
 const COLLECTION_GROUPS = 'groups';
 
@@ -95,11 +96,17 @@ async function addUser(groupId, userId) {
     return group
 }
 
+
+function validateRequest(body){
+    return Utils.validateRequest(body, Group.CREATE_FIELDS)
+}
+
 module.exports = {
     createGroup,
     getGroup,
     writeGroupDetails,
     getAllGroups,
     addUser,
-    updateGroup
+    updateGroup,
+    validateRequest
 }

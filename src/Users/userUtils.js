@@ -1,6 +1,7 @@
 const { firebase, admin } = require('../../firebase/fbConfig');
 const DB_Utils = require('../DB/utils')
 const User = require('./User')
+const Utils = require('../Utils')
 
 const COLLECTION_USERS_DETAILS = 'usersDetails';
 
@@ -33,12 +34,10 @@ async function registerUser(data) {
 }
 
 async function wriewUserDetails(user) {
-    let userData = user.data
-    for (var field in userData) {
-        if (typeof (userData[field]) === 'undefined') throw (`${field} is undefined`)
-    }
+    let success = false
     try {
         DB_Utils.writeToCollection(COLLECTION_USERS_DETAILS, user.uid, user.data)
+        success = true
     } catch (error) {
         user.user.delete()
             .then(() => {
@@ -48,7 +47,7 @@ async function wriewUserDetails(user) {
             })
         throw new Error(`couldent write data to ${user.email}\n${error}`)
     }
-    return userData
+    return success
 }
 
 async function getToken() {
@@ -195,11 +194,12 @@ async function resetPassword(email) {
     return success
 }
 
-async function deleteAllUsers() {
-
+function validateRequest(body){
+    return Utils.validateRequest(body, User.REGISTER_FIELDS)
 }
 
 module.exports = {
+    validateRequest,
     registerUser,
     wriewUserDetails,
     getToken,
@@ -210,6 +210,5 @@ module.exports = {
     getAllUsers,
     getAllUsersDetails,
     addGroup,
-    resetPassword,
-    deleteAllUsers
+    resetPassword
 }

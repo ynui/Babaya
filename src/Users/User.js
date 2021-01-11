@@ -1,4 +1,5 @@
 class User {
+    static REGISTER_FIELDS = ['phoneNumber', 'email', 'languageID', 'userType', 'firstNameEng', 'lastNameEng']
     constructor(data) {
         this.uid = data.uid
         this.phoneNumber = data.phoneNumber
@@ -17,7 +18,7 @@ class User {
         this.streetID = data.streetID || null
         this.streetNum = data.streetNum || null
         this.dateOfBirth = data.dateOfBirth || null
-        this.demographic = data.demographicOther || []
+        this.demographic = data.demographic || null
         this.demogrephicsOther = data.demogrephicsOther || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
@@ -39,7 +40,7 @@ class User {
             genderID: this.genderID,
             maritalStatus: this.maritalStatus,
             demographic: this.demographic,
-            demographicOther: this.demographicOther,
+            demogrephicsOther: this.demogrephicsOther,
             streetID: this.streetID,
             streetNum: this.streetNum,
             dateOfBirth: this.dateOfBirth,
@@ -52,7 +53,7 @@ class User {
 
     addToGroupsList(groupId) {
         if (this.groups.includes(groupId)) throw `${userId} is already in group ${groupId}`
-        this.groups.push(groupId)    
+        this.groups.push(groupId)
     }
 }
 

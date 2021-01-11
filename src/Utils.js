@@ -46,6 +46,24 @@ function generateId() {
     }();
 }
 
+function validateRequest(req, mandatoryFields) {
+    let reqData = req.body
+    for (var field of mandatoryFields) {
+        if (!reqData[field]) throw new Error(`Requset ${req.originalUrl} must contain ${field}`)
+    }
+    return true
+}
+
+function validateDataWrite(data) {
+    for (var field in data) {
+        if (typeof (data[field]) === typeof (undefined))
+            throw new Error(`Cannot write data: ${field} is undefined`)
+    }
+    return true
+}
+
 module.exports = {
-    generateId
+    generateId,
+    validateRequest,
+    validateDataWrite
 }

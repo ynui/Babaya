@@ -37,6 +37,7 @@ router.get('/deleteAllUsers', async (req, res, next) => {
 
 router.post('/register', async (req, res, next) => {
   try {
+    let valid = userUtils.validateRequest(req)
     let newUser = await userUtils.registerUser(req.body)
     let writeDetails = await userUtils.wriewUserDetails(newUser)
     let token = await userUtils.getToken()
@@ -99,7 +100,6 @@ router.post('/:userId/addGroup', async (req, res, next) => {
       user: user.data,
       group: group
     })
-    // res.send(user)
     res.end()
   } catch (error) {
     next(error)
