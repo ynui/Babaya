@@ -1,7 +1,14 @@
 const Utils = require('../Utils')
 
 class Group {
-    static CREATE_FIELDS = ['name', 'description', 'createUser', 'publicity']
+    static CREATE_REQIRED = [
+        'name', 'description', 'createUser', 'publicity'
+    ]
+    static CREATE_OPTIONAL = [
+        'groupManager', 'rulesList', 'rulesText', 'workingPlace',
+        'areaOfInterest', 'expertise', 'demographicInfo', 'users', 'events',
+        'discussion'
+    ]
     constructor(data) {
         this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
@@ -10,7 +17,7 @@ class Group {
         this.createUser = data.createUser
         this.publicity = data.publicity
         this.groupManager = data.groupManager || [data.createUser] //list of user, role (admin, advisor)
-        this.rulesList = data.rulesList || [] 
+        this.rulesList = data.rulesList || []
         this.rulesText = data.rulesText || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
@@ -41,9 +48,9 @@ class Group {
         }
     }
 
-    addToUsersList(userId){
+    addToUsersList(userId) {
         if (this.users.includes(userId)) throw `${this.groupId} already contains user ${userId}`
-        this.users.push(userId) 
+        this.users.push(userId)
     }
 }
 

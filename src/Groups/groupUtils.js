@@ -97,7 +97,7 @@ async function addUser(groupId, userId) {
 
 
 function validateRequest(body){
-    return Utils.validateRequest(body, Group.CREATE_FIELDS)
+    return Utils.validateRequest(body, Group.CREATE_REQIRED, Group.CREATE_OPTIONAL)
 }
 
 module.exports = {
