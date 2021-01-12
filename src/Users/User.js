@@ -1,5 +1,12 @@
 class User {
-    static REGISTER_FIELDS = ['phoneNumber', 'email', 'languageID', 'userType', 'firstNameEng', 'lastNameEng']
+    static REGISTER_REQUIRED = [
+        'phoneNumber', 'email', 'password', 'languageID', 'userType', 'firstNameEng', 'lastNameEng'
+    ]
+    static REGISTER_OPTIONAL = [
+        'firstNameHeb', 'lastNameHeb', 'firstNameArb', 'lastNameArb', 'genderID', 'maritalStatus',
+        'demographic', 'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise',
+        'groups'
+    ]
     constructor(data) {
         this.uid = data.uid
         this.phoneNumber = data.phoneNumber
@@ -15,10 +22,7 @@ class User {
         this.genderID = data.genderID || null
         this.maritalStatus = data.maritalStatus || null
         this.demographic = data.demographic || null
-        this.streetID = data.streetID || null
-        this.streetNum = data.streetNum || null
         this.dateOfBirth = data.dateOfBirth || null
-        this.demographic = data.demographic || null
         this.demogrephicsOther = data.demogrephicsOther || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
@@ -31,6 +35,7 @@ class User {
             phoneNumber: this.phoneNumber,
             email: this.email,
             languageID: this.languageID,
+            userType: this.userType,
             firstNameEng: this.firstNameEng,
             lastNameEng: this.lastNameEng,
             firstNameHeb: this.firstNameHeb,
@@ -41,8 +46,6 @@ class User {
             maritalStatus: this.maritalStatus,
             demographic: this.demographic,
             demogrephicsOther: this.demogrephicsOther,
-            streetID: this.streetID,
-            streetNum: this.streetNum,
             dateOfBirth: this.dateOfBirth,
             workingPlace: this.workingPlace,
             areaOfInterest: this.areaOfInterest,

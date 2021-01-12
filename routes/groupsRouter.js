@@ -27,7 +27,7 @@ router.post('/create', async (req, res, next) => {
   try {
     let valid = groupUtils.validateRequest(req)
     let newGroup = await groupUtils.createGroup(req.body)
-    newGroup = await groupUtils.writeGroupDetails(newGroup)
+    let success = await groupUtils.writeGroupDetails(newGroup)
     res.send(newGroup.data)
     res.end()
   } catch (error) {

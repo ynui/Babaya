@@ -41,19 +41,18 @@ async function getAllGroups() {
 }
 
 async function writeGroupDetails(group) {
-    let resault = null;
-    let data = group.data;
+    let success = false;
     try {
         await DB_Utils.writeToCollection(COLLECTION_GROUPS, group.groupId, group.data)
             .then((doc) => {
-                resault = new Group(data)
+                success = true
             }).catch((error) => {
                 throw error
             })
     } catch (error) {
         throw error
     }
-    return resault
+    return success
 }
 
 async function addUser(groupId, userId) {

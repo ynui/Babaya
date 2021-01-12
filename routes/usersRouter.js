@@ -41,6 +41,7 @@ router.post('/register', async (req, res, next) => {
     let newUser = await userUtils.registerUser(req.body)
     let writeDetails = await userUtils.wriewUserDetails(newUser)
     let token = await userUtils.getToken()
+    let VerificationEmail = userUtils.sendVerificationEmail(newUser)
     resault = {
       token: token,
       user: newUser

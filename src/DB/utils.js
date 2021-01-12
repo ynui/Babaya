@@ -28,14 +28,16 @@ async function uploadImage(files, id) {
 
 
 async function writeToCollection(collection, document, data) {
+    let success = false
     try {
         Utils.validateDataWrite(data)
         await db.collection(collection).doc(document).set(data)
+        success = true
     } catch (error) {
         console.error(`${error}\n collection: ${collection} doc: ${document} data: ${data}`)
         throw error
     }
-    return true
+    return success
 }
 
 async function updateDocument(collection, document, data) {

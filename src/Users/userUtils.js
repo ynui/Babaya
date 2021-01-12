@@ -16,18 +16,10 @@ async function registerUser(data) {
                 let registeredUser = user.user
                 data.uid = registeredUser.uid
                 newUser = new User(data)
-                registeredUser.sendEmailVerification()
-                    .then(() => {
-                        console.log('Verification email sent to ' + registeredUser.email)
-                    }).catch((error) => {
-                        throw error
-                    });
             }).catch((error) => {
-                console.log(error)
                 throw error
             })
     } catch (error) {
-        console.log(error)
         throw error
     }
     return newUser
@@ -36,15 +28,9 @@ async function registerUser(data) {
 async function wriewUserDetails(user) {
     let success = false
     try {
-        DB_Utils.writeToCollection(COLLECTION_USERS_DETAILS, user.uid, user.data)
-        success = true
+        success = await DB_Utils.writeToCollection(COLLECTION_USERS_DETAILS, user.uid, user.data)
     } catch (error) {
-        user.user.delete()
-            .then(() => {
-                console.log(`User ${user.email} has been deleted successfully`)
-            }).catch(() => {
-                throw new Error(`Error deleting ${user.email}\n${error}`)
-            })
+        deleteUser()
         throw new Error(`couldent write data to ${user.email}\n${error}`)
     }
     return success
@@ -194,11 +180,37 @@ async function resetPassword(email) {
     return success
 }
 
-function validateRequest(body){
-    return Utils.validateRequest(body, User.REGISTER_FIELDS)
+function validateRequest(body) {
+    return Utils.validateRequest(body, User.REGISTER_REQUIRED, User.REGISTER_OPTIONAL)
+}
+
+function sendVerificationEmail() {
+    var user = firebase.auth().currentUser;
+    try {
+        user.sendEmailVerification()
+            .then(() => {
+                console.log('Verification email sent to ' + user.email)
+            }).catch((error) => {
+                throw error
+            });
+    }
+    catch (error) {
+        throw error
+    }
+}
+
+function deleteUser() {
+    var user = firebase.auth().currentUser;
+    user.delete()
+        .then(() => {
+            console.log(`User ${user.email} has been deleted successfully`)
+        }).catch(() => {
+            throw new Error(`Error deleting ${user.email}\n${error}`)
+        })
 }
 
 module.exports = {
+    sendVerificationEmail,
     validateRequest,
     registerUser,
     wriewUserDetails,

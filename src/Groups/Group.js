@@ -6,7 +6,7 @@ class Group {
         this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
         this.description = data.description
-        this.createTime = new Date()
+        this.createTime = new Date().toISOString()
         this.createUser = data.createUser
         this.publicity = data.publicity
         this.groupManager = data.groupManager || [data.createUser] //list of user, role (admin, advisor)
