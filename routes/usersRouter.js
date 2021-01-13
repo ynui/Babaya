@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 const userUtils = require('../src/Users/userUtils')
 const groupUtils = require('../src/Groups/groupUtils');
-const { validateRequest } = require('../src/Utils');
 
 /* GET users listing. */
 router.get('/', async (req, res, next) => {
@@ -26,15 +25,15 @@ router.get('/allUsersDetails', async (req, res, next) => {
 });
 
 
-router.get('/deleteAllUsers', async (req, res, next) => {
-  try {
-    let success = await userUtils.deleteAllUsers()
-    res.send(success)
-    res.end()
-  } catch (error) {
-    next(error)
-  }
-});
+// router.get('/deleteAllUsers', async (req, res, next) => {
+//   try {
+//     let success = await userUtils.deleteAllUsers()
+//     res.send(success)
+//     res.end()
+//   } catch (error) {
+//     next(error)
+//   }
+// });
 
 router.post('/register', async (req, res, next) => {
   try {
@@ -56,8 +55,9 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
   try {
-    let token = await userUtils.login(req.body.email, req.body.password)
-    res.send(token)
+    let valid = userUtils.validateRequest(req)
+    let resault = await userUtils.login(req.body.email, req.body.password)
+    res.send(resault)
     res.end()
   } catch (error) {
     next(error)
@@ -85,20 +85,21 @@ router.post('/updateProfile', async (req, res, next) => {
   }
 })
 
-router.get('/:userId', async (req, res, next) => {
-  try {
-    let user = await userUtils.getUser(req.params.userId)
-    res.send(user.data)
-    res.end()
-  } catch (error) {
-    next(error)
-  }
-})
+router.route('/:userId')
+  .get(async (req, res, next) => {//get user
+    try {
+      let user = await userUtils.getUser(req.params.userId)
+      res.send(user.data)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
 
-router.post('/:userId/addGroup', async (req, res, next) => {
+router.post('/addGroup', async (req, res, next) => {
   try {
-    let user = await userUtils.addGroup(req.params.userId, req.body.groupId)
-    let group = await groupUtils.addUser(req.body.groupId, req.params.userId)
+    let user = await userUtils.addGroup(req.body.userId, req.body.groupId)
+    let group = await groupUtils.addUser(req.body.groupId, req.body.userId)
     res.send({
       user: user.data,
       group: group

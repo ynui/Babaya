@@ -1,18 +1,6 @@
+const Utils = require('../Utils')
+
 class User {
-    static REGISTER_REQUIRED = [
-        'phoneNumber', 'email', 'password', 'languageID', 'userType', 'firstNameEng', 'lastNameEng'
-    ]
-    static REGISTER_OPTIONAL = [
-        'firstNameHeb', 'lastNameHeb', 'firstNameArb', 'lastNameArb', 'genderID', 'maritalStatus',
-        'demographic', 'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise',
-        'groups'
-    ]
-    static UPDATE_REQUIRED = []
-    static UPDATE_OPTIONAL = [
-        'phoneNumber', 'languageID', 'userType', 'firstNameEng', 'lastNameEng', 'firstNameHeb',
-        'lastNameHeb', 'firstNameArb', 'lastNameArb', 'genderID', 'maritalStatus', 'demographic',
-        'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise', 'groups'
-    ]
     constructor(data) {
         this.uid = data.uid
         this.phoneNumber = data.phoneNumber
@@ -35,6 +23,35 @@ class User {
         this.expertise = data.expertise || []  // list of [expertise, subExpertise]. can be only expertise without subExpertise 
         this.groups = data.groups || []
     }
+
+    static Validators = {
+        registerRequest: {
+            required: [
+                'phoneNumber', 'email', 'password', 'languageID',
+                'userType', 'firstNameEng', 'lastNameEng'],
+            optional: [
+                'firstNameHeb', 'lastNameHeb', 'firstNameArb', 'lastNameArb',
+                'genderID', 'maritalStatus', 'demographic', 'dateOfBirth',
+                'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise',
+                'groups'
+            ]
+        },
+        updateProfileRequest: {
+            required: [],
+            optional: [
+                'phoneNumber', 'languageID', 'userType', 'firstNameEng',
+                'lastNameEng', 'firstNameHeb', 'lastNameHeb', 'firstNameArb',
+                'lastNameArb', 'genderID', 'maritalStatus', 'demographic',
+                'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest',
+                'expertise', 'groups'
+            ]
+        },
+        loginRequest: {
+            required: ['email', 'password'],
+            optional: []
+        }
+    }
+
     get data() {
         return {
             uid: this.uid,
@@ -61,7 +78,7 @@ class User {
     }
 
     addToGroupsList(groupId) {
-        if (this.groups.includes(groupId)) throw `${userId} is already in group ${groupId}`
+        if (this.groups.includes(groupId)) throw Utils.createError(`${userId} is already in group ${groupId}`)
         this.groups.push(groupId)
     }
 }

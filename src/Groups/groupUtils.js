@@ -96,17 +96,15 @@ async function addUser(groupId, userId) {
 }
 
 
-function validateRequest(req) {
-    let required = null
-    let optional = null
+function validateRequest(req, required = [], optional = []) {
     switch (req.url) {
         case '/create':
-            required = Group.CREATE_REQIRED
-            optional = Group.CREATE_OPTIONAL
+            required = Group.Validators.createRequest.required
+            optional = Group.Validators.createRequest.optional
             break;
-        // case '/updateProfile':
-        //     optional = User.UPDATE_OPTIONAL
-        //     break
+        default:
+            if (required.length == 0 && !optional.length == 0)
+                throw Utils.createError(`Can't validate ${req.url}. No validetors provided`)
     }
     return Utils.validateRequest(req, required, optional)
 }

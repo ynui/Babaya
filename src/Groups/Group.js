@@ -1,14 +1,6 @@
 const Utils = require('../Utils')
 
 class Group {
-    static CREATE_REQIRED = [
-        'name', 'description', 'createUser', 'publicity'
-    ]
-    static CREATE_OPTIONAL = [
-        'groupManager', 'rulesList', 'rulesText', 'workingPlace',
-        'areaOfInterest', 'expertise', 'demographicInfo', 'users', 'events',
-        'discussion'
-    ]
     constructor(data) {
         this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
@@ -27,6 +19,20 @@ class Group {
         this.events = data.events || []
         this.discussion = data.discussion || [] // text/ link/ image / vidio 
     }
+
+    static Validators = {
+        createRequest: {
+            required: [
+                'name', 'description', 'createUser', 'publicity'
+            ],
+            optional: [
+                'groupManager', 'rulesList', 'rulesText', 'workingPlace',
+                'areaOfInterest', 'expertise', 'demographicInfo', 'users',
+                'events', 'discussion'
+            ]
+        }
+    }
+    
     get data() {
         return {
             groupId: this.groupId,

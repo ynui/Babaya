@@ -56,14 +56,16 @@ async function getToken() {
 
 async function login(email, password) {
     let token = null;
+    let user = null;
     try {
         await firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
-            .then(async (user) => {
-                await user.user.getIdToken(true)
-                    .then((idToken) => {
+            .then(async (registeredUser) => {
+                await registeredUser.user.getIdToken(true)
+                    .then(async (idToken) => {
                         token = idToken
+                        user = await getUser(registeredUser.user.uid)
                     }).catch((error) => {
                         throw error
                     });
@@ -73,7 +75,10 @@ async function login(email, password) {
     } catch (error) {
         throw error
     }
-    return token
+    return {
+        user: user,
+        token: token
+    }
 }
 
 async function logout() {
@@ -180,18 +185,23 @@ async function resetPassword(email) {
     return success
 }
 
-function validateRequest(req) {
-    let required = null
-    let optional = null
+function validateRequest(req, required = [], optional = []) {
     switch (req.url) {
         case '/register':
-            required = User.REGISTER_REQUIRED
-            optional = User.REGISTER_OPTIONAL
+            required = User.Validators.registerRequest.required
+            optional = User.Validators.registerRequest.optional
             break;
         case '/updateProfile':
-            required = User.UPDATE_REQUIRED
-            optional = User.UPDATE_OPTIONAL
-            break
+            required = User.Validators.updateProfileRequest.required
+            optional = User.Validators.updateProfileRequest.optional
+            break;
+        case '/login':
+            required = User.Validators.loginRequest.required
+            optional = User.Validators.loginRequest.optional
+            break;
+        default:
+            if (required.length == 0 && !optional.length == 0)
+                throw Utils.createError(`Can't validate ${req.url}. No validetors provided`)
     }
     return Utils.validateRequest(req, required, optional)
 }
