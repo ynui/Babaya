@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const userUtils = require('../src/Users/userUtils')
-const groupUtils = require('../src/Groups/groupUtils')
+const groupUtils = require('../src/Groups/groupUtils');
+const { validateRequest } = require('../src/Utils');
 
 /* GET users listing. */
 router.get('/', async (req, res, next) => {
@@ -75,6 +76,7 @@ router.get('/logout', async (req, res, next) => {
 
 router.post('/updateProfile', async (req, res, next) => {
   try {
+    let valid = userUtils.validateRequest(req)
     let success = await userUtils.updateProfile(req.body)
     res.send(success)
     res.end()

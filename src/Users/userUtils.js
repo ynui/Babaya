@@ -31,7 +31,7 @@ async function wriewUserDetails(user) {
         success = await DB_Utils.writeToCollection(COLLECTION_USERS_DETAILS, user.uid, user.data)
     } catch (error) {
         deleteUser()
-        throw new Error(`couldent write data to ${user.email}\n${error}`)
+        throw Utils.createError(`couldent write data to ${user.email}\n${error}`)
     }
     return success
 }
@@ -46,7 +46,7 @@ async function getToken() {
             .then((idToken) => {
                 token = idToken
             }).catch((error) => {
-                throw new Error(`Error getting token ${newUser.email}, ${error}`)
+                throw Utils.createError(`Error getting token ${newUser.email}, ${error}`)
             });
     } catch (error) {
         throw error
@@ -106,7 +106,7 @@ async function updateProfile(data) {
                 })
         }
         else {
-            throw new Error('User is not signed in!')
+            throw Utils.createError('User is not signed in!')
         }
     } catch (error) {
         throw error
@@ -121,7 +121,7 @@ async function getUser(userId) {
             if (found) {
                 user = new User(found)
             } else {
-                throw new Error(`No user details document found for ${userId}`)
+                throw Utils.createError(`No user details document found for ${userId}`)
             }
         })
     return user
@@ -180,8 +180,20 @@ async function resetPassword(email) {
     return success
 }
 
-function validateRequest(body) {
-    return Utils.validateRequest(body, User.REGISTER_REQUIRED, User.REGISTER_OPTIONAL)
+function validateRequest(req) {
+    let required = null
+    let optional = null
+    switch (req.url) {
+        case '/register':
+            required = User.REGISTER_REQUIRED
+            optional = User.REGISTER_OPTIONAL
+            break;
+        case '/updateProfile':
+            required = User.UPDATE_REQUIRED
+            optional = User.UPDATE_OPTIONAL
+            break
+    }
+    return Utils.validateRequest(req, required, optional)
 }
 
 function sendVerificationEmail() {
@@ -205,7 +217,7 @@ function deleteUser() {
         .then(() => {
             console.log(`User ${user.email} has been deleted successfully`)
         }).catch(() => {
-            throw new Error(`Error deleting ${user.email}\n${error}`)
+            throw Utils.createError(`Error deleting ${user.email}\n${error}`)
         })
 }
 

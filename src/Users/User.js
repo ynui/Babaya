@@ -7,6 +7,12 @@ class User {
         'demographic', 'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise',
         'groups'
     ]
+    static UPDATE_REQUIRED = []
+    static UPDATE_OPTIONAL = [
+        'phoneNumber', 'languageID', 'userType', 'firstNameEng', 'lastNameEng', 'firstNameHeb',
+        'lastNameHeb', 'firstNameArb', 'lastNameArb', 'genderID', 'maritalStatus', 'demographic',
+        'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise', 'groups'
+    ]
     constructor(data) {
         this.uid = data.uid
         this.phoneNumber = data.phoneNumber

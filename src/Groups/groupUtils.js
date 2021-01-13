@@ -21,7 +21,7 @@ async function getGroup(groupId) {
             if (found) {
                 group = new Group(found)
             } else {
-                throw new Error(`No group details document found for ${groupId}`)
+                throw Utils.createError(`No group details document found for ${groupId}`)
             }
         })
     return group
@@ -96,10 +96,20 @@ async function addUser(groupId, userId) {
 }
 
 
-function validateRequest(body){
-    return Utils.validateRequest(body, Group.CREATE_REQIRED, Group.CREATE_OPTIONAL)
+function validateRequest(req) {
+    let required = null
+    let optional = null
+    switch (req.url) {
+        case '/create':
+            required = Group.CREATE_REQIRED
+            optional = Group.CREATE_OPTIONAL
+            break;
+        // case '/updateProfile':
+        //     optional = User.UPDATE_OPTIONAL
+        //     break
+    }
+    return Utils.validateRequest(req, required, optional)
 }
-
 module.exports = {
     createGroup,
     getGroup,
