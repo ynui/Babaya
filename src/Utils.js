@@ -22,33 +22,62 @@ function generateId() {
 }
 
 function validateRequest(req, requiredFields, optionalFields) {
-    let success = false
+    let resault = {
+        valid: false,
+        error: null
+    }
     let reqData = req.body
-    if (requiredFields) {
+    let invalidFound = false
+    if (requiredFields && !invalidFound) {
         for (var field of requiredFields) {
-            if (!reqData[field]) throw createError(`Requset ${req.originalUrl} must contain field: ${field}`)
+            if (!reqData[field]) {
+                invalidFound = true
+                resault.valid = false
+                resault.error = createError(`Requset ${req.originalUrl} must contain field: ${field}`)
+                break;
+            }
+            // if (!reqData[field]) throw createError(`Requset ${req.originalUrl} must contain field: ${field}`)
         }
     }
-    if (reqData) {
+    if (reqData && !invalidFound) {
         for (var field in reqData) {
-            if (!requiredFields.includes(field) && !optionalFields.includes(field)) throw createError(`Requset ${req.originalUrl} contains unneccecery field: ${field}`)
+            if (!requiredFields.includes(field) && !optionalFields.includes(field)) {
+                resault.valid = false
+                resault.error = createError(`Requset ${req.originalUrl} contains unrelated field: ${field}`, 'unrequired-field')
+                break;
+            }
         }
     }
-    success = true
-    return success
+    if (!resault.error) {
+        resault.valid = true
+    }
+    return resault
 }
 
 function validateDataWrite(data) {
-    for (var field in data) {
-        if (typeof (data[field]) === typeof (undefined))
-            throw createError(`Cannot write data: field: ${field} is undefined`)
+    let success = false;
+    if (data) {
+        for (var field in data) {
+            if (typeof (data[field]) === typeof (undefined))
+                throw createError(`Cannot write data: field: ${field} is undefined`, 'invalid-data-write')
+        }
+        success = true
     }
-    return true
+    return success
+}
+
+function isRequestValid(req, res, next) {
+    if (!req.valid){
+        let error = createError('Request does not contain a valid flag', 'invalid-request')
+        return next(error)
+    }
+    return next()
 }
 
 module.exports = {
     generateId,
     validateRequest,
     validateDataWrite,
-    createError
+    createError,
+    isRequestValid
 }

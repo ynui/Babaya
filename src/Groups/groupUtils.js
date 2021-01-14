@@ -21,7 +21,7 @@ async function getGroup(groupId) {
             if (found) {
                 group = new Group(found)
             } else {
-                throw Utils.createError(`No group details document found for ${groupId}`)
+                throw Utils.createError(`No group details document found for ${groupId}`, 'no-group-found')
             }
         })
     return group
@@ -95,18 +95,26 @@ async function addUser(groupId, userId) {
     return group
 }
 
-
-function validateRequest(req, required = [], optional = []) {
+function validateRequest(req, res, next, required = [], optional = []) {
     switch (req.url) {
         case '/create':
             required = Group.Validators.createRequest.required
             optional = Group.Validators.createRequest.optional
             break;
-        default:
-            if (required.length == 0 && !optional.length == 0)
-                throw Utils.createError(`Can't validate ${req.url}. No validetors provided`)
+        case '/update':
+            required = Group.Validators.updateRequest.required
+            optional = Group.Validators.updateRequest.optional
+            break;
     }
-    return Utils.validateRequest(req, required, optional)
+    let validateResault = Utils.validateRequest(req, required, optional);
+    if (validateResault.error) {
+        let error = validateResault.error
+        return next(error)
+    }
+    else req.valid = validateResault.valid
+    return next()
+
+
 }
 module.exports = {
     createGroup,

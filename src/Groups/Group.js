@@ -15,7 +15,7 @@ class Group {
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
         this.expertise = data.expertise || []  // list of [expertise, subExpertise]. can be only expertise without subExpertise 
         this.demographicInfo = data.demographicInfo || [] // can be  country, county, city, street, can be part of it.... 
-        this.users = data.users || []
+        this.users = data.users || [data.createUser]
         this.events = data.events || []
         this.discussion = data.discussion || [] // text/ link/ image / vidio 
     }
@@ -30,9 +30,19 @@ class Group {
                 'areaOfInterest', 'expertise', 'demographicInfo', 'users',
                 'events', 'discussion'
             ]
+        },
+        updateRequest: {
+            required: [
+                'groupId'
+            ],
+            optional: [
+                'name', 'description', 'publicity', 'groupManager',
+                'rulesList', 'rulesText', 'workingPlace', 'areaOfInterest',
+                'expertise', 'demographicInfo', 'events', 'discussion'
+            ]
         }
     }
-    
+
     get data() {
         return {
             groupId: this.groupId,

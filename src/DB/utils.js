@@ -41,14 +41,16 @@ async function writeToCollection(collection, document, data) {
 }
 
 async function updateDocument(collection, document, data) {
+    let success = false
     try {
         Utils.validateDataWrite(data)
         await db.collection(collection).doc(document).update(data)
+        success = true
     } catch (error) {
         console.error('Error updating ' + collection + document + data)
         throw error
     }
-    return true
+    return success
 }
 
 async function getDocument(collection, document) {

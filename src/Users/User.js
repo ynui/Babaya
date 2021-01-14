@@ -2,7 +2,7 @@ const Utils = require('../Utils')
 
 class User {
     constructor(data) {
-        this.uid = data.uid
+        this.userId = data.userId
         this.phoneNumber = data.phoneNumber
         this.email = data.email
         this.languageID = data.languageID
@@ -24,8 +24,8 @@ class User {
         this.groups = data.groups || []
     }
 
-    static Validators = {
-        registerRequest: {
+    static RequestValidators = {
+        register: {
             required: [
                 'phoneNumber', 'email', 'password', 'languageID',
                 'userType', 'firstNameEng', 'lastNameEng'],
@@ -36,8 +36,8 @@ class User {
                 'groups'
             ]
         },
-        updateProfileRequest: {
-            required: [],
+        update: {
+            required: ['userId'],
             optional: [
                 'phoneNumber', 'languageID', 'userType', 'firstNameEng',
                 'lastNameEng', 'firstNameHeb', 'lastNameHeb', 'firstNameArb',
@@ -46,15 +46,23 @@ class User {
                 'expertise', 'groups'
             ]
         },
-        loginRequest: {
+        login: {
             required: ['email', 'password'],
+            optional: []
+        },
+        addGroup: {
+            required: ['userId', 'groupId'],
+            optional: []
+        },
+        resetPassword: {
+            required: ['email'],
             optional: []
         }
     }
 
     get data() {
         return {
-            uid: this.uid,
+            userId: this.userId,
             phoneNumber: this.phoneNumber,
             email: this.email,
             languageID: this.languageID,
@@ -78,7 +86,7 @@ class User {
     }
 
     addToGroupsList(groupId) {
-        if (this.groups.includes(groupId)) throw Utils.createError(`${userId} is already in group ${groupId}`)
+        if (this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is already in group ${groupId}`,'user-already-in-group')
         this.groups.push(groupId)
     }
 }

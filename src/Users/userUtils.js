@@ -5,7 +5,6 @@ const Utils = require('../Utils')
 
 const COLLECTION_USERS_DETAILS = 'usersDetails';
 
-
 async function registerUser(data) {
     let newUser = null;
     try {
@@ -14,7 +13,7 @@ async function registerUser(data) {
             .createUserWithEmailAndPassword(data.email, data.password)
             .then((user) => {
                 let registeredUser = user.user
-                data.uid = registeredUser.uid
+                data.userId = registeredUser.uid
                 newUser = new User(data)
             }).catch((error) => {
                 throw error
@@ -28,10 +27,10 @@ async function registerUser(data) {
 async function wriewUserDetails(user) {
     let success = false
     try {
-        success = await DB_Utils.writeToCollection(COLLECTION_USERS_DETAILS, user.uid, user.data)
+        success = await DB_Utils.writeToCollection(COLLECTION_USERS_DETAILS, user.userId, user.data)
     } catch (error) {
         deleteUser()
-        throw Utils.createError(`couldent write data to ${user.email}\n${error}`)
+        throw error
     }
     return success
 }
@@ -46,7 +45,7 @@ async function getToken() {
             .then((idToken) => {
                 token = idToken
             }).catch((error) => {
-                throw Utils.createError(`Error getting token ${newUser.email}, ${error}`)
+                throw Utils.createError(`Error getting token ${newUser.email}, ${error}`, 'cant-get-token')
             });
     } catch (error) {
         throw error
@@ -65,7 +64,7 @@ async function login(email, password) {
                 await registeredUser.user.getIdToken(true)
                     .then(async (idToken) => {
                         token = idToken
-                        user = await getUser(registeredUser.user.uid)
+                        user = await getUser(registeredUser.user.userId)
                     }).catch((error) => {
                         throw error
                     });
@@ -98,12 +97,12 @@ async function logout() {
     return success
 }
 
-async function updateProfile(data) {
+async function updateProfile(userId, data) {
     let success = false;
     try {
-        let user = await firebase.auth().currentUser;
+        let user = await getUser(userId)
         if (user) {
-            await DB_Utils.updateDocument(COLLECTION_USERS_DETAILS, user.uid, data)
+            await DB_Utils.updateDocument(COLLECTION_USERS_DETAILS, user.userId, data)
                 .then((resault) => {
                     if (resault) success = true
                 }).catch((error) => {
@@ -111,7 +110,7 @@ async function updateProfile(data) {
                 })
         }
         else {
-            throw Utils.createError('User is not signed in!')
+            throw error
         }
     } catch (error) {
         throw error
@@ -126,7 +125,7 @@ async function getUser(userId) {
             if (found) {
                 user = new User(found)
             } else {
-                throw Utils.createError(`No user details document found for ${userId}`)
+                throw Utils.createError(`No user details document found for ${userId}`, 'no-user-found')
             }
         })
     return user
@@ -161,7 +160,7 @@ async function addGroup(userId, groupId) {
     try {
         user = await getUser(userId)
         user.addToGroupsList(groupId)
-        let updateUser = await updateProfile({ groups: user.groups })
+        let updateUser = await updateProfile(userId, { groups: user.groups })
     } catch (error) {
         throw error
     }
@@ -171,7 +170,7 @@ async function addGroup(userId, groupId) {
 async function resetPassword(email) {
     let success = false;
     try {
-        firebase
+        await firebase
             .auth()
             .sendPasswordResetEmail(email)
             .then(() => {
@@ -185,25 +184,37 @@ async function resetPassword(email) {
     return success
 }
 
-function validateRequest(req, required = [], optional = []) {
+function validateRequest(req, res, next, required = [], optional = []) {
+    req.valid = false
     switch (req.url) {
         case '/register':
-            required = User.Validators.registerRequest.required
-            optional = User.Validators.registerRequest.optional
+            required = User.RequestValidators.register.required
+            optional = User.RequestValidators.register.optional
             break;
-        case '/updateProfile':
-            required = User.Validators.updateProfileRequest.required
-            optional = User.Validators.updateProfileRequest.optional
+        case '/update':
+            required = User.RequestValidators.update.required
+            optional = User.RequestValidators.update.optional
             break;
         case '/login':
-            required = User.Validators.loginRequest.required
-            optional = User.Validators.loginRequest.optional
+            required = User.RequestValidators.login.required
+            optional = User.RequestValidators.login.optional
             break;
-        default:
-            if (required.length == 0 && !optional.length == 0)
-                throw Utils.createError(`Can't validate ${req.url}. No validetors provided`)
+        case '/addGroup':
+            required = User.RequestValidators.addGroup.required
+            optional = User.RequestValidators.addGroup.optional
+            break;
+        case '/resetPassword':
+            required = User.RequestValidators.resetPassword.required
+            optional = User.RequestValidators.resetPassword.optional
+            break;
+        // default:
+        //     if (required.length == 0 && !optional.length == 0)
+        //         throw Utils.createError(`Can't validate ${req.url}. No validetors provided`)
     }
-    return Utils.validateRequest(req, required, optional)
+    let validateResault = Utils.validateRequest(req, required, optional);
+    if (validateResault.error) return next(validateResault.error)
+    else req.valid = validateResault.valid
+    return next()
 }
 
 function sendVerificationEmail() {
@@ -222,13 +233,17 @@ function sendVerificationEmail() {
 }
 
 function deleteUser() {
-    var user = firebase.auth().currentUser;
-    user.delete()
-        .then(() => {
-            console.log(`User ${user.email} has been deleted successfully`)
-        }).catch(() => {
-            throw Utils.createError(`Error deleting ${user.email}\n${error}`)
-        })
+    try {
+        var user = firebase.auth().currentUser;
+        user.delete()
+            .then(() => {
+                console.log(`User ${user.email} has been deleted successfully`)
+            }).catch(() => {
+                throw Utils.createError(`Error deleting ${user.email}\n${error}`)
+            })
+    } catch (error) {
+        throw error
+    }
 }
 
 module.exports = {

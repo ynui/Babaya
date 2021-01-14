@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const groupUtils = require('../src/Groups/groupUtils')
+const Utils = require('../src/Utils')
+
+router.use(groupUtils.validateRequest)
+router.use(Utils.isRequestValid)
 
 router.get('/', async (req, res, next) => {
   try {
@@ -22,10 +26,8 @@ router.get('/:groupId', async (req, res, next) => {
   }
 });
 
-
 router.post('/create', async (req, res, next) => {
   try {
-    let valid = groupUtils.validateRequest(req)
     let newGroup = await groupUtils.createGroup(req.body)
     let success = await groupUtils.writeGroupDetails(newGroup)
     res.send(newGroup.data)
@@ -35,9 +37,9 @@ router.post('/create', async (req, res, next) => {
   }
 });
 
-router.post('/:groupId', async (req, res, next) => {
+router.post('/update', async (req, res, next) => {
   try {
-    let success = await groupUtils.updateGroup(req.params.groupId, req.body)
+    let success = await groupUtils.updateGroup(req.body.groupId, req.body)
     res.send(success)
     res.end()
   } catch (error) {

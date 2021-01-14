@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 const userUtils = require('../src/Users/userUtils')
 const groupUtils = require('../src/Groups/groupUtils');
+const { validateDataWrite } = require('../src/Utils');
+
+router.use(userUtils.validateRequest)
+
 
 /* GET users listing. */
 router.get('/', async (req, res, next) => {
@@ -37,11 +41,10 @@ router.get('/allUsersDetails', async (req, res, next) => {
 
 router.post('/register', async (req, res, next) => {
   try {
-    let valid = userUtils.validateRequest(req)
     let newUser = await userUtils.registerUser(req.body)
     let writeDetails = await userUtils.wriewUserDetails(newUser)
     let token = await userUtils.getToken()
-    let VerificationEmail = userUtils.sendVerificationEmail(newUser)
+    let verificationEmail = userUtils.sendVerificationEmail(newUser)
     resault = {
       token: token,
       user: newUser
@@ -55,7 +58,6 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
   try {
-    let valid = userUtils.validateRequest(req)
     let resault = await userUtils.login(req.body.email, req.body.password)
     res.send(resault)
     res.end()
@@ -74,10 +76,9 @@ router.get('/logout', async (req, res, next) => {
   }
 })
 
-router.post('/updateProfile', async (req, res, next) => {
+router.post('/update', async (req, res, next) => {
   try {
-    let valid = userUtils.validateRequest(req)
-    let success = await userUtils.updateProfile(req.body)
+    let success = await userUtils.updateProfile(req.body.userId, req.body)
     res.send(success)
     res.end()
   } catch (error) {
@@ -86,7 +87,7 @@ router.post('/updateProfile', async (req, res, next) => {
 })
 
 router.route('/:userId')
-  .get(async (req, res, next) => {//get user
+  .get(async (req, res, next) => {
     try {
       let user = await userUtils.getUser(req.params.userId)
       res.send(user.data)
@@ -98,6 +99,7 @@ router.route('/:userId')
 
 router.post('/addGroup', async (req, res, next) => {
   try {
+    // let valid = userUtils.validateRequest(req)
     let user = await userUtils.addGroup(req.body.userId, req.body.groupId)
     let group = await groupUtils.addUser(req.body.groupId, req.body.userId)
     res.send({
@@ -112,7 +114,7 @@ router.post('/addGroup', async (req, res, next) => {
 
 router.post('/resetPassword', async (req, res, next) => {
   try {
-    let success = userUtils.resetPassword(req.body.email)
+    let success = await userUtils.resetPassword(req.body.email)
     res.send(success)
     res.end()
   } catch (error) {
