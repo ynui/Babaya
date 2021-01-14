@@ -98,12 +98,12 @@ async function addUser(groupId, userId) {
 function validateRequest(req, res, next, required = [], optional = []) {
     switch (req.url) {
         case '/create':
-            required = Group.Validators.createRequest.required
-            optional = Group.Validators.createRequest.optional
+            required = Group.RequestValidators.createRequest.required
+            optional = Group.RequestValidators.createRequest.optional
             break;
         case '/update':
-            required = Group.Validators.updateRequest.required
-            optional = Group.Validators.updateRequest.optional
+            required = Group.RequestValidators.updateRequest.required
+            optional = Group.RequestValidators.updateRequest.optional
             break;
     }
     let validateResault = Utils.validateRequest(req, required, optional);

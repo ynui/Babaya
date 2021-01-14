@@ -20,7 +20,7 @@ class Group {
         this.discussion = data.discussion || [] // text/ link/ image / vidio 
     }
 
-    static Validators = {
+    static RequestValidators = {
         createRequest: {
             required: [
                 'name', 'description', 'createUser', 'publicity'
