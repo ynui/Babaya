@@ -28,7 +28,8 @@ class User {
         register: {
             required: [
                 'phoneNumber', 'email', 'password', 'languageID',
-                'userType', 'firstNameEng', 'lastNameEng'],
+                'userType', 'firstNameEng', 'lastNameEng'
+            ],
             optional: [
                 'firstNameHeb', 'lastNameHeb', 'firstNameArb', 'lastNameArb',
                 'genderID', 'maritalStatus', 'demographic', 'dateOfBirth',
@@ -37,7 +38,9 @@ class User {
             ]
         },
         update: {
-            required: ['userId'],
+            required: [
+                'userId'
+            ],
             optional: [
                 'phoneNumber', 'languageID', 'userType', 'firstNameEng',
                 'lastNameEng', 'firstNameHeb', 'lastNameHeb', 'firstNameArb',

@@ -1,55 +1,399 @@
 <!DOCTYPE html>
 <html>
-    <body>
-        <h1>
-            Babaya REST API server
-        </h1>
-        <h3>
-            This is an amazing server
-        </h3>
-        <pre>
-            /users
-            get / -> object with all users(firebase auth)
-            get /allUsersDetails -> object with all users + details
-            post /register -> return object with user, token
-            MUST:
-                email
-                password
-                phoneNumber
-                languageID
-                firstNameEng
-                lastNameEng
-            post /login -> returns token
-            MUST:
-                email
-                password
-            get /logout -> Boolean
-            post /updateProfile -> Boolean
-                update params
-                *user must be logged in
-            get /:userId -> object with user details
-            post /:userId/addGroup -> object with user, group
-            MUST:
-                groupId
-                *user must be logged in
-            post /resetPassword -> Boolean
-            MUST:
-                email
-        </pre>
-        <pre>
-            /groups
-            get / -> object with all groups
-            get /:groupId -> object with group details
-            post /:groupId -> Boolean
-            MUST:
-                update params
-            post /create -> object with group
-            MUST:
-                name
-                description
-                createUser
-                publicity
-            
-        </pre>
-    </body>
+
+<head>
+    <style>
+        #api {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: gray;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Babaya REST API server</h1>
+    <h3>This is an amazing server</h3>
+    <h4>API:</h4>
+    <table id="api">
+        <tr>
+            <th>Route</th>
+            <th>Method</th>
+            <th>Path</th>
+            <th>Required</th>
+            <th>Optional</th>
+            <th>Response</th>
+            <th>Errors</th>
+        </tr>
+        <tr>
+            <td>
+                <h3>/users</h3>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/</td>
+            <!--Required-->
+            <td>-</td>
+            <!--Optional-->
+            <td>-</td>
+            <!--Response-->
+            <td>All registered users (firebase auth)</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/allUsersDetails</td>
+            <!--Required-->
+            <td>-</td>
+            <!--Optional-->
+            <td>-</td>
+            <!--Response-->
+            <td>All registered users details</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/logout</td>
+            <!--Required-->
+            <td>
+            </td>
+            <!--Optional-->
+            <td>
+            </td>
+            <!--Response-->
+            <td>Boolean</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:{userId}</td>
+            <!--Required-->
+            <td>
+                -
+            </td>
+            <!--Optional-->
+            <td>
+                -
+            </td>
+            <!--Response-->
+            <td>User</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/register</td>
+            <!--Required-->
+            <td title="Required">
+                <li>phoneNumber</li>
+                <li>email</li>
+                <li>password</li>
+                <li>languageID</li>
+                <li>userType</li>
+                <li>firstNameEng</li>
+                <li>lastNameEng</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>firstNameHeb</li>
+                <li>lastNameHeb</li>
+                <li>firstNameArb</li>
+                <li>lastNameArb</li>
+                <li>genderID</li>
+                <li>maritalStatus</li>
+                <li>demographic</li>
+                <li>dateOfBirth</li>
+                <li>demogrephicsOther</li>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>groups</li>
+            </td>
+            <!--Response-->
+            <td>Token, User</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/login</td>
+            <!--Required-->
+            <td title="Required">
+                <li>userId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>phoneNumber</li>
+                <li>languageID</li>
+                <li>userType</li>
+                <li>firstNameEng</li>
+                <li>lastNameEng</li>
+                <li>firstNameHeb</li>
+                <li>lastNameHeb</li>
+                <li>firstNameArb</li>
+                <li>lastNameArb</li>
+                <li>genderID</li>
+                <li>maritalStatus</li>
+                <li>demographic</li>
+                <li>dateOfBirth</li>
+                <li>demogrephicsOther</li>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>groups</li>
+            </td>
+            <!--Response-->
+            <td>Token, User</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/update</td>
+            <!--Required-->
+            <td title="Required">
+                <li> userId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>phoneNumber</li>
+                <li>languageID</li>
+                <li>userType</li>
+                <li>firstNameEng</li>
+                <li>lastNameEng</li>
+                <li>firstNameHeb</li>
+                <li>lastNameHeb</li>
+                <li>firstNameArb</li>
+                <li>lastNameArb</li>
+                <li>genderID</li>
+                <li>maritalStatus</li>
+                <li>demographic</li>
+                <li>dateOfBirth</li>
+                <li>demogrephicsOther</li>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>groups</li>
+            </td>
+            <!--Response-->
+            <td>Boolean</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/addGroup</td>
+            <!--Required-->
+            <td title="Required">
+                <li>userId</li>
+                <li>groupId</li>
+            </td>
+            <!--Optional-->
+            <td>
+                -
+            </td>
+            <!--Response-->
+            <td>User, Group</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/resetPassword</td>
+            <!--Required-->
+            <td>
+                <li>email</li>
+            </td>
+            <!--Optional-->
+            <td>
+                -
+            </td>
+            <!--Response-->
+            <td>Boolean</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <td>
+            <h3>/groups</h3>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        </td>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/</td>
+            <!--Required-->
+            <td>
+                -
+            </td>
+            <!--Optional-->
+            <td>
+                -
+            </td>
+            <!--Response-->
+            <td>All groups</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:{groupId}</td>
+            <!--Required-->
+            <td>
+                -
+            </td>
+            <!--Optional-->
+            <td>
+                -
+            </td>
+            <!--Response-->
+            <td>All groups</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/create</td>
+            <!--Required-->
+            <td title="Required">
+                <li>name</li>
+                <li>description</li>
+                <li>createUser</li>
+                <li>publicity</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>groupManager</li>
+                <li>rulesList</li>
+                <li>rulesText</li>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>demographicInfo</li>
+                <li>users</li>
+                <li>events</li>
+                <li>discussion</li>
+            </td>
+            <!--Response-->
+            <td>Group</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/update</td>
+            <!--Required-->
+            <td title="Required">
+                <li>grouopId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>name</li>
+                <li>description</li>
+                <li>publicity</li>
+                <li>groupManager</li>
+                <li>rulesList</li>
+                <li>rulesText</li>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>demographicInfo</li>
+                <li>events</li>
+                <li>discussion</li>
+            </td>
+            <!--Response-->
+            <td>Boolean</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+    </table>
+</body>
+
 </html>

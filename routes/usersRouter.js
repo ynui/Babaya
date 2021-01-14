@@ -99,7 +99,6 @@ router.route('/:userId')
 
 router.post('/addGroup', async (req, res, next) => {
   try {
-    // let valid = userUtils.validateRequest(req)
     let user = await userUtils.addGroup(req.body.userId, req.body.groupId)
     let group = await groupUtils.addUser(req.body.groupId, req.body.userId)
     res.send({
