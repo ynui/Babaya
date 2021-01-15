@@ -185,6 +185,7 @@ async function resetPassword(email) {
 }
 
 function validateRequest(req, res, next, required = [], optional = []) {
+    let originalUrl = Utils.removeTrailingSlash(req.originalUrl)
     let url = Utils.removeTrailingSlash(req.url)
     req.valid = false
     switch (url) {
@@ -208,9 +209,11 @@ function validateRequest(req, res, next, required = [], optional = []) {
             required = User.RequestValidators.resetPassword.required
             optional = User.RequestValidators.resetPassword.optional
             break;
-        // default:
-        //     if (required.length == 0 && !optional.length == 0)
-        //         throw Utils.createError(`Can't validate ${req.url}. No validetors provided`)
+        default:
+            if (required.length == 0 && optional.length == 0){
+                console.warn(`No validators provided for ${originalUrl}`)
+            }
+            break;
     }
     let validateResault = Utils.validateRequest(req, required, optional);
     if (validateResault.error) return next(validateResault.error)

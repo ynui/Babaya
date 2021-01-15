@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
+const Utils = require('../src/Utils')
 const userUtils = require('../src/Users/userUtils')
 const groupUtils = require('../src/Groups/groupUtils');
 
 router.use(userUtils.validateRequest)
+router.use(Utils.isRequestValid)
 
 
 /* GET users listing. */
