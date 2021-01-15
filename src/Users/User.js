@@ -64,28 +64,7 @@ class User {
     }
 
     get data() {
-        return {
-            userId: this.userId,
-            phoneNumber: this.phoneNumber,
-            email: this.email,
-            languageID: this.languageID,
-            userType: this.userType,
-            firstNameEng: this.firstNameEng,
-            lastNameEng: this.lastNameEng,
-            firstNameHeb: this.firstNameHeb,
-            lastNameHeb: this.lastNameHeb,
-            firstNameArb: this.firstNameArb,
-            lastNameArb: this.lastNameArb,
-            genderID: this.genderID,
-            maritalStatus: this.maritalStatus,
-            demographic: this.demographic,
-            demogrephicsOther: this.demogrephicsOther,
-            dateOfBirth: this.dateOfBirth,
-            workingPlace: this.workingPlace,
-            areaOfInterest: this.areaOfInterest,
-            expertise: this.expertise,
-            groups: this.groups
-        }
+        return JSON.parse(JSON.stringify(this))
     }
 
     addToGroupsList(groupId) {

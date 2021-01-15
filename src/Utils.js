@@ -77,11 +77,19 @@ function removeTrailingSlash(str){
     return str.replace(/\/+$/, '');
   }
 
+function toJSON(class_object){
+    let array = JSON.parse(class_object);
+    let object = new this.types[array[0]]();
+    array[1].map(e=>{object[e[0]] = e[1];});
+    return object;
+}
+
 module.exports = {
     generateId,
     validateRequest,
     validateDataWrite,
     createError,
     isRequestValid,
-    removeTrailingSlash
+    removeTrailingSlash,
+    toJSON
 }

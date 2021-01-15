@@ -20,6 +20,8 @@ async function getGroup(groupId) {
         .then((found) => {
             if (found) {
                 group = new Group(found)
+                console.log(group.data)
+                
             } else {
                 throw Utils.createError(`No group details document found for ${groupId}`, 'no-group-found')
             }

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const groupUtils = require('../src/Groups/groupUtils')
+const userUtils = require('../src/Users/userUtils')
 const Utils = require('../src/Utils')
 
 router.use(groupUtils.validateRequest)
@@ -29,8 +30,12 @@ router.get('/:groupId', async (req, res, next) => {
 router.post('/create', async (req, res, next) => {
   try {
     let newGroup = await groupUtils.createGroup(req.body)
+    let updatedUser = await userUtils.addGroup(newGroup.createUser, newGroup.groupId)
     let success = await groupUtils.writeGroupDetails(newGroup)
-    res.send(newGroup.data)
+    res.send({
+      group: newGroup.data,
+      user: updatedUser
+    })
     res.end()
   } catch (error) {
     next(error)

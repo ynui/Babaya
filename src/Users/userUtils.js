@@ -210,7 +210,7 @@ function validateRequest(req, res, next, required = [], optional = []) {
             optional = User.RequestValidators.resetPassword.optional
             break;
         default:
-            if (required.length == 0 && optional.length == 0){
+            if (required.length == 0 && optional.length == 0) {
                 console.warn(`No validators provided for ${originalUrl}`)
             }
             break;

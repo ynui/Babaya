@@ -44,24 +44,7 @@ class Group {
     }
 
     get data() {
-        return {
-            groupId: this.groupId,
-            name: this.name,
-            description: this.description,
-            createTime: this.createTime,
-            createUser: this.createUser,
-            rulesList: this.rulesList,
-            rulesText: this.rulesText,
-            publicity: this.publicity,
-            workingPlace: this.workingPlace,
-            areaOfInterest: this.areaOfInterest,
-            expertise: this.expertise,
-            demographicInfo: this.demographicInfo,
-            groupManager: this.groupManager,
-            users: this.users,
-            events: this.events,
-            discussion: this.discussion
-        }
+        return JSON.parse(JSON.stringify(this))
     }
 
     addToUsersList(userId) {
