@@ -96,6 +96,7 @@ async function addUser(groupId, userId) {
 }
 
 function validateRequest(req, res, next, required = [], optional = []) {
+    let originalUrl = Utils.removeTrailingSlash(req.originalUrl)
     let url = Utils.removeTrailingSlash(req.url)
     req.valid = false
     switch (url) {
@@ -106,6 +107,11 @@ function validateRequest(req, res, next, required = [], optional = []) {
         case '/update':
             required = Group.RequestValidators.updateRequest.required
             optional = Group.RequestValidators.updateRequest.optional
+            break;
+        default:
+            if (required.length == 0 && optional.length == 0) {
+                console.warn(`No validators provided for ${originalUrl}`)
+            }
             break;
     }
     let validateResault = Utils.validateRequest(req, required, optional);
