@@ -36,7 +36,6 @@ function validateRequest(req, requiredFields, optionalFields) {
                 resault.error = createError(`Requset ${req.originalUrl} must contain field: ${field}`)
                 break;
             }
-            // if (!reqData[field]) throw createError(`Requset ${req.originalUrl} must contain field: ${field}`)
         }
     }
     if (reqData && !invalidFound) {
@@ -74,10 +73,15 @@ function isRequestValid(req, res, next) {
     return next()
 }
 
+function removeTrailingSlash(str){
+    return str.replace(/\/+$/, '');
+  }
+
 module.exports = {
     generateId,
     validateRequest,
     validateDataWrite,
     createError,
-    isRequestValid
+    isRequestValid,
+    removeTrailingSlash
 }

@@ -64,7 +64,7 @@ async function login(email, password) {
                 await registeredUser.user.getIdToken(true)
                     .then(async (idToken) => {
                         token = idToken
-                        user = await getUser(registeredUser.user.userId)
+                        user = await getUser(registeredUser.user.uid)
                     }).catch((error) => {
                         throw error
                     });
@@ -185,8 +185,9 @@ async function resetPassword(email) {
 }
 
 function validateRequest(req, res, next, required = [], optional = []) {
+    let url = Utils.removeTrailingSlash(req.url)
     req.valid = false
-    switch (req.url) {
+    switch (url) {
         case '/register':
             required = User.RequestValidators.register.required
             optional = User.RequestValidators.register.optional

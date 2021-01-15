@@ -96,7 +96,9 @@ async function addUser(groupId, userId) {
 }
 
 function validateRequest(req, res, next, required = [], optional = []) {
-    switch (req.url) {
+    let url = Utils.removeTrailingSlash(req.url)
+    req.valid = false
+    switch (url) {
         case '/create':
             required = Group.RequestValidators.createRequest.required
             optional = Group.RequestValidators.createRequest.optional
@@ -107,10 +109,7 @@ function validateRequest(req, res, next, required = [], optional = []) {
             break;
     }
     let validateResault = Utils.validateRequest(req, required, optional);
-    if (validateResault.error) {
-        let error = validateResault.error
-        return next(error)
-    }
+    if (validateResault.error) return next(validateResault.error)
     else req.valid = validateResault.valid
     return next()
 

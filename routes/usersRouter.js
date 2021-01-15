@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 const userUtils = require('../src/Users/userUtils')
 const groupUtils = require('../src/Groups/groupUtils');
-const { validateDataWrite } = require('../src/Utils');
 
 router.use(userUtils.validateRequest)
 
