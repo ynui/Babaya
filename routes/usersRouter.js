@@ -103,7 +103,7 @@ router.post('/addGroup', async (req, res, next) => {
     let user = await userUtils.addGroup(req.body.userId, req.body.groupId)
     let group = await groupUtils.addUser(req.body.groupId, req.body.userId)
     res.send({
-      user: user.data,
+      user: user,
       group: group
     })
     res.end()
@@ -116,6 +116,20 @@ router.post('/resetPassword', async (req, res, next) => {
   try {
     let success = await userUtils.resetPassword(req.body.email)
     res.send(success)
+    res.end()
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/removeGroup', async (req, res, next) => {
+  try {
+    let user = await userUtils.removeGroup(req.body.userId, req.body.groupId)
+    let group = await groupUtils.removeUser(req.body.groupId, req.body.userId)
+    res.send({
+      user: user,
+      group: group
+    })
     res.end()
   } catch (error) {
     next(error)

@@ -167,6 +167,18 @@ async function addGroup(userId, groupId) {
     return user
 }
 
+async function removeGroup(userId, groupId) {
+    let user = null
+    try {
+        user = await getUser(userId)
+        user.removeFromGroupsList(groupId)
+        let updateUser = await updateProfile(userId, { groups: user.groups })
+    } catch (error) {
+        throw error
+    }
+    return user
+}
+
 async function resetPassword(email) {
     let success = false;
     try {
@@ -208,6 +220,10 @@ function validateRequest(req, res, next, required = [], optional = []) {
         case '/resetPassword':
             required = User.RequestValidators.resetPassword.required
             optional = User.RequestValidators.resetPassword.optional
+            break;
+        case '/removeGroup':
+            required = User.RequestValidators.removeGroup.required
+            optional = User.RequestValidators.removeGroup.optional
             break;
         default:
             if (required.length == 0 && optional.length == 0) {
@@ -263,5 +279,6 @@ module.exports = {
     getAllUsers,
     getAllUsersDetails,
     addGroup,
-    resetPassword
+    resetPassword,
+    removeGroup
 }

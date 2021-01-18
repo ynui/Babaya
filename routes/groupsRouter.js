@@ -52,4 +52,18 @@ router.post('/update', async (req, res, next) => {
   }
 })
 
+router.post('/removeUser', async (req, res, next) => {
+  try {
+    let group = await groupUtils.removeUser(req.body.groupId, req.body.userId)
+    let user = await userUtils.removeGroup(req.body.userId, req.body.groupId)
+    res.send({
+      user: user,
+      group: group
+    })
+    res.end()
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = router;

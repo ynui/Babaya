@@ -20,8 +20,6 @@ async function getGroup(groupId) {
         .then((found) => {
             if (found) {
                 group = new Group(found)
-                console.log(group.data)
-                
             } else {
                 throw Utils.createError(`No group details document found for ${groupId}`, 'no-group-found')
             }
@@ -61,9 +59,21 @@ async function addUser(groupId, userId) {
     let group = null
     try {
         group = await getGroup(groupId)
-        if (group.users.includes(userId)) throw `${groupId} already has user ${userId}`
+        if (group.users.includes(userId)) throw Utils.createError(`${groupId} already has user ${userId}`, 'group-already-contains-user')
         group.users.push(userId)
-        let updateGroup = await updateGroup(group, { users: group.users })
+        let updatedGroup = await updateGroup(group, { users: group.users })
+    } catch (error) {
+        throw error
+    }
+    return group
+}
+
+async function removeUser(groupId, userId) {
+    let group = null
+    try {
+        group = await getGroup(groupId)
+        group.removeFromUsersList(userId)
+        let updatedGroup = await updateGroup(groupId, { users: group.users })
     } catch (error) {
         throw error
     }
@@ -103,12 +113,16 @@ function validateRequest(req, res, next, required = [], optional = []) {
     req.valid = false
     switch (url) {
         case '/create':
-            required = Group.RequestValidators.createRequest.required
-            optional = Group.RequestValidators.createRequest.optional
+            required = Group.RequestValidators.create.required
+            optional = Group.RequestValidators.create.optional
             break;
         case '/update':
-            required = Group.RequestValidators.updateRequest.required
-            optional = Group.RequestValidators.updateRequest.optional
+            required = Group.RequestValidators.update.required
+            optional = Group.RequestValidators.update.optional
+            break;
+        case '/removeUser':
+            required = Group.RequestValidators.removeUser.required
+            optional = Group.RequestValidators.removeUser.optional
             break;
         default:
             if (required.length == 0 && optional.length == 0) {
@@ -120,9 +134,9 @@ function validateRequest(req, res, next, required = [], optional = []) {
     if (validateResault.error) return next(validateResault.error)
     else req.valid = validateResault.valid
     return next()
-
-
 }
+
+
 module.exports = {
     createGroup,
     getGroup,
@@ -130,5 +144,6 @@ module.exports = {
     getAllGroups,
     addUser,
     updateGroup,
-    validateRequest
+    validateRequest,
+    removeUser
 }

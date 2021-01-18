@@ -21,7 +21,7 @@ class Group {
     }
 
     static RequestValidators = {
-        createRequest: {
+        create: {
             required: [
                 'name', 'description', 'createUser', 'publicity'
             ],
@@ -31,15 +31,21 @@ class Group {
                 'events', 'discussion'
             ]
         },
-        updateRequest: {
+        update: {
             required: [
                 'groupId'
             ],
             optional: [
-                'name', 'description', 'publicity', 'groupManager',
+                'name', 'description', 'pu,blicity', 'groupManager',
                 'rulesList', 'rulesText', 'workingPlace', 'areaOfInterest',
                 'expertise', 'demographicInfo', 'events', 'discussion'
             ]
+        },
+        removeUser: {
+            required: [
+                'groupId', 'userId'
+            ],
+            optional: []
         }
     }
 
@@ -48,8 +54,20 @@ class Group {
     }
 
     addToUsersList(userId) {
-        if (this.users.includes(userId)) throw `${this.groupId} already contains user ${userId}`
-        this.users.push(userId)
+        if (this.users.includes(userId)) throw Utils.createError(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
+        else {
+            this.users.push(userId)
+        }
+    }
+
+    removeFromUsersList(userId) {
+        if (!this.users.includes(userId)) throw Utils.createError(`${userId} is not member in ${this.groupId}`, 'group-not-contains-user')
+        else {
+            var userIndx = this.users.indexOf(userId);
+            if (userIndx > -1) {
+                this.users.splice(userIndx, 1);
+            }
+        }
     }
 }
 

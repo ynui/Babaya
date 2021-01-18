@@ -60,6 +60,12 @@ class User {
         resetPassword: {
             required: ['email'],
             optional: []
+        },
+        removeGroup: {
+            required: [
+                'groupId', 'userId'
+            ],
+            optional: []
         }
     }
 
@@ -68,8 +74,20 @@ class User {
     }
 
     addToGroupsList(groupId) {
-        if (this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is already in group ${groupId}`,'user-already-in-group')
-        this.groups.push(groupId)
+        if (this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is already in group ${groupId}`, 'user-already-in-group')
+        else {
+            this.groups.push(groupId)
+        }
+    }
+
+    removeFromGroupsList(groupId) {
+        if (!this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is not member in ${groupId}`, 'user-not-contains-group')
+        else {
+            var groupIndx = this.groups.indexOf(groupId);
+            if (groupIndx > -1) {
+                this.groups.splice(groupIndx, 1);
+            }
+        }
     }
 }
 
