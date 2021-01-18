@@ -1,11 +1,15 @@
 const Utils = require('../src/Utils')
-const translator = require('../src/DB/Translator')
-const cities = translator.cities
-const genders = translator.gender
-const areasOfInterest = require('../src/AreasOfInterests/AreaOfInterest').PRESETS
-const expertises = require('../src/Expertises/Expertise').PRESETS
-const workingPlaces = require('../src/WorkingPlaces/WorkingPlace').PRESETS
+const cities = require('./Demographics/Cities')
+const genders = require('./Users/Genders')
+const areasOfInterest = require('../src/AreasOfInterests/AreasOfInterest')
+const expertises = require('../src/Expertises/Expertises')
+const workingPlaces = require('../src/WorkingPlaces/WorkingPlaces')
 
+function getDictionaries(){
+    return [
+        'city', 'gender', 'areaOfInterest', 'expertise', 'workingPlace'
+    ]
+}
 
 function getItem(dictionary, query, lang = 'eng') {
     let resault = null
@@ -60,7 +64,5 @@ function getDictionary(dictionary) {
 module.exports = {
     getItem,
     getAllItems,
-    cities,
-    genders,
-    areasOfInterest
+    getDictionaries
 }
