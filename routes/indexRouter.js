@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path')
+const translator = require('../src/translator')
 
 // const Utils = require('../src/Utils')
 // router.use(Utils.isRequestValid)
@@ -11,8 +12,24 @@ router.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, '../views', 'index.html'));
 });
 
-router.get('/test', (req, res, next) => {
-
-});
+router.route('/getCity')
+  .get((req, res, next) => {
+    try {
+      let cities = translator.cities
+      res.send(cities)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+  .post((req, res, next) => {
+    try {
+      let city = translator.findCityByName(req.body.query, req.body.lang)
+      res.send(city)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
 
 module.exports = router;

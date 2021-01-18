@@ -1,7 +1,8 @@
 const crypto = require('crypto');
 
-function createError(message, code = null) {
+function createError(message, code = null, status = null) {
     let error = new Error(message);
+    error.status = status
     error.code = code
     return error
 }
@@ -66,22 +67,15 @@ function validateDataWrite(data) {
 }
 
 function isRequestValid(req, res, next) {
-    if (!req.valid){
+    if (!req.valid) {
         let error = createError('Request does not contain a valid flag', 'invalid-request')
         return next(error)
     }
     return next()
 }
 
-function removeTrailingSlash(str){
+function removeTrailingSlash(str) {
     return str.replace(/\/+$/, '');
-  }
-
-function toJSON(class_object){
-    let array = JSON.parse(class_object);
-    let object = new this.types[array[0]]();
-    array[1].map(e=>{object[e[0]] = e[1];});
-    return object;
 }
 
 module.exports = {
@@ -91,5 +85,4 @@ module.exports = {
     createError,
     isRequestValid,
     removeTrailingSlash,
-    toJSON
 }

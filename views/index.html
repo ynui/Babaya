@@ -49,6 +49,69 @@
         </tr>
         <tr>
             <td>
+                <h3>/</h3>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/</td>
+            <!--Required-->
+            <td>-</td>
+            <!--Optional-->
+            <td>-</td>
+            <!--Response-->
+            <td>Redirect index.html</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/getCity</td>
+            <!--Required-->
+            <td>-</td>
+            <!--Optional-->
+            <td>-</td>
+            <!--Response-->
+            <td>All Cities</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/getCity</td>
+            <!--Required-->
+            <td>
+                <li>query</li>
+            </td>
+            <!--Optional-->
+            <td>
+                <li>lang (heb, eng) eng is default</li>
+            </td>
+            <!--Response-->
+            <td>City</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>
                 <h3>/users</h3>
             </td>
             <td></td>
@@ -281,6 +344,26 @@
             <!--Errors-->
             <td>-</td>
         </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/removeGroup</td>
+            <!--Required-->
+            <td title="Required">
+                <li>grouopId</li>
+                <li>userId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>User, Group</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
         <td>
             <h3>/groups</h3>
         <td></td>
@@ -393,7 +476,28 @@
             <!--Errors-->
             <td>-</td>
         </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/removeUser</td>
+            <!--Required-->
+            <td title="Required">
+                <li>grouopId</li>
+                <li>userId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>User, Group</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
     </table>
+    <h2>Made by Yuval Niezni - ynui12@gmail.com</h2>
 </body>
 
 </html>

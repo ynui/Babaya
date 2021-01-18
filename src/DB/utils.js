@@ -5,26 +5,26 @@ const Utils = require('../Utils')
 const db = admin.firestore()
 const storage = firebase.storage()
 
-async function uploadImage(files, id) {
-    let resURL = {};
-    let storageRef = storage.ref(id);
-    for (const [key, file] of Object.entries(files)) {
-        await storageRef.child(file.name).put(file.data)
-            .then(async (task) => {
-                await task.ref.getDownloadURL()
-                    .then((res) => {
-                        console.log(`File uploaded: ${file.name}`)
-                        resURL[file.name] = res
-                    })
-            })
-            .catch((err) => {
-                console.error(`Error Uploading: ${file.name} ${err}`)
-                resURL[file.name] = 'Error'
-            })
-    }
-    writeToCollection(Constants.Collections.USER_STORAGE, id, resURL)
-    return resURL
-}
+// async function uploadImage(files, id) {
+//     let resURL = {};
+//     let storageRef = storage.ref(id);
+//     for (const [key, file] of Object.entries(files)) {
+//         await storageRef.child(file.name).put(file.data)
+//             .then(async (task) => {
+//                 await task.ref.getDownloadURL()
+//                     .then((res) => {
+//                         console.log(`File uploaded: ${file.name}`)
+//                         resURL[file.name] = res
+//                     })
+//             })
+//             .catch((err) => {
+//                 console.error(`Error Uploading: ${file.name} ${err}`)
+//                 resURL[file.name] = 'Error'
+//             })
+//     }
+//     writeToCollection(Constants.Collections.USER_STORAGE, id, resURL)
+//     return resURL
+// }
 
 
 async function writeToCollection(collection, document, data) {
@@ -78,6 +78,6 @@ module.exports = {
     writeToCollection,
     updateDocument,
     getDocument,
-    uploadImage,
+    // uploadImage,
     getCollection
 };
