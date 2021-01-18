@@ -1,9 +1,9 @@
-const Utils = require('../src/Utils')
-const cities = require('./Demographics/Cities')
-const genders = require('./Users/Genders')
-const areasOfInterest = require('../src/AreasOfInterests/AreasOfInterest')
-const expertises = require('../src/Expertises/Expertises')
-const workingPlaces = require('../src/WorkingPlaces/WorkingPlaces')
+const Utils = require('../Utils')
+const cities = require('../Demographics/Cities')
+const genders = require('../Users/Genders')
+const areasOfInterest = require('../AreasOfInterests/AreasOfInterest')
+const expertises = require('../Expertises/Expertises')
+const workingPlaces = require('../WorkingPlaces/WorkingPlaces')
 
 function getDictionaries(){
     return [

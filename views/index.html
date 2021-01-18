@@ -75,42 +75,6 @@
             <td>-</td>
         </tr>
         <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>GET</td>
-            <!--Path-->
-            <td>/getCity</td>
-            <!--Required-->
-            <td>-</td>
-            <!--Optional-->
-            <td>-</td>
-            <!--Response-->
-            <td>All Cities</td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-        <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>POST</td>
-            <!--Path-->
-            <td>/getCity</td>
-            <!--Required-->
-            <td>
-                <li>query</li>
-            </td>
-            <!--Optional-->
-            <td>
-                <li>lang (heb, eng) eng is default</li>
-            </td>
-            <!--Response-->
-            <td>City</td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-        <tr>
             <td>
                 <h3>/users</h3>
             </td>
@@ -493,6 +457,71 @@
             </td>
             <!--Response-->
             <td>User, Group</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <td>
+            <h3>/translate</h3>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        </td>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/</td>
+            <!--Required-->
+            <td title="Required">
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>All dictionaries</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:dictionaryName</td>
+            <!--Required-->
+            <td title="Required">
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>All dictionary's records</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/:dictionaryName</td>
+            <!--Required-->
+            <td title="Required">
+                <li>query</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>lang</li>
+            </td>
+            <!--Response-->
+            <td>Matching record</td>
             <!--Errors-->
             <td>-</td>
         </tr>

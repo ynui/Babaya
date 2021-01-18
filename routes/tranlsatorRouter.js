@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const translator = require('../src/translator')
+const translator = require('../src/Translateor/translator')
+const translatorUtils = require('../src/Translateor/translatorUtils')
+const Utils = require('../src/Utils')
+
+
+router.use(translatorUtils.validateRequest)
+router.use(Utils.isRequestValid)
+
 
 router.route('/')
     .get((req, res, next) => {
