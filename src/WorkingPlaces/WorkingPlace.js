@@ -6,14 +6,8 @@ class WorkingPlace {
         this.workingPlaceNameArb = data.workingPlaceNameArb || null
     }
     get data() {
-        return {
-            workingPlaceID: this.workingPlaceID,
-            workingPlaceNameEng: this.workingPlaceNameEng,
-            workingPlaceNameHeb: this.workingPlaceNameHeb,
-            workingPlaceNameArb: this.workingPlaceNameArb
-        }
+        return JSON.parse(JSON.stringify(this))
     }
-
 }
 
 class workingPlaceDepartment {
@@ -24,18 +18,30 @@ class workingPlaceDepartment {
         this.workingPlacDepartmenetNameArb = data.workingPlacDepartmenetNameArb || null
     }
     get data() {
-        return {
-            workingPlaceDepartmentID: this.workingPlaceDepartmentID,
-            workingPlacDepartmenetNameEng: this.workingPlacDepartmenetNameEng,
-            workingPlacDepartmenetNameHeb: this.workingPlacDepartmenetNameHeb,
-            workingPlacDepartmenetNameArb: this.workingPlacDepartmenetNameArb
-        }
+        return JSON.parse(JSON.stringify(this))
     }
 }
 
-
+const PRESETS = [
+    {
+        "id": 1,
+        "eng_name": "BABAYA",
+        "heb_name": "באבאיה"
+    },
+    {
+        "id": 2,
+        "eng_name": "MICROSOFT",
+        "heb_name": "מייקרוסופט"
+    },
+    {
+        "id": 3,
+        "eng_name": "APPLE",
+        "heb_name": "אפל"
+    }
+]
 
 module.exports = {
     WorkingPlace,
-    workingPlaceDepartment
+    workingPlaceDepartment,
+    PRESETS
 }

@@ -8,12 +8,7 @@ class AreaOfInterest {
         this.areaOfInterestNameArb = data.areaOfInterestNameArb || null
     }
     get data() {
-        return {
-            areaOfInterestID: this.areaOfInterestID,
-            areaOfInterestNameEng: this.areaOfInterestNameEng,
-            areaOfInterestNameHeb: this.areaOfInterestNameHeb,
-            areaOfInterestNameArb: this.areaOfInterestNameArb
-        }
+        return JSON.parse(JSON.stringify(this))
     }
 }
 
@@ -25,18 +20,31 @@ class SubAreaOfInterest {
         this.SubAreaOfInterestArb = data.SubAreaOfInterestArb || null
     }
     get data() {
-        return {
-            SubAreaOfInterestID: this.SubAreaOfInterestID,
-            SubAreaOfInterestEng: this.SubAreaOfInterestEng,
-            SubAreaOfInterestHeb: this.SubAreaOfInterestHeb,
-            SubAreaOfInterestArb: this.SubAreaOfInterestArb
-        }
+        return JSON.parse(JSON.stringify(this))
     }
 
 }
 
+const PRESETS = [
+    {
+        "id": 1,
+        "eng_name": "BASKETBALL",
+        "heb_name": "כדורסל"
+    },
+    {
+        "id": 2,
+        "eng_name": "BOOKS",
+        "heb_name": "ספרים"
+    },
+    {
+        "id": 3,
+        "eng_name": "BIRDS",
+        "heb_name": "ציפורים"
+    }
+]
 
 module.exports = {
     AreaOfInterest,
-    SubAreaOfInterest
+    SubAreaOfInterest,
+    PRESETS
 } 

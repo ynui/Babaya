@@ -6,14 +6,8 @@ class Expertise {
         this.expertiseNameArb = data.expertiseNameArb || null
     }
     get data() {
-        return {
-            expertiseID: this.expertiseID,
-            expertiseNameEng: this.expertiseNameEng,
-            expertiseNameHeb: this.expertiseNameHeb,
-            expertiseNameArb: this.expertiseNameArb
-        }
+        return JSON.parse(JSON.stringify(this))
     }
-
 }
 
 class SubExpertise {
@@ -24,17 +18,30 @@ class SubExpertise {
         this.subExpertiseArb = data.subExpertiseArb || null
     }
     get data() {
-        return {
-            subExpertiseID: this.subExpertiseID,
-            subExpertiseEng: this.subExpertiseEng,
-            subExpertiseHeb: this.subExpertiseHeb,
-            subExpertiseArb: this.subExpertiseArb
-        }
+        return JSON.parse(JSON.stringify(this))
     }
 }
 
+const PRESETS = [
+    {
+        "id": 1,
+        "eng_name": "ELECTRICITY",
+        "heb_name": "חשמל"
+    },
+    {
+        "id": 2,
+        "eng_name": "WOODWORK",
+        "heb_name": "נגרות"
+    },
+    {
+        "id": 3,
+        "eng_name": "KARATE",
+        "heb_name": "קראטה"
+    }
+]
 
 module.exports = {
     Expertise,
-    SubExpertise
+    SubExpertise,
+    PRESETS
 }
