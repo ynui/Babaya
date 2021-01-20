@@ -5,7 +5,7 @@ const areasOfInterest = require('../AreasOfInterests/AreasOfInterest')
 const expertises = require('../Expertises/Expertises')
 const workingPlaces = require('../WorkingPlaces/WorkingPlaces')
 
-function getDictionaries(){
+function getDictionaries() {
     return [
         'city', 'gender', 'areaOfInterest', 'expertise', 'workingPlace'
     ]
@@ -13,14 +13,27 @@ function getDictionaries(){
 
 function getItem(dictionary, query, lang = 'eng') {
     let resault = null
+    let dictObj = null
     let dict = getDictionary(dictionary)
     switch (lang) {
         case 'eng':
             let queryUpperCase = query.toUpperCase()
-            resault = dict.find(item => item.eng_name === queryUpperCase)
+            dictObj = dict.find(item => item.eng_name === queryUpperCase)
+            if (dictObj) {
+                resault = {
+                    id: dictObj.id,
+                    name: dictObj.eng_name
+                }
+            }
             break;
         case 'heb':
-            resault = dict.find(item => item.heb_name === query)
+            dictObj = dict.find(item => item.heb_name === query)
+            if (dictObj) {
+                resault = {
+                    id: dictObj.id,
+                    name: dictObj.heb_name
+                }
+            }
             break;
         case 'id':
             resault = dict.find(item => item.id == query)
@@ -32,8 +45,35 @@ function getItem(dictionary, query, lang = 'eng') {
     return resault
 }
 
-function getAllItems(dictionary){
-    return getDictionary(dictionary)
+function getAllItems(dictionary, lang = null) {
+    let dict = getDictionary(dictionary)
+    let resault = []
+    if (!lang)
+        resault = dict
+    else {
+        switch (lang) {
+            case 'eng':
+                for (var entry of dict) {
+                    resault.push({
+                        id: entry.id,
+                        name: entry.eng_name
+                    })
+                }
+                break;
+            case 'heb':
+                for (var entry of dict) {
+                    resault.push({
+                        id: entry.id,
+                        name: entry.heb_name
+                    })
+                }
+                break;
+            default:
+                throw Utils.createError(`Language: ${lang} is not supported`, 'language-not-supported')
+
+        }
+    }
+    return resault
 }
 
 function getDictionary(dictionary) {

@@ -40,4 +40,15 @@ router.route('/:dictionaryName')
             next(error)
         }
     })
+
+router.route('/:dictionaryName/:langId')
+    .get((req, res, next) => {
+        try {
+            let resault = translator.getAllItems(req.params.dictionaryName, req.params.langId)
+            res.send(resault)
+            res.end()
+        } catch (error) {
+            next(error)
+        }
+    })
 module.exports = router;
