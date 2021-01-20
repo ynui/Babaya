@@ -1,8 +1,8 @@
 module.exports = [
     {
         "id": 1,
-        "eng_name": "BABAYA",
-        "heb_name": "באבאיה"
+        "eng_name": "WOLT",
+        "heb_name": "וולט"
     },
     {
         "id": 2,
