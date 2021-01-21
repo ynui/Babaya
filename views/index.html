@@ -537,7 +537,34 @@
             <!--Optional-->
             <td title="Optional">
                 <li>langId (eng, heb)</li>
-                <li>query (Integer || String)</li>
+                <li>key (Integer || String)</li>
+            </td>
+            <!--Response-->
+            <td>
+                <li>
+                    Integer query - Matching record (by ID) in the specified language
+                </li>
+                <li>
+                    String query - Matching record (by name) in all languages
+                </li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/:{dictionaryName}</td>
+            <!--Required-->
+            <td title="Required">
+                <li>key (Integer, String)</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>langId (eng, heb)</li>
             </td>
             <!--Response-->
             <td>

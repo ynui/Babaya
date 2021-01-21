@@ -11,19 +11,20 @@ function getDictionaries() {
     ]
 }
 
-function getItem(dictionary, query, lang = 'eng') {
+function getItem(dictionary, query, langId = 'eng') {
     let resault = null
+    query = query.toString()
     if (query.match(/^-?\d+$/))
-        resault = getItemById(dictionary, query, lang)
+        resault = getItemById(dictionary, query, langId)
     else
-        resault = getItemByName(dictionary, query, lang)
+        resault = getItemByName(dictionary, query, langId)
     return resault
 }
 
-function getItemByName(dictionary, query, lang) {
+function getItemByName(dictionary, query, langId) {
     let resault = null
     let dict = getDictionary(dictionary)
-    switch (lang) {
+    switch (langId) {
         case 'eng':
             resault = dict.find(item => item.eng_name.match(new RegExp(query, 'gi')))
             break;
@@ -31,49 +32,52 @@ function getItemByName(dictionary, query, lang) {
             resault = dict.find(item => item.heb_name === query)
             break;
         default:
-            throw Utils.createError(`Language: ${lang} is not supported`, 'language-not-supported')
+            throw Utils.createError(`Language: ${langId} is not supported`, 'language-not-supported')
     }
-    if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${lang}`, 'query-not-found', 404)
+    if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${langId}`, 'query-not-found', 404)
     return resault
 }
 
-function getItemById(dictionary, query, lang) {
+function getItemById(dictionary, query, langId) {
     let resault = null
     let dict = getDictionary(dictionary)
     let dictObj = dict.find(item => item.id == query)
     if (dictObj) {
-        switch (lang) {
+        switch (langId) {
             case 'eng':
                 resault = {
-                    id: dictObj.id,
+                    langId: langId,
+                    key: dictObj.id,
                     value: dictObj.eng_name
                 }
                 break;
             case 'heb':
                 resault = {
-                    id: dictObj.id,
+                    langId: langId,
+                    key: dictObj.id,
                     value: dictObj.heb_name
                 }
                 break;
             default:
-                throw Utils.createError(`Language: ${lang} is not supported`, 'language-not-supported')
+                throw Utils.createError(`Language: ${langId} is not supported`, 'language-not-supported')
         }
     }
-    if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${lang}`, 'query-not-found', 404)
+    if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${langId}`, 'query-not-found', 404)
     return resault
 }
 
-function getAllItems(dictionary, lang = null) {
+function getAllItems(dictionary, langId = null) {
     let dict = getDictionary(dictionary)
     let resault = []
-    if (!lang)
+    if (!langId)
         resault = dict
     else {
-        switch (lang) {
+        switch (langId) {
             case 'eng':
                 for (var entry of dict) {
                     resault.push({
-                        id: entry.id,
+                        langId: langId,
+                        key: entry.id,
                         value: entry.eng_name
                     })
                 }
@@ -81,13 +85,14 @@ function getAllItems(dictionary, lang = null) {
             case 'heb':
                 for (var entry of dict) {
                     resault.push({
-                        id: entry.id,
+                        langId: langId,
+                        key: entry.id,
                         value: entry.heb_name
                     })
                 }
                 break;
             default:
-                throw Utils.createError(`Language: ${lang} is not supported`, 'language-not-supported')
+                throw Utils.createError(`Language: ${langId} is not supported`, 'language-not-supported')
 
         }
     }

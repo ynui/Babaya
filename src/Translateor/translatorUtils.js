@@ -3,10 +3,10 @@ const Utils = require('../Utils')
 const RequestValidators = {
     POST: {
         required: [
-            'query'
+            'key'
         ],
         optional: [
-            'lang'
+            'langId'
         ]
     }
 }
