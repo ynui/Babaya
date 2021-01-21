@@ -13,33 +13,51 @@ function getDictionaries() {
 
 function getItem(dictionary, query, lang = 'eng') {
     let resault = null
-    let dictObj = null
+    if (query.match(/^-?\d+$/))
+        resault = getItemById(dictionary, query, lang)
+    else
+        resault = getItemByName(dictionary, query, lang)
+    return resault
+}
+
+function getItemByName(dictionary, query, lang) {
+    let resault = null
     let dict = getDictionary(dictionary)
     switch (lang) {
         case 'eng':
-            let queryUpperCase = query.toUpperCase()
-            dictObj = dict.find(item => item.eng_name === queryUpperCase)
-            if (dictObj) {
+            resault = dict.find(item => item.eng_name.match(new RegExp(query, 'gi')))
+            break;
+        case 'heb':
+            resault = dict.find(item => item.heb_name === query)
+            break;
+        default:
+            throw Utils.createError(`Language: ${lang} is not supported`, 'language-not-supported')
+    }
+    if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${lang}`, 'query-not-found', 404)
+    return resault
+}
+
+function getItemById(dictionary, query, lang) {
+    let resault = null
+    let dict = getDictionary(dictionary)
+    let dictObj = dict.find(item => item.id == query)
+    if (dictObj) {
+        switch (lang) {
+            case 'eng':
                 resault = {
                     id: dictObj.id,
                     name: dictObj.eng_name
                 }
-            }
-            break;
-        case 'heb':
-            dictObj = dict.find(item => item.heb_name === query)
-            if (dictObj) {
+                break;
+            case 'heb':
                 resault = {
                     id: dictObj.id,
                     name: dictObj.heb_name
                 }
-            }
-            break;
-        case 'id':
-            resault = dict.find(item => item.id == query)
-            break;
-        default:
-            throw Utils.createError(`Language: ${lang} is not supported`, 'language-not-supported')
+                break;
+            default:
+                throw Utils.createError(`Language: ${lang} is not supported`, 'language-not-supported')
+        }
     }
     if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${lang}`, 'query-not-found', 404)
     return resault

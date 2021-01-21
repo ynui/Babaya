@@ -31,17 +31,9 @@ router.route('/:dictionaryName')
             next(error)
         }
     })
-    .post((req, res, next) => {
-        try {
-            let resault = translator.getItem(req.params.dictionaryName, req.body.query, req.body.lang)
-            res.send(resault)
-            res.end()
-        } catch (error) {
-            next(error)
-        }
-    })
-
-router.route('/:dictionaryName/:langId')
+    
+    
+    router.route('/:dictionaryName/:langId')
     .get((req, res, next) => {
         try {
             let resault = translator.getAllItems(req.params.dictionaryName, req.params.langId)
@@ -51,4 +43,19 @@ router.route('/:dictionaryName/:langId')
             next(error)
         }
     })
-module.exports = router;
+    
+    
+    router.route('/:dictionaryName/:langId/:query')
+    .get((req, res, next) => {
+        try {
+            let resault = translator.getItem(req.params.dictionaryName, req.params.query, req.params.langId)
+            res.send(resault)
+            res.end()
+        } catch (error) {
+            next(error)
+        }
+    })
+    
+    
+    module.exports = router;
+    
