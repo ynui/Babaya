@@ -46,13 +46,13 @@ function getItemById(dictionary, query, lang) {
             case 'eng':
                 resault = {
                     id: dictObj.id,
-                    name: dictObj.eng_name
+                    value: dictObj.eng_name
                 }
                 break;
             case 'heb':
                 resault = {
                     id: dictObj.id,
-                    name: dictObj.heb_name
+                    value: dictObj.heb_name
                 }
                 break;
             default:
@@ -74,7 +74,7 @@ function getAllItems(dictionary, lang = null) {
                 for (var entry of dict) {
                     resault.push({
                         id: entry.id,
-                        name: entry.eng_name
+                        value: entry.eng_name
                     })
                 }
                 break;
@@ -82,7 +82,7 @@ function getAllItems(dictionary, lang = null) {
                 for (var entry of dict) {
                     resault.push({
                         id: entry.id,
-                        name: entry.heb_name
+                        value: entry.heb_name
                     })
                 }
                 break;
