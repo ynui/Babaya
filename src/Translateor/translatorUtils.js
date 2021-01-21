@@ -18,6 +18,8 @@ function validateRequest(req, res, next, required = [], optional = []) {
             required = RequestValidators.POST.required
             optional = RequestValidators.POST.optional
             break;
+        case 'GET':
+            break;
         default:
             if (required.length == 0 && optional.length == 0) {
                 console.warn(`No validators provided for ${originalUrl}`)

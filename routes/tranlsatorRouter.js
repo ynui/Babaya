@@ -13,7 +13,7 @@ router.use(Utils.isRequestValid)
 router.route('/')
     .get((req, res, next) => {
         try {
-            let resault = translator.getDictionaries()
+            let resault = translator.getTranslatorSupportFields()
             res.send(resault)
             res.end()
         } catch (error) {

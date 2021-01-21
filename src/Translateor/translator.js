@@ -5,7 +5,24 @@ const areasOfInterest = require('../AreasOfInterests/AreasOfInterest')
 const expertises = require('../Expertises/Expertises')
 const workingPlaces = require('../WorkingPlaces/WorkingPlaces')
 
-function getDictionaries() {
+
+function getTranslatorSupportFields(){
+    let dictionaries = getSupportedDictionaries();
+    let languages = getSupportedLanguages();
+    return{
+        dictionaries: dictionaries,
+        languages: languages
+    }
+}
+
+
+function getSupportedLanguages(){
+    return [
+        'eng', 'heb'
+    ]
+}
+
+function getSupportedDictionaries() {
     return [
         'city', 'gender', 'areaOfInterest', 'expertise', 'workingPlace'
     ]
@@ -127,5 +144,5 @@ function getDictionary(dictionary) {
 module.exports = {
     getItem,
     getAllItems,
-    getDictionaries
+    getTranslatorSupportFields
 }
