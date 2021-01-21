@@ -6,17 +6,17 @@ const expertises = require('../Expertises/Expertises')
 const workingPlaces = require('../WorkingPlaces/WorkingPlaces')
 
 
-function getTranslatorSupportFields(){
+function getTranslatorSupportFields() {
     let dictionaries = getSupportedDictionaries();
     let languages = getSupportedLanguages();
-    return{
+    return {
         dictionaries: dictionaries,
         languages: languages
     }
 }
 
 
-function getSupportedLanguages(){
+function getSupportedLanguages() {
     return [
         'eng', 'heb'
     ]
@@ -52,7 +52,10 @@ function getItemByName(dictionary, query, langId) {
             throw Utils.createError(`Language: ${langId} is not supported`, 'language-not-supported')
     }
     if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${langId}`, 'query-not-found', 404)
-    return resault
+    return {
+        langId: langId,
+        entries: resault
+    }
 }
 
 function getItemById(dictionary, query, langId) {
@@ -63,14 +66,12 @@ function getItemById(dictionary, query, langId) {
         switch (langId) {
             case 'eng':
                 resault = {
-                    langId: langId,
                     key: dictObj.id,
                     value: dictObj.eng_name
                 }
                 break;
             case 'heb':
                 resault = {
-                    langId: langId,
                     key: dictObj.id,
                     value: dictObj.heb_name
                 }
@@ -80,20 +81,22 @@ function getItemById(dictionary, query, langId) {
         }
     }
     if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${langId}`, 'query-not-found', 404)
-    return resault
+    return {
+        langId: langId,
+        entries: resault
+    }
 }
 
 function getAllItems(dictionary, langId = null) {
     let dict = getDictionary(dictionary)
     let resault = []
     if (!langId)
-        resault = dict
+        return dict
     else {
         switch (langId) {
             case 'eng':
                 for (var entry of dict) {
                     resault.push({
-                        langId: langId,
                         key: entry.id,
                         value: entry.eng_name
                     })
@@ -102,7 +105,6 @@ function getAllItems(dictionary, langId = null) {
             case 'heb':
                 for (var entry of dict) {
                     resault.push({
-                        langId: langId,
                         key: entry.id,
                         value: entry.heb_name
                     })
@@ -113,7 +115,10 @@ function getAllItems(dictionary, langId = null) {
 
         }
     }
-    return resault
+    return {
+        langId: langId,
+        entries: resault
+    }
 }
 
 function getDictionary(dictionary) {
