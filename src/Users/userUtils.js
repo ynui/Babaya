@@ -2,6 +2,7 @@ const { firebase, admin } = require('../../firebase/fbConfig');
 const DB_Utils = require('../DB/utils')
 const User = require('./User')
 const Utils = require('../Utils')
+const Translator = require('../Translateor/translator')
 
 const COLLECTION_USERS_DETAILS = 'usersDetails';
 
@@ -29,7 +30,7 @@ async function wriewUserDetails(user) {
     try {
         success = await DB_Utils.writeToCollection(COLLECTION_USERS_DETAILS, user.userId, user.data)
     } catch (error) {
-        deleteUser()
+        deleteUser(user.userId)
         throw error
     }
     return success
@@ -131,6 +132,38 @@ async function getUser(userId) {
     return user
 }
 
+async function getReadableUser(userId, langId = 'eng') {
+    let user = null;
+    await DB_Utils.getDocument(COLLECTION_USERS_DETAILS, userId)
+        .then((found) => {
+            if (found) {
+                let translatedFields = translateFields(found, langId)
+                for (var field in translatedFields) {
+                    if (found[field])
+                        found[field] = translatedFields[field].value
+                }
+                user = new User(found)
+            } else {
+                throw Utils.createError(`No user details document found for ${userId}`, 'no-user-found')
+            }
+        })
+    return {
+        langId,
+        user
+    }
+}
+
+function translateFields(user, langId) {
+    let resault = {
+        genderId: Translator.getItem('gender', user.genderId, langId) || null,
+        workingPlace: Translator.getItem('workingPlace', user.workingPlace, langId) || null,
+        expertise: Translator.getItem('expertise', user.expertise, langId) || null,
+        areaOfInterest: Translator.getItem('areaOfInterest', user.areaOfInterest, langId) || null,
+        demographic: Translator.getItem('demographic', user.demographic, langId) || null
+    }
+    return resault
+}
+
 async function getAllUsers() {
     let users = null
     await admin
@@ -226,8 +259,25 @@ function validateRequest(req, res, next, required = [], optional = []) {
             optional = User.RequestValidators.removeGroup.optional
             break;
         default:
-            if (required.length == 0 && optional.length == 0) {
-                console.warn(`No validators provided for ${originalUrl}`)
+            let isCustom = false
+            if (req.customURL) {
+                isCustom = true
+                switch (req.customURL) {
+                    case ':userId':
+                        required = User.RequestValidators.getUser.required
+                        optional = User.RequestValidators.getUser.optional
+                        break;
+                    default:
+                        if (required.length == 0 && optional.length == 0) {
+                            console.warn(`No validators provided for ${originalUrl}/(${req.customURL})`)
+                        }
+                        break;
+                }
+            }
+            else {
+                if (required.length == 0 && optional.length == 0) {
+                    console.warn(`No validators provided for ${originalUrl}`)
+                }
             }
             break;
     }
@@ -235,6 +285,15 @@ function validateRequest(req, res, next, required = [], optional = []) {
     if (validateResault.error) return next(validateResault.error)
     else req.valid = validateResault.valid
     return next()
+}
+
+function getValidator(validateUrl) {
+    let required = User.RequestValidators[validateUrl].required
+    let optional = User.RequestValidators[validateUrl].optional
+    return {
+        required: required,
+        optional: optional
+    }
 }
 
 function sendVerificationEmail() {
@@ -252,18 +311,37 @@ function sendVerificationEmail() {
     }
 }
 
-function deleteUser() {
+async function deleteUser(userId) {
     try {
-        var user = firebase.auth().currentUser;
-        user.delete()
+        await admin
+            .auth()
+            .deleteUser(userId)
             .then(() => {
-                console.log(`User ${user.email} has been deleted successfully`)
-            }).catch(() => {
-                throw Utils.createError(`Error deleting ${user.email}\n${error}`)
+                console.log('Successfully deleted user');
             })
+            .catch((error) => {
+                console.log('Error deleting user:', error);
+            });
+        await DB_Utils.deleteDocument(COLLECTION_USERS_DETAILS, userId)
     } catch (error) {
         throw error
     }
+}
+
+async function deleteAllUsers() {
+    await getAllUsers()
+        .then(async (all) => {
+            for (user of all.users) {
+                await deleteUser(user.uid)
+                    .then(() => {
+                        console.log(`Successfully deleted user ${user.uid}`);
+                    })
+                    .catch((error) => {
+                        console.log('Error deleting user:', error);
+                    });
+            }
+
+        })
 }
 
 module.exports = {
@@ -275,10 +353,12 @@ module.exports = {
     login,
     logout,
     updateProfile,
-    getUser,
+    getReadableUser,
     getAllUsers,
     getAllUsersDetails,
     addGroup,
     resetPassword,
-    removeGroup
+    removeGroup,
+    deleteAllUsers,
+    getValidator
 }

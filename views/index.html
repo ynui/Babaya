@@ -151,7 +151,27 @@
                 -
             </td>
             <!--Response-->
-            <td>User</td>
+            <td>User (fields in default language)</td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+		        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/:{userId}</td>
+            <!--Required-->
+            <td>
+                -
+            </td>
+            <!--Optional-->
+            <td>
+                <li>langId</li>
+            </td>
+            <!--Response-->
+            <td>User (fields in required language)</td>
             <!--Errors-->
             <td>-</td>
         </tr>
@@ -178,7 +198,7 @@
                 <li>lastNameHeb</li>
                 <li>firstNameArb</li>
                 <li>lastNameArb</li>
-                <li>genderID</li>
+                <li>genderId</li>
                 <li>maritalStatus</li>
                 <li>demographic</li>
                 <li>dateOfBirth</li>
@@ -218,7 +238,7 @@
                 <li>lastNameHeb</li>
                 <li>firstNameArb</li>
                 <li>lastNameArb</li>
-                <li>genderID</li>
+                <li>genderId</li>
                 <li>maritalStatus</li>
                 <li>demographic</li>
                 <li>dateOfBirth</li>
@@ -258,7 +278,7 @@
                 <li>lastNameHeb</li>
                 <li>firstNameArb</li>
                 <li>lastNameArb</li>
-                <li>genderID</li>
+                <li>genderId</li>
                 <li>maritalStatus</li>
                 <li>demographic</li>
                 <li>dateOfBirth</li>
@@ -326,7 +346,7 @@
             <td>/removeGroup</td>
             <!--Required-->
             <td title="Required">
-                <li>grouopId</li>
+                <li>groupId</li>
                 <li>userId</li>
             </td>
             <!--Optional-->
@@ -561,19 +581,14 @@
             <!--Optional-->
             <td title="Optional">
                 <li>langId (eng, heb)</li>
-                <li>key (Integer || String)</li>
+                <li>key (Integer)</li>
             </td>
             <!--Response-->
             <td>
                 <li>
-                    Integer query - Matching record (by ID) in the specified language
                     <li>langId</li>
-                    <li>entries</li>
-                </li>
-                <li>
-                    String query - Matching record (by name) in all languages
-                    <li>langId</li>
-                    <li>entries</li>
+                    <li>key</li>
+					<li>value</li>
                 </li>
             </td>
             <!--Errors-->
@@ -588,7 +603,7 @@
             <td>/:{dictionaryName}</td>
             <!--Required-->
             <td title="Required">
-                <li>key (Integer, String)</li>
+                <li>key (Integer) * Accepts arrays</li>
             </td>
             <!--Optional-->
             <td title="Optional">
@@ -597,12 +612,6 @@
             <!--Response-->
             <td>
                 <li>
-                    Integer query - Matching record (by ID) in the specified language
-                    <li>langId</li>
-                    <li>entries</li>
-                </li>
-                <li>
-                    String query - Matching record (by name) in all languages
                     <li>langId</li>
                     <li>entries</li>
                 </li>

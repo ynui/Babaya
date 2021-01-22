@@ -35,6 +35,7 @@ router.route('/:dictionaryName')
     .post((req, res, next) => {
         try {
             let resault = translator.getItem(req.params.dictionaryName, req.body.key, req.body.langId)
+            resault.key = req.body.key
             res.send(resault)
             res.end()
         } catch (error) {
@@ -59,6 +60,7 @@ router.route('/:dictionaryName/:langId/:query')
     .get((req, res, next) => {
         try {
             let resault = translator.getItem(req.params.dictionaryName, req.params.query, req.params.langId)
+            resault.key = req.params.query
             res.send(resault)
             res.end()
         } catch (error) {

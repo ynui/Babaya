@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const crypto = require('crypto');
 
 function createError(message, code = null, status = null) {
@@ -34,7 +35,7 @@ function validateRequest(req, requiredFields, optionalFields) {
             if (!reqData[field]) {
                 invalidFound = true
                 resault.valid = false
-                resault.error = createError(`Requset ${req.originalUrl} must contain field: ${field}`)
+                resault.error = createError(`${req.method} requset on ${req.originalUrl} must contain field: ${field}`)
                 break;
             }
         }
@@ -43,7 +44,7 @@ function validateRequest(req, requiredFields, optionalFields) {
         for (var field in reqData) {
             if (!requiredFields.includes(field) && !optionalFields.includes(field)) {
                 resault.valid = false
-                resault.error = createError(`Requset ${req.originalUrl} contains unrelated field: ${field}`, 'unrequired-field')
+                resault.error = createError(`${req.method} requset on ${req.originalUrl} contains unrelated field: ${field}`, 'unrequired-field')
                 break;
             }
         }
@@ -78,6 +79,16 @@ function removeTrailingSlash(str) {
     return str.replace(/\/+$/, '');
 }
 
+function applyMiddleware(middleware, req, res, next) {
+    try {
+        for (var func of middleware) {
+            func(req, res, next)
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
 module.exports = {
     generateId,
     validateRequest,
@@ -85,4 +96,5 @@ module.exports = {
     createError,
     isRequestValid,
     removeTrailingSlash,
+    applyMiddleware
 }

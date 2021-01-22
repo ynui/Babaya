@@ -13,7 +13,7 @@ class User {
         this.lastNameHeb = data.lastNameHeb || null
         this.firstNameArb = data.firstNameArb || null
         this.lastNameArb = data.lastNameArb || null
-        this.genderID = data.genderID || null
+        this.genderId = data.genderId || null
         this.maritalStatus = data.maritalStatus || null
         this.demographic = data.demographic || null
         this.dateOfBirth = data.dateOfBirth || null
@@ -32,7 +32,7 @@ class User {
             ],
             optional: [
                 'firstNameHeb', 'lastNameHeb', 'firstNameArb', 'lastNameArb',
-                'genderID', 'maritalStatus', 'demographic', 'dateOfBirth',
+                'genderId', 'maritalStatus', 'demographic', 'dateOfBirth',
                 'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise',
                 'groups'
             ]
@@ -44,7 +44,7 @@ class User {
             optional: [
                 'phoneNumber', 'languageID', 'userType', 'firstNameEng',
                 'lastNameEng', 'firstNameHeb', 'lastNameHeb', 'firstNameArb',
-                'lastNameArb', 'genderID', 'maritalStatus', 'demographic',
+                'lastNameArb', 'genderId', 'maritalStatus', 'demographic',
                 'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest',
                 'expertise', 'groups'
             ]
@@ -66,6 +66,11 @@ class User {
                 'groupId', 'userId'
             ],
             optional: []
+        },
+        getUser: {
+            required: [
+            ],
+            optional: ['langId']
         }
     }
 

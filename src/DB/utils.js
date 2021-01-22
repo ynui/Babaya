@@ -74,10 +74,29 @@ async function getCollection(collection) {
     return resault
 }
 
+async function deleteDocument(collection, document) {
+    let resault = false
+    try {
+        let doc = await db.collection('cities').doc('DC')
+        if (doc) {
+            await doc.delete()
+            resault = true
+        }
+        else{
+            console.error(`Path ${collection}/${document} was not found`)
+            resault = false
+        }
+    } catch (error) {
+        throw error
+    }
+    return resault
+}
+
 module.exports = {
     writeToCollection,
     updateDocument,
     getDocument,
     // uploadImage,
-    getCollection
+    getCollection,
+    deleteDocument
 };

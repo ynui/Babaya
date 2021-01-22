@@ -4,14 +4,15 @@ const genders = require('../Users/Genders')
 const areasOfInterest = require('../AreasOfInterests/AreasOfInterest')
 const expertises = require('../Expertises/Expertises')
 const workingPlaces = require('../WorkingPlaces/WorkingPlaces')
+const { query } = require('express')
 
 
 function getTranslatorSupportFields() {
     let dictionaries = getSupportedDictionaries();
     let languages = getSupportedLanguages();
     return {
-        dictionaries: dictionaries,
-        languages: languages
+        dictionaries,
+        languages
     }
 }
 
@@ -30,35 +31,60 @@ function getSupportedDictionaries() {
 
 function getItem(dictionary, query, langId = 'eng') {
     let resault = null
-    query = query.toString()
-    if (query.match(/^-?\d+$/))
-        resault = getItemById(dictionary, query, langId)
-    else
-        resault = getItemByName(dictionary, query, langId)
+    if (query) {
+        if (Array.isArray(query))
+            resault = getManyItems(dictionary, query, langId)
+        else
+            resault = getSingleItem(dictionary, query, langId)
+    }
     return resault
 }
 
-function getItemByName(dictionary, query, langId) {
+function getSingleItem(dictionary, query, langId = 'eng') {
     let resault = null
-    let dict = getDictionary(dictionary)
-    switch (langId) {
-        case 'eng':
-            resault = dict.find(item => item.eng_name.match(new RegExp(query, 'gi')))
-            break;
-        case 'heb':
-            resault = dict.find(item => item.heb_name === query)
-            break;
-        default:
-            throw Utils.createError(`Language: ${langId} is not supported`, 'language-not-supported')
-    }
-    if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${langId}`, 'query-not-found', 404)
+    query = query.toString()
+    if (query.match(/^-?\d+$/))
+        resault = getSingleItemById(dictionary, query, langId)
+    // else
+    //     resault = getSingleItemByName(dictionary, query, langId)
     return {
         langId: langId,
-        entries: resault
+        value: resault.value
     }
 }
 
-function getItemById(dictionary, query, langId) {
+function getManyItems(dictionary, queryArray, langId = 'eng') {
+    let resault = []
+    for (var query of queryArray) {
+        resault.push(getSingleItem(dictionary, query, langId).value)
+    }
+    return {
+        langId: langId,
+        value: resault
+    }
+}
+
+// function getSingleItemByName(dictionary, query, langId) {
+//     let resault = null
+//     let dict = getDictionary(dictionary)
+//     switch (langId) {
+//         case 'eng':
+//             resault = dict.find(item => item.eng_name.match(new RegExp(query, 'gi')))
+//             break;
+//         case 'heb':
+//             resault = dict.find(item => item.heb_name === query)
+//             break;
+//         default:
+//             throw Utils.createError(`Language: ${langId} is not supported`, 'language-not-supported')
+//     }
+//     if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${langId}`, 'query-not-found', 404)
+//     return {
+//         langId: langId,
+//         entries: resault
+//     }
+// }
+
+function getSingleItemById(dictionary, query, langId) {
     let resault = null
     let dict = getDictionary(dictionary)
     let dictObj = dict.find(item => item.id == query)
@@ -83,7 +109,7 @@ function getItemById(dictionary, query, langId) {
     if (!resault) throw Utils.createError(`Query: ${query} was not found in: ${dictionary}, Language: ${langId}`, 'query-not-found', 404)
     return {
         langId: langId,
-        entries: resault
+        value: resault.value
     }
 }
 
@@ -112,7 +138,6 @@ function getAllItems(dictionary, langId = null) {
                 break;
             default:
                 throw Utils.createError(`Language: ${langId} is not supported`, 'language-not-supported')
-
         }
     }
     return {
