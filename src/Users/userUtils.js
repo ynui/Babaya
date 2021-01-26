@@ -328,20 +328,25 @@ async function deleteUser(userId) {
     }
 }
 
-async function deleteAllUsers() {
-    await getAllUsers()
-        .then(async (all) => {
-            for (user of all.users) {
-                await deleteUser(user.uid)
-                    .then(() => {
-                        console.log(`Successfully deleted user ${user.uid}`);
-                    })
-                    .catch((error) => {
-                        console.log('Error deleting user:', error);
-                    });
-            }
+async function deleteAllUsers(seriously) {
+    if (seriously) {
+        await getAllUsers()
+            .then(async (all) => {
+                for (user of all.users) {
+                    await deleteUser(user.uid)
+                        .then(() => {
+                            console.log(`Successfully deleted user ${user.uid}`);
+                        })
+                        .catch((error) => {
+                            console.log('Error deleting user:', error);
+                        });
+                }
 
-        })
+            })
+    }
+    else {
+        return 'Your\'e not serious....'
+    }
 }
 
 module.exports = {

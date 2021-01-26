@@ -1,10 +1,13 @@
 const Utils = require('../Utils')
-const cities = require('../Demographics/Cities')
-const genders = require('../Users/Genders')
-const areasOfInterest = require('../AreasOfInterests/AreasOfInterest')
-const expertises = require('../Expertises/Expertises')
-const workingPlaces = require('../WorkingPlaces/WorkingPlaces')
-const { query } = require('express')
+const addresses = require('./Addresses')
+const areasOfInterest = require('./AreasOfInterest')
+const cities = require('./Cities')
+const departments = require('./Departments')
+const expertises = require('./Expertises')
+const genders = require('./Genders')
+const languages = require('./Languages')
+const streets = require('./Streets')
+const workingPlaces = require('./WorkingPlaces')
 
 
 function getTranslatorSupportFields() {
@@ -19,19 +22,27 @@ function getTranslatorSupportFields() {
 
 function getSupportedLanguages() {
     return [
-        'eng', 'heb'
+        {
+            'Name': 'English',
+            'ID': 1
+        },
+        {
+            'Name': 'Hebrew',
+            'ID': 2
+        }
     ]
 }
 
 function getSupportedDictionaries() {
     return [
-        'city', 'gender', 'areaOfInterest', 'expertise', 'workingPlace'
+        'address', 'areaOfInterest', 'city', 'department', 'expertise', 'gender', 'language', 'street', 'workingPlace'
     ]
 }
 
-function getItem(dictionary, query, langId = 'eng') {
+function getItem(dictionary, query, langId = '1') {
     let resault = null
     if (query) {
+        langId = langId.toString()
         if (Array.isArray(query))
             resault = getManyItems(dictionary, query, langId)
         else
@@ -40,7 +51,7 @@ function getItem(dictionary, query, langId = 'eng') {
     return resault
 }
 
-function getSingleItem(dictionary, query, langId = 'eng') {
+function getSingleItem(dictionary, query, langId = '1') {
     let resault = null
     query = query.toString()
     if (query.match(/^-?\d+$/))
@@ -53,7 +64,7 @@ function getSingleItem(dictionary, query, langId = 'eng') {
     }
 }
 
-function getManyItems(dictionary, queryArray, langId = 'eng') {
+function getManyItems(dictionary, queryArray, langId = '1') {
     let resault = []
     for (var query of queryArray) {
         resault.push(getSingleItem(dictionary, query, langId).value)
@@ -68,10 +79,10 @@ function getManyItems(dictionary, queryArray, langId = 'eng') {
 //     let resault = null
 //     let dict = getDictionary(dictionary)
 //     switch (langId) {
-//         case 'eng':
+//         case '1':
 //             resault = dict.find(item => item.eng_name.match(new RegExp(query, 'gi')))
 //             break;
-//         case 'heb':
+//         case '2':
 //             resault = dict.find(item => item.heb_name === query)
 //             break;
 //         default:
@@ -90,13 +101,13 @@ function getSingleItemById(dictionary, query, langId) {
     let dictObj = dict.find(item => item.id == query)
     if (dictObj) {
         switch (langId) {
-            case 'eng':
+            case '1':
                 resault = {
                     key: dictObj.id,
                     value: dictObj.eng_name
                 }
                 break;
-            case 'heb':
+            case '2':
                 resault = {
                     key: dictObj.id,
                     value: dictObj.heb_name
@@ -119,8 +130,9 @@ function getAllItems(dictionary, langId = null) {
     if (!langId)
         return dict
     else {
+        langId = langId.toString()
         switch (langId) {
-            case 'eng':
+            case '1': //English
                 for (var entry of dict) {
                     resault.push({
                         key: entry.id,
@@ -128,7 +140,7 @@ function getAllItems(dictionary, langId = null) {
                     })
                 }
                 break;
-            case 'heb':
+            case '2': //Hebrew
                 for (var entry of dict) {
                     resault.push({
                         key: entry.id,
@@ -146,20 +158,33 @@ function getAllItems(dictionary, langId = null) {
     }
 }
 
+
 function getDictionary(dictionary) {
     let dict = null
     switch (dictionary) {
-        case 'city':
-            dict = cities
-            break;
-        case 'gender':
-            dict = genders
+        case 'address':
+            dict = addresses
             break;
         case 'areaOfInterest':
             dict = areasOfInterest
             break;
+        case 'city':
+            dict = cities
+            break;
+        case 'department':
+            dict = departments
+            break;
         case 'expertise':
             dict = expertises
+            break;
+        case 'gender':
+            dict = genders
+            break;
+        case 'language':
+            dict = languages
+            break;
+        case 'street':
+            dict = streets
             break;
         case 'workingPlace':
             dict = workingPlaces

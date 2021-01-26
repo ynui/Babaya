@@ -68,8 +68,7 @@ class User {
             optional: []
         },
         getUser: {
-            required: [
-            ],
+            required: [],
             optional: ['langId']
         }
     }
@@ -91,6 +90,23 @@ class User {
             var groupIndx = this.groups.indexOf(groupId);
             if (groupIndx > -1) {
                 this.groups.splice(groupIndx, 1);
+            }
+        }
+    }
+
+    addToFriendsList(userId) {
+        if (this.friends.includes(userId)) throw Utils.createError(`${this.userId} is already friend of ${userId}`, 'user-already-friend')
+        else {
+            this.groups.push(groupId)
+        }
+    }
+
+    removeFromFriendsList(userId) {
+        if (!this.friends.includes(userId)) throw Utils.createError(`${this.userId} is not friend of ${userId}`, 'user-not-friend')
+        else {
+            var userIndx = this.friends.indexOf(userId);
+            if (groupIndx > -1) {
+                this.friends.splice(userIndx, 1);
             }
         }
     }

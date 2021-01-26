@@ -31,15 +31,15 @@ router.get('/allUsersDetails', middleware, async (req, res, next) => {
 });
 
 
-// router.get('/deleteAllUsers', async (req, res, next) => {
-//   try {
-//     let success = await userUtils.deleteAllUsers()
-//     res.send(success)
-//     res.end()
-//   } catch (error) {
-//     next(error)
-//   }
-// });
+router.delete('/allUsers', async (req, res, next) => {
+  try {
+    let success = await userUtils.deleteAllUsers(req.body.seriously)
+    res.send(success)
+    res.end()
+  } catch (error) {
+    next(error)
+  }
+});
 
 router.post('/register', middleware, async (req, res, next) => {
   try {
