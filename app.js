@@ -9,6 +9,7 @@ var cors = require('cors');
 var indexRouter = require('./routes/indexRouter');
 var usersRouter = require('./routes/usersRouter');
 var groupsRouter = require('./routes/groupsRouter');
+var demographicRouter = require('./routes/demographicsRouter');
 var translateRouter = require('./routes/tranlsatorRouter');
 const { TooManyRequests } = require('http-errors');
 
@@ -32,6 +33,7 @@ app.use(cors())
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/groups', groupsRouter);
+app.use('/demographic', demographicRouter);
 app.use('/translate', translateRouter);
 
 // catch 404 and forward to error handler

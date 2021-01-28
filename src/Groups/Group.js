@@ -2,6 +2,7 @@ const Utils = require('../Utils')
 
 class Group {
     constructor(data) {
+        this.numberOfUsers = data.numberOfUsers || 0
         this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
         this.description = data.description
@@ -54,13 +55,15 @@ class Group {
     }
 
     addToUsersList(userId) {
+        this.numberOfUsers++;
         if (this.users.includes(userId)) throw Utils.createError(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
         else {
             this.users.push(userId)
         }
     }
-
+    
     removeFromUsersList(userId) {
+        this.numberOfUsers--;
         if (!this.users.includes(userId)) throw Utils.createError(`${userId} is not member in ${this.groupId}`, 'group-not-contains-user')
         else {
             var userIndx = this.users.indexOf(userId);

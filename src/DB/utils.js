@@ -77,15 +77,9 @@ async function getCollection(collection) {
 async function deleteDocument(collection, document) {
     let resault = false
     try {
-        let doc = await db.collection('cities').doc('DC')
-        if (doc) {
-            await doc.delete()
-            resault = true
-        }
-        else{
-            console.error(`Path ${collection}/${document} was not found`)
-            resault = false
-        }
+        let docRef = db.collection(collection).doc(document)
+        await docRef.delete()
+        resault = true
     } catch (error) {
         throw error
     }

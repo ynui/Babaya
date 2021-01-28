@@ -2,11 +2,14 @@ const Utils = require('../Utils')
 const addresses = require('./Addresses')
 const areasOfInterest = require('./AreasOfInterest')
 const cities = require('./Cities')
+const counties = require('./Counties')
 const departments = require('./Departments')
 const expertises = require('./Expertises')
 const genders = require('./Genders')
 const languages = require('./Languages')
+const rules = require('./Rules')
 const streets = require('./Streets')
+const userTypes = require('./UserTypes')
 const workingPlaces = require('./WorkingPlaces')
 
 
@@ -35,7 +38,7 @@ function getSupportedLanguages() {
 
 function getSupportedDictionaries() {
     return [
-        'address', 'areaOfInterest', 'city', 'department', 'expertise', 'gender', 'language', 'street', 'workingPlace'
+        'address', 'areaOfInterest', 'city', 'county', 'department', 'expertise', 'gender', 'language','rule', 'street', 'userTypes', 'workingPlace'
     ]
 }
 
@@ -171,6 +174,9 @@ function getDictionary(dictionary) {
         case 'city':
             dict = cities
             break;
+        case 'county':
+            dict = counties
+            break;
         case 'department':
             dict = departments
             break;
@@ -183,8 +189,14 @@ function getDictionary(dictionary) {
         case 'language':
             dict = languages
             break;
+        case 'rule':
+            dict = rules
+            break;
         case 'street':
             dict = streets
+            break;
+        case 'userTypes':
+            dict = userTypes
             break;
         case 'workingPlace':
             dict = workingPlaces

@@ -1,5 +1,5 @@
-const DB_Utils = require('../DB/utils')
 const Group = require('./Group')
+const DB_Utils = require('../DB/utils')
 const Utils = require('../Utils')
 
 const COLLECTION_GROUPS = 'groups';
@@ -136,6 +136,21 @@ function validateRequest(req, res, next, required = [], optional = []) {
     return next()
 }
 
+async function deleteGroup(groupId) {
+    let success = false;
+    try {
+        await DB_Utils.deleteDocument(COLLECTION_GROUPS, groupId)
+            .then((doc) => {
+                success = true
+            }).catch((error) => {
+                throw error
+            })
+    } catch (error) {
+        throw error
+    }
+    return success
+}
+
 
 module.exports = {
     createGroup,
@@ -145,5 +160,6 @@ module.exports = {
     addUser,
     updateGroup,
     validateRequest,
-    removeUser
+    removeUser,
+    deleteGroup
 }

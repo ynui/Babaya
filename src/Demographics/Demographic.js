@@ -1,95 +1,61 @@
+const Utils = require('../Utils')
+
 class Demographic {
     constructor(data) {
-        this.country = new Country(data.country)
-        this.county = new County(data.county)
-        this.city = new City(data.city)
-        this.street = new Street(data.street)
+        this.numberOfUsers = data.numberOfUsers || 0
+        this.demographicId = data.demographicId || Utils.generateId()
+        this.createTime = data.createTime || new Date().toISOString()
+        this.countryId = data.countryId
+        this.countyId = data.countyId || null
+        this.cityId = data.cityId || null
+        this.streetId = data.streetId || null
+        this.users = data.users || []
     }
-}
 
-class DemographicOther {
-    constructor(data) {
-        this.country = new Country(data.country)
-        this.county = new County(data.county)
-        this.city = new City(data.city)
-        this.street = new Street(data.street)
-    }
-}
 
-class Country {
-    constructor(data) {
-        this.countryID = data.countryID
-        this.countryNameEng = data.countryNameEng
-        this.countryNameHeb = data.countryNameHeb || null
-        this.countryNameArb = data.countryNameArb || null
-    }
-    get data() {
-        return {
-            countryID: this.countryID,
-            countryNameEng: this.countryNameEng,
-            countryNameHeb: this.countryNameHeb,
-            countryNameArb: this.countryNameArb
+    static RequestValidators = {
+        create: {
+            required: [
+                'countryId'
+            ],
+            optional: [
+                'countyId', 'cityId', 'streetId'
+            ]
+        },
+        update: {
+            required: [
+                // 'demographocId'
+            ],
+            optional: [
+                'countryId', 'countyId', 'cityId', 'streetId'
+            ]
         }
     }
 
-}
 
-class County {
-    constructor(data) {
-        this.countyID = data.countyID
-        this.countyNameEng = data.countyNameEng
-        this.countyNameHeb = data.countyNameHeb || null
-        this.countyNameArb = data.countyNameArb || null
-    }
     get data() {
-        return {
-            countyID: this.countyID,
-            countyNameEng: this.countyNameEng,
-            countyNameHeb: this.countyNameHeb,
-            countyNameArb: this.countyNameArb
+        return JSON.parse(JSON.stringify(this))
+    }
+
+
+    addToUsersList(userId) {
+        this.numberOfUsers++;
+        if (this.users.includes(userId)) throw Utils.createError(`${this.demographicId} already contains user ${userId}`, 'group-already-contains-user')
+        else {
+            this.users.push(userId)
         }
     }
-}
 
-class City {
-    constructor(data) {
-        this.cityID = data.cityID
-        this.cityNameEng = data.cityNameEng
-        this.cityNameHeb = data.cityNameHeb || null
-        this.cityNameArb = data.cityNameArb || null
-    }
-    get data() {
-        return {
-            cityID: this.cityID,
-            cityNameEng: this.cityNameEng,
-            cityNameHeb: this.cityNameHeb,
-            cityNameArb: this.cityNameArb
+    removeFromUsersList(userId) {
+        this.numberOfUsers--;
+        if (!this.users.includes(userId)) throw Utils.createError(`${userId} is not member in ${this.demographicId}`, 'group-not-contains-user')
+        else {
+            var userIndx = this.users.indexOf(userId);
+            if (userIndx > -1) {
+                this.users.splice(userIndx, 1);
+            }
         }
     }
 }
 
-class Street {
-    constructor(data) {
-        this.streetID = data.streetID
-        this.streetNameEng = data.streetNameEng
-        this.streetNameHeb = data.streetNameHeb || null
-        this.streetNameArb = data.streetNameArb || null
-    }
-    get data() {
-        return {
-            streetID: this.streetID,
-            streetNameEng: this.streetNameEng,
-            streetNameHeb: this.streetNameHeb,
-            streetNameArb: this.streetNameArb
-        }
-    }
-}
-
-module.exports = {
-    Demographic,
-    DemographicOther,
-    Country,
-    County,
-    City,
-    Street
-}
+module.exports = Demographic

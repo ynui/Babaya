@@ -311,6 +311,10 @@ function sendVerificationEmail() {
     }
 }
 
+function updateDeletedGroupForUsers(groupId){
+    
+}
+
 async function deleteUser(userId) {
     try {
         await admin
