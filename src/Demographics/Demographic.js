@@ -2,7 +2,7 @@ const Utils = require('../Utils')
 
 class Demographic {
     constructor(data) {
-        this.numberOfUsers = data.numberOfUsers || 0
+        this.numberOfUsers = data.numberOfUsers || 1
         this.demographicId = data.demographicId || Utils.generateId()
         this.createTime = data.createTime || new Date().toISOString()
         this.countryId = data.countryId

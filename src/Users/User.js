@@ -1,4 +1,5 @@
 const Utils = require('../Utils')
+const Demographic = require('../Demographics/Demographic')
 
 class User {
     constructor(data) {
@@ -70,6 +71,14 @@ class User {
         getUser: {
             required: [],
             optional: ['langId']
+        },
+        addDemographic: {
+            required: Demographic.RequestValidators.create.required,
+            optional: Demographic.RequestValidators.create.optional
+        },
+        updateDemographic: {
+            required: Demographic.RequestValidators.update.required,
+            optional: Demographic.RequestValidators.update.optional
         }
     }
 
@@ -78,14 +87,14 @@ class User {
     }
 
     addToGroupsList(groupId) {
-        if (this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is already in group ${groupId}`, 'user-already-in-group')
+        if (this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is already in group ${groupId}`, 'group-already-exists')
         else {
             this.groups.push(groupId)
         }
     }
 
     removeFromGroupsList(groupId) {
-        if (!this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is not member in ${groupId}`, 'user-not-contains-group')
+        if (!this.groups.includes(groupId)) throw Utils.createError(`${this.userId} is not member in ${groupId}`, 'group-not-exists')
         else {
             var groupIndx = this.groups.indexOf(groupId);
             if (groupIndx > -1) {
@@ -95,18 +104,43 @@ class User {
     }
 
     addToFriendsList(userId) {
-        if (this.friends.includes(userId)) throw Utils.createError(`${this.userId} is already friend of ${userId}`, 'user-already-friend')
+        if (this.friends.includes(userId)) throw Utils.createError(`${this.userId} is already friend of ${userId}`, 'friend-already-exists')
         else {
             this.groups.push(groupId)
         }
     }
 
     removeFromFriendsList(userId) {
-        if (!this.friends.includes(userId)) throw Utils.createError(`${this.userId} is not friend of ${userId}`, 'user-not-friend')
+        if (!this.friends.includes(userId)) throw Utils.createError(`${this.userId} is not friend of ${userId}`, 'friend-not-exists')
         else {
             var userIndx = this.friends.indexOf(userId);
             if (groupIndx > -1) {
                 this.friends.splice(userIndx, 1);
+            }
+        }
+    }
+
+    setDemographic(data) {
+        this.demographic = data
+    }
+
+    removeDemographic() {
+        this.demographic = null
+    }
+
+    addToDemographicOthers(demographicId) {
+        if (this.demogrephicsOther.includes(demographicId)) throw Utils.createError(`${this.userId} is already has demographic ${demographicId}`, 'demographic-already-exists')
+        else {
+            this.demogrephicsOther.push(demographicId)
+        }
+    }
+
+    removeFromFriendsList(demographicId) {
+        if (!this.demogrephicsOther.includes(demographicId)) throw Utils.createError(`${this.userId} does not has demographic ${demographicId}`, 'demographic-not-exists')
+        else {
+            var demoIndx = this.demogrephicsOther.indexOf(demographicId);
+            if (groupIndx > -1) {
+                this.demogrephicsOther.splice(demoIndx, 1);
             }
         }
     }

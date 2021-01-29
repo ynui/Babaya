@@ -3,6 +3,7 @@ var router = express.Router();
 const Utils = require('../src/Utils')
 const userUtils = require('../src/Users/userUtils')
 const groupUtils = require('../src/Groups/groupUtils');
+const demographicUtils = require('../src/Demographics/demographicUtils');
 
 // router.use(userUtils.validateRequest)
 // router.use(Utils.isRequestValid)
@@ -91,7 +92,7 @@ router.post('/update', middleware, async (req, res, next) => {
 router.route('/:userId')
   .all((req, res, next) => {
     if (req.method === 'POST')
-      req.customURL = ':userId';
+      req.customURL = '/getUserLang';
     next()
   })
   .get(middleware, async (req, res, next) => {
@@ -113,6 +114,7 @@ router.route('/:userId')
     }
   })
 
+
 router.post('/addGroup', middleware, async (req, res, next) => {
   try {
     let user = await userUtils.addGroup(req.body.userId, req.body.groupId)
@@ -126,6 +128,90 @@ router.post('/addGroup', middleware, async (req, res, next) => {
     next(error)
   }
 })
+
+router.route('/:userId/demographic')
+  .all((req, res, next) => {
+    if (req.method === 'POST')
+      req.customURL = '/createDemographic';
+    if (req.method === 'PUT')
+      req.customURL = '/updateDemographic';
+    next()
+  })
+  .get(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.getUser(req.params.userId)
+      let demographicId = user.demographic
+      let demographic = await demographicUtils.getReadableDemographic(demographicId)
+      res.send(demographic)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+  .post(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.addDemographic(req.params.userId, req.body)
+      res.send(user)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+  .delete(middleware, async (req, res, next) => {
+    try {
+      let success = await userUtils.removeDemographic(req.params.userId, req.body.demographicId)
+      res.send(success)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+  .put(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.getUser(req.params.userId)
+      let demographicId = user.demographic
+      let success = await demographicUtils.updateDemographic(demographicId, req.body)
+      res.send(success)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+
+
+router.route('/:userId/DemographicOther')
+  .all((req, res, next) => {
+    if (req.method === 'POST')
+      req.customURL = '/createDemographicOther';
+    next()
+  })
+  .get(middleware, async (req, res, next) => {
+    try {
+      let demographics = await demographicUtils.getManyReadableDemographic(req.params.userId)
+      res.send(demographics)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+  .post(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.addDemographicOther(req.params.userId, req.body)
+      res.send(user)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+  .delete(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.removeDemographicOther(req.params.userId, req.body.demographicId)
+      res.send(user)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
 
 router.post('/resetPassword', middleware, async (req, res, next) => {
   try {

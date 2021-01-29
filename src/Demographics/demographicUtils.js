@@ -1,6 +1,7 @@
 const Demographic = require('./Demographic')
 const DB_Utils = require('../DB/utils')
 const Utils = require('../Utils')
+const Translator = require('../Translateor/translator')
 
 
 const COLLECTION_DEMOGRAPHIC = 'demographics';
@@ -9,6 +10,7 @@ async function createDemographic(data) {
     let newDemographic = null
     try {
         newDemographic = new Demographic(data)
+        writeDemographicDetails(newDemographic)
     } catch (error) {
         throw error
     }
@@ -136,11 +138,69 @@ function validateRequest(req, res, next, required = [], optional = []) {
     return next()
 }
 
+async function getReadableDemographic(demographicId, langId = '1') {
+    let demographic = null;
+    if (demographicId) {
+        await getDemographic(demographicId)
+            .then(async (found) => {
+                if (found) {
+                    let translatedFields = translateFields(found, langId)
+                    for (var field in translatedFields) {
+                        if (!(found[field] === null))
+                            found[field] = translatedFields[field].value.toString()
+                    }
+                    demographic = new Demographic(found)
+                } else {
+                    throw Utils.createError(`No user details document found for ${demographicId}`, 'demographic-not-found')
+                }
+            })
+    } else {
+        throw Utils.createError(`No demographic found`, 'demographic-not-found')
+    }
+    return {
+        langId,
+        demographic
+    }
+}
+
+async function getManyReadableDemographic(demographicId, langId = 'eng') {
+    let demographics = null;
+    await DB_Utils.getDocument(COLLECTION_DEMOGRAPHIC, demographicId)
+        .then((found) => {
+            if (found) {
+                let translatedFields = translateFields(found, langId)
+                for (var field in translatedFields) {
+                    if (found[field])
+                        found[field] = translatedFields[field].value
+                }
+                demographic = new Demographic(found)
+            } else {
+                throw Utils.createError(`No user details document found for ${demographicId}`, 'demographic-not-found')
+            }
+        })
+    return {
+        langId,
+        demographic
+    }
+}
+
+function translateFields(demographic, langId) {
+    let resault = {
+        countryId: Translator.getItem('country', demographic.countryId, langId) || null,
+        countyId: Translator.getItem('county', demographic.countyId, langId) || null,
+        cityId: Translator.getItem('city', demographic.cityId, langId) || null,
+        streetId: Translator.getItem('street', demographic.streetId, langId) || null
+    }
+    return resault
+}
+
 module.exports = {
     createDemographic,
     updateDemographic,
     deleteDemographic,
     getDemographic,
+    getReadableDemographic,
+    getManyReadableDemographic,
     getAllDemographics,
     validateRequest,
     writeDemographicDetails

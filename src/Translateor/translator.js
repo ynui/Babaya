@@ -1,8 +1,10 @@
 const Utils = require('../Utils')
+// const demographicUtils = require('../Demographics/demographicUtils')
 const addresses = require('./Addresses')
 const areasOfInterest = require('./AreasOfInterest')
 const cities = require('./Cities')
 const counties = require('./Counties')
+const countries = require('./Countries')
 const departments = require('./Departments')
 const expertises = require('./Expertises')
 const genders = require('./Genders')
@@ -38,7 +40,7 @@ function getSupportedLanguages() {
 
 function getSupportedDictionaries() {
     return [
-        'address', 'areaOfInterest', 'city', 'county', 'department', 'expertise', 'gender', 'language','rule', 'street', 'userTypes', 'workingPlace'
+        'address', 'areaOfInterest', 'city', 'county', 'country', 'department', 'expertise', 'gender', 'language', 'rule', 'street', 'userTypes', 'workingPlace'
     ]
 }
 
@@ -177,6 +179,9 @@ function getDictionary(dictionary) {
         case 'county':
             dict = counties
             break;
+        case 'country':
+            dict = countries
+            break;
         case 'department':
             dict = departments
             break;
@@ -208,8 +213,46 @@ function getDictionary(dictionary) {
     return dict
 }
 
+async function getReadableDemographic(demographic, langId = '1') {
+    let resault = {}
+    let country = null, county = null, city = null, street = null
+    try {
+        country = getItem('country', demographic.countryId, langId)
+        if (country !== null)
+            resault['country'] = country.value
+        else {
+            resault['country'] = null
+        }
+        county = getItem('county', demographic.countyId, langId)
+        if (county !== null)
+            resault['county'] = county.value
+        else {
+            resault['county'] = null
+        }
+        city = getItem('city', demographic.cityId, langId)
+        if (city !== null)
+            resault['city'] = city.value
+        else {
+            resault['city'] = null
+        }
+        street = getItem('street', demographic.streetId, langId)
+        if (street !== null)
+            resault['street'] = street.value
+        else {
+            resault['street'] = null
+        }
+    } catch (error) {
+        throw error
+    }
+    return {
+        langId: langId,
+        value: resault
+    }
+}
+
 module.exports = {
     getItem,
     getAllItems,
-    getTranslatorSupportFields
+    getTranslatorSupportFields,
+    getReadableDemographic
 }

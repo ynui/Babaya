@@ -1,8 +1,11 @@
 const { firebase, admin } = require('../../firebase/fbConfig');
 const DB_Utils = require('../DB/utils')
 const User = require('./User')
+const Demographic = require('../Demographics/Demographic')
 const Utils = require('../Utils')
+const demographicUtils = require('../Demographics/demographicUtils')
 const Translator = require('../Translateor/translator')
+const { use } = require('../../routes/usersRouter');
 
 const COLLECTION_USERS_DETAILS = 'usersDetails';
 
@@ -132,12 +135,12 @@ async function getUser(userId) {
     return user
 }
 
-async function getReadableUser(userId, langId = 'eng') {
+async function getReadableUser(userId, langId = '1') {
     let user = null;
     await DB_Utils.getDocument(COLLECTION_USERS_DETAILS, userId)
-        .then((found) => {
+        .then(async (found) => {
             if (found) {
-                let translatedFields = translateFields(found, langId)
+                let translatedFields = await translateFields(found, langId)
                 for (var field in translatedFields) {
                     if (found[field])
                         found[field] = translatedFields[field].value
@@ -153,13 +156,23 @@ async function getReadableUser(userId, langId = 'eng') {
     }
 }
 
-function translateFields(user, langId) {
-    let resault = {
-        genderId: Translator.getItem('gender', user.genderId, langId) || null,
-        workingPlace: Translator.getItem('workingPlace', user.workingPlace, langId) || null,
-        expertise: Translator.getItem('expertise', user.expertise, langId) || null,
-        areaOfInterest: Translator.getItem('areaOfInterest', user.areaOfInterest, langId) || null,
-        demographic: Translator.getItem('demographic', user.demographic, langId) || null
+async function translateFields(user, langId) {
+    let resault = null
+    let readableDemographic = null
+    try {
+        if (user.demographic) {
+            let demographic = await getDemographic(user.demographic)
+            readableDemographic = await Translator.getReadableDemographic(demographic, langId)
+        }
+        resault = {
+            genderId: Translator.getItem('gender', user.genderId, langId) || null,
+            workingPlace: Translator.getItem('workingPlace', user.workingPlace, langId) || null,
+            expertise: Translator.getItem('expertise', user.expertise, langId) || null,
+            areaOfInterest: Translator.getItem('areaOfInterest', user.areaOfInterest, langId) || null,
+            demographic: readableDemographic || null
+        }
+    } catch (error) {
+        throw error
     }
     return resault
 }
@@ -212,6 +225,70 @@ async function removeGroup(userId, groupId) {
     return user
 }
 
+async function getDemographic(demographicId) {
+    let demographic = null
+    try {
+        demographic = await demographicUtils.getDemographic(demographicId)
+    } catch (error) {
+        throw error
+    }
+    return demographic
+}
+
+async function addDemographic(userId, data) {
+    let demographic = null
+    let user = null
+    try {
+        demographic = await demographicUtils.createDemographic(data)
+        user = await getUser(userId)
+        user.setDemographic(demographic.demographicId)
+        let updateUser = await updateProfile(userId, { demographic: user.demographic })
+    } catch (error) {
+        throw error
+    }
+    return user
+}
+
+async function removeDemographic(userId, groupId) {
+    let success = false
+    let user = null
+    try {
+        user = await getUser(userId)
+        user.removeDemographic(groupId)
+        let updateUser = await updateProfile(userId, { demographic: user.demographic })
+        success = true
+    } catch (error) {
+        throw error
+    }
+    return success
+}
+
+async function addDemographicOther(userId, data) {
+    let demographic = null
+    let user = null
+    try {
+        demographic = demographicUtils.createDemographic(data)
+        user = await getUser(userId)
+        user.addDemographicOther(demographic.demographicId)
+        let updateUser = await updateProfile(userId, { demogrephicsOther: user.demographic })
+    } catch (error) {
+        throw error
+    }
+    return user
+}
+
+async function removeDemographicOther(userId, demographicId) {
+    let user = null
+    try {
+        user = await getUser(userId)
+        user.removeDemographicOther(demographicId)
+        let updateUser = await updateProfile(userId, { demogrephicsOther: user.demogrephicsOther })
+    } catch (error) {
+        throw error
+    }
+    return user
+}
+
 async function resetPassword(email) {
     let success = false;
     try {
@@ -231,7 +308,7 @@ async function resetPassword(email) {
 
 function validateRequest(req, res, next, required = [], optional = []) {
     let originalUrl = Utils.removeTrailingSlash(req.originalUrl)
-    let url = Utils.removeTrailingSlash(req.url)
+    let url = req.customURL || Utils.removeTrailingSlash(req.url)
     req.valid = false
     switch (url) {
         case '/register':
@@ -258,26 +335,21 @@ function validateRequest(req, res, next, required = [], optional = []) {
             required = User.RequestValidators.removeGroup.required
             optional = User.RequestValidators.removeGroup.optional
             break;
+        case '/getUserLang':
+            required = User.RequestValidators.getUser.required
+            optional = User.RequestValidators.getUser.optional
+            break;
+        case '/createDemographic':
+            required = Demographic.RequestValidators.create.required
+            optional = Demographic.RequestValidators.create.optional
+            break;
+        case '/updateDemographic':
+            required = Demographic.RequestValidators.update.required
+            optional = Demographic.RequestValidators.update.optional
+            break;
         default:
-            let isCustom = false
-            if (req.customURL) {
-                isCustom = true
-                switch (req.customURL) {
-                    case ':userId':
-                        required = User.RequestValidators.getUser.required
-                        optional = User.RequestValidators.getUser.optional
-                        break;
-                    default:
-                        if (required.length == 0 && optional.length == 0) {
-                            console.warn(`No validators provided for ${originalUrl}/(${req.customURL})`)
-                        }
-                        break;
-                }
-            }
-            else {
-                if (required.length == 0 && optional.length == 0) {
-                    console.warn(`No validators provided for ${originalUrl}`)
-                }
+            if (required.length == 0 && optional.length == 0) {
+                console.warn(`No validators provided for ${originalUrl}`)
             }
             break;
     }
@@ -311,8 +383,8 @@ function sendVerificationEmail() {
     }
 }
 
-function updateDeletedGroupForUsers(groupId){
-    
+function updateDeletedGroupForUsers(groupId) {
+
 }
 
 async function deleteUser(userId) {
@@ -369,5 +441,11 @@ module.exports = {
     resetPassword,
     removeGroup,
     deleteAllUsers,
-    getValidator
+    getValidator,
+    getDemographic,
+    addDemographic,
+    removeDemographic,
+    addDemographicOther,
+    removeDemographicOther,
+    getUser
 }
