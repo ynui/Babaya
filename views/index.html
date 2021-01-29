@@ -121,6 +121,29 @@
             <!--Route-->
             <td></td>
             <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/login</td>
+            <!--Required-->
+            <td title="Required">
+                <li>email</li>
+                <li>password</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
+                <li>user</li>
+                <li>token</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td></td>
+            <!--Method-->
             <td>GET</td>
             <!--Path-->
             <td>/logout</td>
@@ -132,194 +155,6 @@
             </td>
             <!--Response-->
             <td>Boolean</td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-        <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>GET</td>
-            <!--Path-->
-            <td>/:{userId}</td>
-            <!--Required-->
-            <td>
-                -
-            </td>
-            <!--Optional-->
-            <td>
-                -
-            </td>
-            <!--Response-->
-            <td>
-						<li>langId</li>
-			<li>user</li>
-			</td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-		        <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>POST</td>
-            <!--Path-->
-            <td>/:{userId}</td>
-            <!--Required-->
-            <td>
-                -
-            </td>
-            <!--Optional-->
-            <td>
-                <li>langId</li>
-            </td>
-            <!--Response-->
-            <td>
-			<li>langId</li>
-			<li>user</li>
-			</td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-        <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>POST</td>
-            <!--Path-->
-            <td>/register</td>
-            <!--Required-->
-            <td title="Required">
-                <li>phoneNumber</li>
-                <li>email</li>
-                <li>password</li>
-                <li>languageID</li>
-                <li>userType</li>
-                <li>firstNameEng</li>
-                <li>lastNameEng</li>
-            </td>
-            <!--Optional-->
-            <td title="Optional">
-                <li>firstNameHeb</li>
-                <li>lastNameHeb</li>
-                <li>firstNameArb</li>
-                <li>lastNameArb</li>
-                <li>genderId</li>
-                <li>maritalStatus</li>
-                <li>demographic</li>
-                <li>dateOfBirth</li>
-                <li>demogrephicsOther</li>
-                <li>workingPlace</li>
-                <li>areaOfInterest</li>
-                <li>expertise</li>
-                <li>groups</li>
-            </td>
-            <!--Response-->
-            <td>
-                <li>user</li>
-                <li>token</li>
-            </td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-        <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>POST</td>
-            <!--Path-->
-            <td>/login</td>
-            <!--Required-->
-            <td title="Required">
-                <li>userId</li>
-            </td>
-            <!--Optional-->
-            <td title="Optional">
-                <li>phoneNumber</li>
-                <li>languageID</li>
-                <li>userType</li>
-                <li>firstNameEng</li>
-                <li>lastNameEng</li>
-                <li>firstNameHeb</li>
-                <li>lastNameHeb</li>
-                <li>firstNameArb</li>
-                <li>lastNameArb</li>
-                <li>genderId</li>
-                <li>maritalStatus</li>
-                <li>demographic</li>
-                <li>dateOfBirth</li>
-                <li>demogrephicsOther</li>
-                <li>workingPlace</li>
-                <li>areaOfInterest</li>
-                <li>expertise</li>
-                <li>groups</li>
-            </td>
-            <!--Response-->
-            <td>
-                <li>user</li>
-                <li>token</li>
-            </td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-        <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>POST</td>
-            <!--Path-->
-            <td>/update</td>
-            <!--Required-->
-            <td title="Required">
-                <li> userId</li>
-            </td>
-            <!--Optional-->
-            <td title="Optional">
-                <li>phoneNumber</li>
-                <li>languageID</li>
-                <li>userType</li>
-                <li>firstNameEng</li>
-                <li>lastNameEng</li>
-                <li>firstNameHeb</li>
-                <li>lastNameHeb</li>
-                <li>firstNameArb</li>
-                <li>lastNameArb</li>
-                <li>genderId</li>
-                <li>maritalStatus</li>
-                <li>demographic</li>
-                <li>dateOfBirth</li>
-                <li>demogrephicsOther</li>
-                <li>workingPlace</li>
-                <li>areaOfInterest</li>
-                <li>expertise</li>
-                <li>groups</li>
-            </td>
-            <!--Response-->
-            <td>Boolean</td>
-            <!--Errors-->
-            <td>-</td>
-        </tr>
-        <tr>
-            <!--Route-->
-            <td></td>
-            <!--Method-->
-            <td>POST</td>
-            <!--Path-->
-            <td>/addGroup</td>
-            <!--Required-->
-            <td title="Required">
-                <li>userId</li>
-                <li>groupId</li>
-            </td>
-            <!--Optional-->
-            <td>
-                -
-            </td>
-            <!--Response-->
-            <td>
-                <li>user</li>
-                <li>group</li>
-            </td>
             <!--Errors-->
             <td>-</td>
         </tr>
@@ -349,11 +184,159 @@
             <!--Method-->
             <td>POST</td>
             <!--Path-->
-            <td>/removeGroup</td>
+            <td>/register</td>
+            <!--Required-->
+            <td title="Required">
+                <li>phoneNumber</li>
+                <li>email</li>
+                <li>password</li>
+                <li>languageID</li>
+                <li>userType</li>
+                <li>firstNameEng</li>
+                <li>lastNameEng</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>firstNameHeb</li>
+                <li>lastNameHeb</li>
+                <li>firstNameArb</li>
+                <li>lastNameArb</li>
+                <li>genderId</li>
+                <li>maritalStatus</li>
+                <li>
+                    demographic:
+                </li>
+                <pre>
+                    {
+                        countryId: Required
+                        countyId: Optional
+                        cityId: Optional
+                        streetId: Optional
+                    }
+                </pre>
+                <li>dateOfBirth</li>
+                <li>demographicsOther</li>
+                <pre>
+                    Array of demographics:
+                    [
+                     {
+                      countryId: Required
+                      countyId: Optional
+                      cityId: Optional
+                      streetId: Optional
+                     },
+                     {...}
+                    ]
+                </pre>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>groups</li>
+            </td>
+            <!--Response-->
+            <td>
+                <li>user</li>
+                <li>token</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Get User</td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:{userId}</td>
+            <!--Required-->
+            <td>
+                -
+            </td>
+            <!--Optional-->
+            <td>
+                -
+            </td>
+            <!--Response-->
+            <td>
+                <li>langId</li>
+                <li>user</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Update User</td>
+            <!--Method-->
+            <td>PUT</td>
+            <!--Path-->
+            <td>/:{userId}</td>
+            <!--Required-->
+            <td title="Required">
+                <li> userId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>phoneNumber</li>
+                <li>languageID</li>
+                <li>userType</li>
+                <li>firstNameEng</li>
+                <li>lastNameEng</li>
+                <li>firstNameHeb</li>
+                <li>lastNameHeb</li>
+                <li>firstNameArb</li>
+                <li>lastNameArb</li>
+                <li>genderId</li>
+                <li>maritalStatus</li>
+                <li>demographic</li>
+                <li>dateOfBirth</li>
+                <li>demographicsOther</li>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>groups</li>
+            </td>
+            <!--Response-->
+            <td>
+                <li>langId</li>
+                <li>user</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Add Group</td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/:{userId}/group</td>
             <!--Required-->
             <td title="Required">
                 <li>groupId</li>
-                <li>userId</li>
+            </td>
+            <!--Optional-->
+            <td>
+                -
+            </td>
+            <!--Response-->
+            <td>
+                <li>user</li>
+                <li>group</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Delete Group</td>
+            <!--Method-->
+            <td>DELETE</td>
+            <!--Path-->
+            <td>/:{userId}/group</td>
+            <!--Required-->
+            <td title="Required">
+                <li>groupId</li>
             </td>
             <!--Optional-->
             <td title="Optional">
@@ -362,6 +345,176 @@
             <td>
                 <li>user</li>
                 <li>group</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Get Demographic</td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:{userId}/demographic</td>
+            <!--Required-->
+            <td title="Required">
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Update Demographic</td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/:{userId}/demographic</td>
+            <!--Required-->
+            <td title="Required">
+                <li>countryId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>countyId</li>
+                <li>cityId</li>
+                <li>streetId</li>
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Remove Demographic</td>
+            <!--Method-->
+            <td>DELETE</td>
+            <!--Path-->
+            <td>/:{userId}/demographic</td>
+            <!--Required-->
+            <td title="Required">
+                <li>demographicId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Get Demographic Other</td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:{userId}/demographicOther</td>
+            <!--Required-->
+            <td title="Required">
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Add Demographic Other</td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/:{userId}/demographicOther</td>
+            <!--Required-->
+            <td title="Required">
+                <li>countryId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+                <li>countyId</li>
+                <li>cityId</li>
+                <li>streetId</li>
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Remove Demographic Other</td>
+            <!--Method-->
+            <td>DELETE</td>
+            <!--Path-->
+            <td>/:{userId}/demographicOther</td>
+            <!--Required-->
+            <td title="Required">
+                <li>demographicId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Get Demographic Language</td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:{userId}/demographic/:{langId}</td>
+            <!--Required-->
+            <td title="Required">
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Get Demographic Other Language</td>
+            <!--Method-->
+            <td>GET</td>
+            <!--Path-->
+            <td>/:{userId}/demographicOther/:{langId}</td>
+            <!--Required-->
+            <td title="Required">
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
+                <li>demographic</li>
             </td>
             <!--Errors-->
             <td>-</td>
@@ -592,9 +745,9 @@
             <!--Response-->
             <td>
                 <li>
-                    <li>langId</li>
-                    <li>key</li>
-					<li>value</li>
+                <li>langId</li>
+                <li>key</li>
+                <li>value</li>
                 </li>
             </td>
             <!--Errors-->
@@ -618,8 +771,8 @@
             <!--Response-->
             <td>
                 <li>
-                    <li>langId</li>
-                    <li>entries</li>
+                <li>langId</li>
+                <li>entries</li>
                 </li>
             </td>
             <!--Errors-->

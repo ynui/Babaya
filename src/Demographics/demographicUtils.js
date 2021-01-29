@@ -9,13 +9,14 @@ const COLLECTION_DEMOGRAPHIC = 'demographics';
 async function createDemographic(data, userId) {
     let newDemographic = null
     try {
+        Utils.isCallValid(data, Demographic.RequestValidators.create.required, Demographic.RequestValidators.create.optional)
         newDemographic = new Demographic(data)
         await DB_Utils.getDocument(COLLECTION_DEMOGRAPHIC, newDemographic.demographicId)
             .then(async (doc) => {
                 if (doc) {
                     newDemographic = new Demographic(doc)
                     newDemographic.addToUsersList(userId)
-                    await DB_Utils.updateDocument(COLLECTION_DEMOGRAPHIC,newDemographic.demographicId, newDemographic.data)
+                    await DB_Utils.updateDocument(COLLECTION_DEMOGRAPHIC, newDemographic.demographicId, newDemographic.data)
                 }
                 else {
                     newDemographic.addToUsersList(userId)
@@ -26,6 +27,19 @@ async function createDemographic(data, userId) {
         throw error
     }
     return newDemographic
+}
+
+async function createDemographicsOther(data, userId) {
+    let demographicsOther = []
+    try {
+        for (var demo of data) {
+            let demoOther = await createDemographic(demo, userId)
+            demographicsOther.push(demoOther)
+        }
+    } catch (error) {
+        throw error
+    }
+    return demographicsOther
 }
 
 async function getDemographic(demographicId) {
@@ -158,7 +172,10 @@ async function getReadableDemographic(demographicId, langId = '1') {
                     let translatedFields = translateFields(found, langId)
                     for (var field in translatedFields) {
                         if (!(found[field] === null))
-                            found[field] = translatedFields[field].value.toString()
+                            found[field] = {
+                                id: translatedFields[field].itemId,
+                                value: translatedFields[field].value
+                            }
                     }
                     demographic = new Demographic(found)
                 } else {
@@ -170,28 +187,27 @@ async function getReadableDemographic(demographicId, langId = '1') {
     }
     return {
         langId,
-        demographic
+        itemId: demographicId,
+        value: demographic
     }
 }
 
-async function getManyReadableDemographic(demographicId, langId = 'eng') {
-    let demographics = null;
-    await DB_Utils.getDocument(COLLECTION_DEMOGRAPHIC, demographicId)
-        .then((found) => {
-            if (found) {
-                let translatedFields = translateFields(found, langId)
-                for (var field in translatedFields) {
-                    if (found[field])
-                        found[field] = translatedFields[field].value
-                }
-                demographic = new Demographic(found)
-            } else {
-                throw Utils.createError(`No user details document found for ${demographicId}`, 'demographic-not-found')
-            }
-        })
+async function getManyReadableDemographic(demographicsIds, langId = '1') {
+    let ids = []
+    let resault = []
+    try {
+        for (var id of demographicsIds) {
+            let newDemo = await getReadableDemographic(id, langId)
+            resault.push(newDemo)
+            ids.push(newDemo.demographicId)
+        }
+    } catch (error) {
+        throw error
+    }
     return {
-        langId,
-        demographic
+        langId: langId,
+        itemId: ids,
+        value: resault
     }
 }
 
@@ -207,6 +223,7 @@ function translateFields(demographic, langId) {
 
 module.exports = {
     createDemographic,
+    createDemographicsOther,
     updateDemographic,
     deleteDemographic,
     getDemographic,

@@ -75,6 +75,19 @@ function validateRequest(req, requiredFields, optionalFields) {
     return resault
 }
 
+function isCallValid(data, requiredFields, optionalFields) {
+    let valid = false;
+    let req = {}
+    try {
+        req.body = data
+        valid = validateRequest(req, requiredFields, optionalFields).valid
+    } catch (error) {
+        throw error
+    }
+    return valid
+}
+
+
 function validateDataWrite(data) {
     let success = false;
     if (data) {
@@ -118,5 +131,6 @@ module.exports = {
     isRequestValid,
     removeTrailingSlash,
     applyMiddleware,
-    convertJsonIntToString
+    convertJsonIntToString,
+    isCallValid
 }

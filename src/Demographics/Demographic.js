@@ -29,6 +29,14 @@ class Demographic {
             optional: [
                 'countryId', 'countyId', 'cityId', 'streetId'
             ]
+        },
+        remove: {
+            required: [
+                'demographicId'
+            ],
+            optional: [
+                // 'countryId', 'countyId', 'cityId', 'streetId'
+            ]
         }
     }
 
@@ -38,7 +46,9 @@ class Demographic {
 
     addToUsersList(userId) {
         this.numberOfUsers++;
-        if (this.users.includes(userId)) throw Utils.createError(`${this.demographicId} already contains user ${userId}`, 'demographic-already-contains-user')
+        if (this.users.includes(userId))
+            // throw Utils.createError(`${this.demographicId} already contains user ${userId}`, 'demographic-already-contains-user')
+            console.warn(`${this.demographicId} already contains user ${userId}`, 'demographic-already-contains-user')
         else {
             this.users.push(userId)
         }

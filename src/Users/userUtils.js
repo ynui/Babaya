@@ -33,27 +33,26 @@ async function registerUser(data) {
 
 async function generateObjects(data) {
     let demographic = null
+    let demographicsOther = []
+    let demoOtherIds = []
     try {
         if (data.demographic) {
             demographic = await demographicUtils.createDemographic(data.demographic, data.userId)
-            data.demographic = demographic.demographicId
+            // data.demographic = demographic.demographicId
+        }
+        if (data.demographicsOther) {
+            demographicsOther = await demographicUtils.createDemographicsOther(data.demographicsOther, data.userId)
+            for (var demo of demographicsOther) {
+                demoOtherIds.push(demo.demographicId)
+            }
+            // data.demographicsOther = demoOtherIds
         }
     } catch (error) {
         console.error(error)
-        data.demographic = null
     }
+    data.demographic = demographic
+    data.demographicsOther = demoOtherIds
     return data
-}
-
-async function addUserToObjectLists(user) {
-    let success = false
-    try {
-        await demographicUtils.addUser(user.demographic, user.userId)
-        success = true
-    } catch (error) {
-        throw error
-    }
-    return success
 }
 
 async function wriewUserDetails(user) {
@@ -171,7 +170,10 @@ async function getReadableUser(userId, langId = '1') {
                 let translatedFields = await translateFields(found, langId)
                 for (var field in translatedFields) {
                     if (found[field])
-                        found[field] = translatedFields[field].value
+                        found[field] = {
+                            id: translatedFields[field].itemId,
+                            value: translatedFields[field].value
+                        }
                 }
                 user = new User(found)
             } else {
@@ -187,17 +189,22 @@ async function getReadableUser(userId, langId = '1') {
 async function translateFields(user, langId) {
     let resault = null
     let readableDemographic = null
+    let readableDemographicsOther = []
     try {
         if (user.demographic) {
             let demographic = await getDemographic(user.demographic)
-            readableDemographic = await Translator.getReadableDemographic(demographic, langId)
+            readableDemographic = await demographicUtils.getReadableDemographic(demographic.demographicId, langId)
+        }
+        if (user.demographicsOther) {
+            readableDemographicsOther = await demographicUtils.getManyReadableDemographic(user.demographicsOther, langId)
         }
         resault = {
             genderId: Translator.getItem('gender', user.genderId, langId) || null,
             workingPlace: Translator.getItem('workingPlace', user.workingPlace, langId) || null,
             expertise: Translator.getItem('expertise', user.expertise, langId) || null,
             areaOfInterest: Translator.getItem('areaOfInterest', user.areaOfInterest, langId) || null,
-            demographic: readableDemographic || null
+            demographic: readableDemographic || null,
+            demographicsOther: readableDemographicsOther || []
         }
     } catch (error) {
         throw error
@@ -300,10 +307,10 @@ async function addDemographicOther(userId, data) {
     let demographic = null
     let user = null
     try {
-        demographic = demographicUtils.createDemographic(data)
+        demographic = await demographicUtils.createDemographic(data)
         user = await getUser(userId)
-        user.addDemographicOther(demographic.demographicId)
-        let updateUser = await updateProfile(userId, { demogrephicsOther: user.demographic })
+        user.addToDemographicOthers(demographic.demographicId)
+        let updateUser = await updateProfile(userId, { demographicsOther: user.demographicsOther })
     } catch (error) {
         throw error
     }
@@ -314,8 +321,8 @@ async function removeDemographicOther(userId, demographicId) {
     let user = null
     try {
         user = await getUser(userId)
-        user.removeDemographicOther(demographicId)
-        let updateUser = await updateProfile(userId, { demogrephicsOther: user.demogrephicsOther })
+        user.removeFromDemographicOthers(demographicId)
+        let updateUser = await updateProfile(userId, { demographicsOther: user.demographicsOther })
     } catch (error) {
         throw error
     }
@@ -379,6 +386,10 @@ function validateRequest(req, res, next, required = [], optional = []) {
         case '/updateDemographic':
             required = Demographic.RequestValidators.update.required
             optional = Demographic.RequestValidators.update.optional
+            break;
+        case '/removeDemographicOther':
+            required = Demographic.RequestValidators.remove.required
+            optional = Demographic.RequestValidators.remove.optional
             break;
         default:
             if (required.length == 0 && optional.length == 0) {

@@ -17,7 +17,7 @@ class User {
         this.genderId = data.genderId || null
         this.maritalStatus = data.maritalStatus || null
         this.dateOfBirth = data.dateOfBirth || null
-        this.demogrephicsOther = data.demogrephicsOther || []
+        this.demographicsOther = data.demographicsOther || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
         this.expertise = data.expertise || []  // list of [expertise, subExpertise]. can be only expertise without subExpertise 
@@ -37,7 +37,7 @@ class User {
             optional: [
                 'firstNameHeb', 'lastNameHeb', 'firstNameArb', 'lastNameArb',
                 'genderId', 'maritalStatus', 'demographic', 'dateOfBirth',
-                'demogrephicsOther', 'workingPlace', 'areaOfInterest', 'expertise',
+                'demographicsOther', 'workingPlace', 'areaOfInterest', 'expertise',
                 'groups'
             ]
         },
@@ -49,7 +49,7 @@ class User {
                 'phoneNumber', 'languageID', 'userType', 'firstNameEng',
                 'lastNameEng', 'firstNameHeb', 'lastNameHeb', 'firstNameArb',
                 'lastNameArb', 'genderId', 'maritalStatus', 'demographic',
-                'dateOfBirth', 'demogrephicsOther', 'workingPlace', 'areaOfInterest',
+                'dateOfBirth', 'demographicsOther', 'workingPlace', 'areaOfInterest',
                 'expertise', 'groups'
             ]
         },
@@ -67,7 +67,7 @@ class User {
         },
         removeGroup: {
             required: [
-                'groupId', 'userId'
+                ['groupId']
             ],
             optional: []
         },
@@ -132,18 +132,18 @@ class User {
     }
 
     addToDemographicOthers(demographicId) {
-        if (this.demogrephicsOther.includes(demographicId)) throw Utils.createError(`${this.userId} is already has demographic ${demographicId}`, 'demographic-already-exists')
+        if (this.demographicsOther.includes(demographicId)) throw Utils.createError(`${this.userId} is already has demographic ${demographicId}`, 'demographic-already-exists')
         else {
-            this.demogrephicsOther.push(demographicId)
+            this.demographicsOther.push(demographicId)
         }
     }
 
-    removeFromFriendsList(demographicId) {
-        if (!this.demogrephicsOther.includes(demographicId)) throw Utils.createError(`${this.userId} does not has demographic ${demographicId}`, 'demographic-not-exists')
+    removeFromDemographicOthers(demographicId) {
+        if (!this.demographicsOther.includes(demographicId)) throw Utils.createError(`${this.userId} does not has demographic ${demographicId}`, 'demographic-not-exists')
         else {
-            var demoIndx = this.demogrephicsOther.indexOf(demographicId);
-            if (groupIndx > -1) {
-                this.demogrephicsOther.splice(demoIndx, 1);
+            var demoIndx = this.demographicsOther.indexOf(demographicId);
+            if (demoIndx > -1) {
+                this.demographicsOther.splice(demoIndx, 1);
             }
         }
     }

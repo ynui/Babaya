@@ -79,15 +79,15 @@ router.get('/logout', middleware, async (req, res, next) => {
   }
 })
 
-router.post('/update', middleware, async (req, res, next) => {
-  try {
-    let success = await userUtils.updateProfile(req.body.userId, req.body)
-    res.send(success)
-    res.end()
-  } catch (error) {
-    next(error)
-  }
-})
+// router.post('/update', middleware, async (req, res, next) => {
+//   try {
+//     let success = await userUtils.updateProfile(req.body.userId, req.body)
+//     res.send(success)
+//     res.end()
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 router.route('/:userId')
   .all((req, res, next) => {
@@ -123,31 +123,40 @@ router.route('/:userId')
 //   }
 // })
 
-router.route('/:userId/:langId')
-  .get(middleware, async (req, res, next) => {
+router.route('/:userId/group')
+  .all((req, res, next) => {
+    if (req.method === 'POST')
+      req.customURL = '/addGroup';
+    else if (req.method === 'DELETE')
+      req.customURL = '/removeGroup';
+    next()
+  })
+  .post(middleware, async (req, res, next) => {
     try {
-      let resault = await userUtils.getReadableUser(req.params.userId, req.params.langId)
-      res.send(resault)
+      let user = await userUtils.addGroup(req.params.userId, req.body.groupId)
+      let group = await groupUtils.addUser(req.body.groupId, req.params.userId)
+      res.send({
+        user: user,
+        group: group
+      })
       res.end()
     } catch (error) {
       next(error)
     }
   })
-
-
-router.post('/:userId/addGroup', middleware, async (req, res, next) => {
-  try {
-    let user = await userUtils.addGroup(req.params.userId, req.body.groupId)
-    let group = await groupUtils.addUser(req.body.groupId, req.params.userId)
-    res.send({
-      user: user,
-      group: group
-    })
-    res.end()
-  } catch (error) {
-    next(error)
-  }
-})
+  .delete(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.removeGroup(req.params.userId, req.body.groupId)
+      let group = await groupUtils.removeUser(req.body.groupId, req.params.userId)
+      res.send({
+        user: user,
+        group: group
+      })
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
 
 router.route('/:userId/demographic')
   .all((req, res, next) => {
@@ -160,7 +169,7 @@ router.route('/:userId/demographic')
   .get(middleware, async (req, res, next) => {
     try {
       let user = await userUtils.getUser(req.params.userId)
-      let demographicId = user.demographic
+      let demographicId = user.demographic.demographicId
       let demographic = await demographicUtils.getReadableDemographic(demographicId)
       res.send(demographic)
       res.end()
@@ -198,29 +207,18 @@ router.route('/:userId/demographic')
 //   }
 // })
 
-router.route('/:userId/demographic/:langId')
-  .get(middleware, async (req, res, next) => {
-    try {
-      let user = await userUtils.getUser(req.params.userId)
-      let demographicId = user.demographic
-      let demographic = await demographicUtils.getReadableDemographic(demographicId, req.params.langId)
-      res.send(demographic)
-      res.end()
-    } catch (error) {
-      next(error)
-    }
-  })
-
-
-router.route('/:userId/DemographicOther')
+router.route('/:userId/demographicOther')
   .all((req, res, next) => {
     if (req.method === 'POST')
-      req.customURL = '/createDemographicOther';
+      req.customURL = '/createDemographic';
+    else if (req.method === 'DELETE')
+      req.customURL = '/removeDemographicOther';
     next()
   })
   .get(middleware, async (req, res, next) => {
     try {
-      let demographics = await demographicUtils.getManyReadableDemographic(req.params.userId)
+      let user = await userUtils.getUser(req.params.userId)
+      let demographics = await demographicUtils.getManyReadableDemographic(user.demographicsOther)
       res.send(demographics)
       res.end()
     } catch (error) {
@@ -246,6 +244,43 @@ router.route('/:userId/DemographicOther')
     }
   })
 
+  router.route('/:userId/demographicOther/:langId')
+  .get(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.getUser(req.params.userId)
+      let demographics = await demographicUtils.getManyReadableDemographic(user.demographicsOther, req.params.langId)
+      res.send(demographics)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+
+router.route('/:userId/demographic/:langId')
+  .get(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.getUser(req.params.userId)
+      let demographicId = user.demographic
+      let demographic = await demographicUtils.getReadableDemographic(demographicId, req.params.langId)
+      res.send(demographic)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+
+
+router.route('/:userId/:langId')
+  .get(middleware, async (req, res, next) => {
+    try {
+      let resault = await userUtils.getReadableUser(req.params.userId, req.params.langId)
+      res.send(resault)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+
 router.post('/resetPassword', middleware, async (req, res, next) => {
   try {
     let success = await userUtils.resetPassword(req.body.email)
@@ -256,18 +291,18 @@ router.post('/resetPassword', middleware, async (req, res, next) => {
   }
 })
 
-router.post('/removeGroup', middleware, async (req, res, next) => {
-  try {
-    let user = await userUtils.removeGroup(req.body.userId, req.body.groupId)
-    let group = await groupUtils.removeUser(req.body.groupId, req.body.userId)
-    res.send({
-      user: user,
-      group: group
-    })
-    res.end()
-  } catch (error) {
-    next(error)
-  }
-})
+// router.post('/removeGroup', middleware, async (req, res, next) => {
+//   try {
+//     let user = await userUtils.removeGroup(req.body.userId, req.body.groupId)
+//     let group = await groupUtils.removeUser(req.body.groupId, req.body.userId)
+//     res.send({
+//       user: user,
+//       group: group
+//     })
+//     res.end()
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 module.exports = router;

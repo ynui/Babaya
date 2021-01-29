@@ -56,7 +56,9 @@ class Group {
 
     addToUsersList(userId) {
         this.numberOfUsers++;
-        if (this.users.includes(userId)) throw Utils.createError(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
+        if (this.users.includes(userId))
+        //  throw Utils.createError(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
+        console.warn(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
         else {
             this.users.push(userId)
         }

@@ -65,6 +65,7 @@ function getSingleItem(dictionary, query, langId = '1') {
     //     resault = getSingleItemByName(dictionary, query, langId)
     return {
         langId: langId,
+        itemId: query,
         value: resault.value
     }
 }
@@ -76,6 +77,7 @@ function getManyItems(dictionary, queryArray, langId = '1') {
     }
     return {
         langId: langId,
+        itemId: queryArray,
         value: resault
     }
 }
@@ -219,25 +221,37 @@ async function getReadableDemographic(demographic, langId = '1') {
     try {
         country = getItem('country', demographic.countryId, langId)
         if (country !== null)
-            resault['country'] = country.value
+            resault['country'] = {
+                id: demographic.countryId,
+                value: country.value
+            }
         else {
             resault['country'] = null
         }
         county = getItem('county', demographic.countyId, langId)
         if (county !== null)
-            resault['county'] = county.value
+            resault['county'] = {
+                id: demographic.countyId,
+                value: county.value
+            }
         else {
             resault['county'] = null
         }
         city = getItem('city', demographic.cityId, langId)
         if (city !== null)
-            resault['city'] = city.value
+            resault['city'] = {
+                id: demographic.cityId,
+                value: city.value
+            }
         else {
             resault['city'] = null
         }
         street = getItem('street', demographic.streetId, langId)
         if (street !== null)
-            resault['street'] = street.value
+            resault['street'] = {
+                id: demographic.streetId,
+                value: street.value
+            }
         else {
             resault['street'] = null
         }
