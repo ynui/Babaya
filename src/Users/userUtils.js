@@ -1,31 +1,59 @@
 const { firebase, admin } = require('../../firebase/fbConfig');
-const DB_Utils = require('../DB/utils')
+const DB_Utils = require('../DB/dbUtils')
 const User = require('./User')
 const Demographic = require('../Demographics/Demographic')
 const Utils = require('../Utils')
 const demographicUtils = require('../Demographics/demographicUtils')
 const Translator = require('../Translateor/translator')
-const { use } = require('../../routes/usersRouter');
 
 const COLLECTION_USERS_DETAILS = 'usersDetails';
 
 async function registerUser(data) {
     let newUser = null;
+    let userId = null
     try {
         await firebase
             .auth()
             .createUserWithEmailAndPassword(data.email, data.password)
-            .then((user) => {
+            .then(async (user) => {
                 let registeredUser = user.user
-                data.userId = registeredUser.uid
+                userId = registeredUser.uid
+                data.userId = userId
+                data = await generateObjects(data)
                 newUser = new User(data)
             }).catch((error) => {
                 throw error
             })
+        // addUserToObjectLists(newUser)
     } catch (error) {
         throw error
     }
     return newUser
+}
+
+async function generateObjects(data) {
+    let demographic = null
+    try {
+        if (data.demographic) {
+            demographic = await demographicUtils.createDemographic(data.demographic, data.userId)
+            data.demographic = demographic.demographicId
+        }
+    } catch (error) {
+        console.error(error)
+        data.demographic = null
+    }
+    return data
+}
+
+async function addUserToObjectLists(user) {
+    let success = false
+    try {
+        await demographicUtils.addUser(user.demographic, user.userId)
+        success = true
+    } catch (error) {
+        throw error
+    }
+    return success
 }
 
 async function wriewUserDetails(user) {
@@ -239,8 +267,12 @@ async function addDemographic(userId, data) {
     let demographic = null
     let user = null
     try {
-        demographic = await demographicUtils.createDemographic(data)
+        demographic = await demographicUtils.createDemographic(data, userId)
         user = await getUser(userId)
+        if (user.demographic !== null) {
+            await demographicUtils.removeUser(user.demographic, userId)
+            user.removeDemographic()
+        }
         user.setDemographic(demographic.demographicId)
         let updateUser = await updateProfile(userId, { demographic: user.demographic })
     } catch (error) {
@@ -254,6 +286,7 @@ async function removeDemographic(userId, groupId) {
     let user = null
     try {
         user = await getUser(userId)
+        await demographicUtils.removeUser(user.demographic, userId)
         user.removeDemographic(groupId)
         let updateUser = await updateProfile(userId, { demographic: user.demographic })
         success = true

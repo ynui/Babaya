@@ -8,7 +8,8 @@ module.exports = [
         "id": 1,
         "eng_name": "PORTUGAL",
         "heb_name": "פורטוגל"
-    },    {
+    },
+    {
         "id": 2,
         "eng_name": "JAPAN",
         "heb_name": "יפן"

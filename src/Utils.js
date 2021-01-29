@@ -1,6 +1,9 @@
 const { exec } = require('child_process');
 const crypto = require('crypto');
 
+const ENCRYPTION = 'sha1'
+
+
 function createError(message, code = null, status = null) {
     let error = new Error(message);
     error.status = status
@@ -23,16 +26,33 @@ function generateId() {
     return resID;
 }
 
+function generateSha1Id(input) {
+    return crypto.createHash(ENCRYPTION).update(JSON.stringify(input)).digest('hex')
+}
+
+function convertJsonIntToString(data) {
+    for (field in data) {
+        if (typeof data[field] === 'number')
+            data[field] = data[field].toString()
+        if (typeof data[field] === 'object')
+            data[field] = convertJsonIntToString(data[field])
+
+    }
+    return data
+}
+
 function validateRequest(req, requiredFields, optionalFields) {
     let resault = {
         valid: false,
         error: null
     }
+    req.body = convertJsonIntToString(req.body)
     let reqData = req.body
     let invalidFound = false
     if (requiredFields && !invalidFound) {
         for (var field of requiredFields) {
             if (!reqData[field]) {
+                // if (reqData[field] === 0) continue;
                 invalidFound = true
                 resault.valid = false
                 resault.error = createError(`${req.method} requset on ${req.originalUrl} must contain field: ${field}`)
@@ -91,10 +111,12 @@ function applyMiddleware(middleware, req, res, next) {
 
 module.exports = {
     generateId,
+    generateSha1Id,
     validateRequest,
     validateDataWrite,
     createError,
     isRequestValid,
     removeTrailingSlash,
-    applyMiddleware
+    applyMiddleware,
+    convertJsonIntToString
 }

@@ -1,5 +1,5 @@
 const Group = require('./Group')
-const DB_Utils = require('../DB/utils')
+const DB_Utils = require('../DB/dbUtils')
 const Utils = require('../Utils')
 
 const COLLECTION_GROUPS = 'groups';

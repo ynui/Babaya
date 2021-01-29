@@ -1,16 +1,27 @@
 const Demographic = require('./Demographic')
-const DB_Utils = require('../DB/utils')
+const DB_Utils = require('../DB/dbUtils')
 const Utils = require('../Utils')
 const Translator = require('../Translateor/translator')
 
 
 const COLLECTION_DEMOGRAPHIC = 'demographics';
 
-async function createDemographic(data) {
+async function createDemographic(data, userId) {
     let newDemographic = null
     try {
         newDemographic = new Demographic(data)
-        writeDemographicDetails(newDemographic)
+        await DB_Utils.getDocument(COLLECTION_DEMOGRAPHIC, newDemographic.demographicId)
+            .then(async (doc) => {
+                if (doc) {
+                    newDemographic = new Demographic(doc)
+                    newDemographic.addToUsersList(userId)
+                    await DB_Utils.updateDocument(COLLECTION_DEMOGRAPHIC,newDemographic.demographicId, newDemographic.data)
+                }
+                else {
+                    newDemographic.addToUsersList(userId)
+                    await writeDemographicDetails(newDemographic)
+                }
+            })
     } catch (error) {
         throw error
     }
@@ -64,7 +75,7 @@ async function addUser(demographicId, userId) {
         demographic = await getDemographic(demographicId)
         if (demographic.users.includes(userId)) throw Utils.createError(`${demographicId} already has user ${userId}`, 'demographic-already-contains-user')
         demographic.addToUsersList(userId)
-        let updatedDemographic = await updateDemographic(demographic, { users: demographic.users })
+        let updatedDemographic = await updateDemographic(demographicId, demographic.data)
     } catch (error) {
         throw error
     }
@@ -76,7 +87,7 @@ async function removeUser(demographicId, userId) {
     try {
         demographic = await getDemographic(demographicId)
         demographic.removeFromUsersList(userId)
-        let updatedDemographic = await updateGroup(demographicId, { users: demographic.users })
+        let updatedDemographic = await updateDemographic(demographicId, demographic.data)
     } catch (error) {
         throw error
     }
@@ -203,5 +214,7 @@ module.exports = {
     getManyReadableDemographic,
     getAllDemographics,
     validateRequest,
-    writeDemographicDetails
+    writeDemographicDetails,
+    removeUser,
+    addUser
 }

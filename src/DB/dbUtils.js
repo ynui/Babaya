@@ -40,11 +40,14 @@ async function writeToCollection(collection, document, data) {
     return success
 }
 
-async function updateDocument(collection, document, data) {
+async function updateDocument(collection, document, data, docRef = null) {
     let success = false
     try {
         Utils.validateDataWrite(data)
-        await db.collection(collection).doc(document).update(data)
+        if (!(docRef === null))
+            await docRef.update(data)
+        else
+            await db.collection(collection).doc(document).update(data)
         success = true
     } catch (error) {
         console.error('Error updating ' + collection + document + data)
@@ -86,11 +89,17 @@ async function deleteDocument(collection, document) {
     return resault
 }
 
+async function isIdAlreadyExists(collection, query) {
+    let doc = getDocument(collection, document)
+    return doc.exists()
+}
+
 module.exports = {
     writeToCollection,
     updateDocument,
     getDocument,
     // uploadImage,
     getCollection,
-    deleteDocument
+    deleteDocument,
+    isIdAlreadyExists
 };

@@ -1,5 +1,10 @@
 module.exports = [
     {
+        "id": 0,
+        "eng_name": "ADDRESS 0",
+        "heb_name": "כתובת 0"
+    },
+    {
         "id": 1,
         "eng_name": "ADDRESS 1",
         "heb_name": "כתובת 1"

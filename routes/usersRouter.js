@@ -92,7 +92,7 @@ router.post('/update', middleware, async (req, res, next) => {
 router.route('/:userId')
   .all((req, res, next) => {
     if (req.method === 'POST')
-      req.customURL = '/getUserLang';
+      req.customURL = '/update';
     next()
   })
   .get(middleware, async (req, res, next) => {
@@ -104,9 +104,29 @@ router.route('/:userId')
       next(error)
     }
   })
-  .post(middleware, async (req, res, next) => {
+  .put(middleware, async (req, res, next) => {
     try {
-      let resault = await userUtils.getReadableUser(req.params.userId, req.body.langId)
+      let success = await userUtils.updateProfile(req.params.userId, req.body)
+      res.send(success)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+// .post(middleware, async (req, res, next) => {
+//   try {
+//     let resault = await userUtils.getReadableUser(req.params.userId, req.body.langId)
+//     res.send(resault)
+//     res.end()
+//   } catch (error) {
+//     next(error)
+//   }
+// })
+
+router.route('/:userId/:langId')
+  .get(middleware, async (req, res, next) => {
+    try {
+      let resault = await userUtils.getReadableUser(req.params.userId, req.params.langId)
       res.send(resault)
       res.end()
     } catch (error) {
@@ -115,10 +135,10 @@ router.route('/:userId')
   })
 
 
-router.post('/addGroup', middleware, async (req, res, next) => {
+router.post('/:userId/addGroup', middleware, async (req, res, next) => {
   try {
-    let user = await userUtils.addGroup(req.body.userId, req.body.groupId)
-    let group = await groupUtils.addUser(req.body.groupId, req.body.userId)
+    let user = await userUtils.addGroup(req.params.userId, req.body.groupId)
+    let group = await groupUtils.addUser(req.body.groupId, req.params.userId)
     res.send({
       user: user,
       group: group
@@ -166,12 +186,25 @@ router.route('/:userId/demographic')
       next(error)
     }
   })
-  .put(middleware, async (req, res, next) => {
+// .put(middleware, async (req, res, next) => {
+//   try {
+//     let user = await userUtils.getUser(req.params.userId)
+//     let demographicId = user.demographic
+//     let success = await demographicUtils.updateDemographic(demographicId, req.body)
+//     res.send(success)
+//     res.end()
+//   } catch (error) {
+//     next(error)
+//   }
+// })
+
+router.route('/:userId/demographic/:langId')
+  .get(middleware, async (req, res, next) => {
     try {
       let user = await userUtils.getUser(req.params.userId)
       let demographicId = user.demographic
-      let success = await demographicUtils.updateDemographic(demographicId, req.body)
-      res.send(success)
+      let demographic = await demographicUtils.getReadableDemographic(demographicId, req.params.langId)
+      res.send(demographic)
       res.end()
     } catch (error) {
       next(error)

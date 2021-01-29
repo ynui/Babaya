@@ -1,5 +1,10 @@
 module.exports = [
     {
+        "id": 0,
+        "eng_name": "DEPARTMENT 0",
+        "heb_name": "מחלקה 0"
+    },
+    {
         "id": 1,
         "eng_name": "DEPARTMENT 1",
         "heb_name": "מחלקה 1"

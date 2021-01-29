@@ -16,13 +16,16 @@ class User {
         this.lastNameArb = data.lastNameArb || null
         this.genderId = data.genderId || null
         this.maritalStatus = data.maritalStatus || null
-        this.demographic = data.demographic || null
         this.dateOfBirth = data.dateOfBirth || null
         this.demogrephicsOther = data.demogrephicsOther || []
         this.workingPlace = data.workingPlace || [] // list of [workingPlace, workingPlaceDepartment]. can be only workingPlace without workingPlaceDepartment 
         this.areaOfInterest = data.areaOfInterest || []  // list of [areaOfInterestID, subAreaOfInterest]. can be only areaOfInterest without subAreaOfInterest 
         this.expertise = data.expertise || []  // list of [expertise, subExpertise]. can be only expertise without subExpertise 
         this.groups = data.groups || []
+        this.demographic = data.demographic || null
+
+
+
     }
 
     static RequestValidators = {
@@ -40,7 +43,7 @@ class User {
         },
         update: {
             required: [
-                'userId'
+                // 'userId'
             ],
             optional: [
                 'phoneNumber', 'languageID', 'userType', 'firstNameEng',
@@ -55,7 +58,7 @@ class User {
             optional: []
         },
         addGroup: {
-            required: ['userId', 'groupId'],
+            required: ['groupId'],
             optional: []
         },
         resetPassword: {
