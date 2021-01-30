@@ -113,15 +113,15 @@ router.route('/:userId')
       next(error)
     }
   })
-// .post(middleware, async (req, res, next) => {
-//   try {
-//     let resault = await userUtils.getReadableUser(req.params.userId, req.body.langId)
-//     res.send(resault)
-//     res.end()
-//   } catch (error) {
-//     next(error)
-//   }
-// })
+.post(middleware, async (req, res, next) => {
+  try {
+    let resault = await userUtils.getUser(req.params.userId)
+    res.send(resault)
+    res.end()
+  } catch (error) {
+    next(error)
+  }
+})
 
 router.route('/:userId/group')
   .all((req, res, next) => {
