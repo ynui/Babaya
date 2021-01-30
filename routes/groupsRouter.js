@@ -3,7 +3,6 @@ var router = express.Router();
 const groupUtils = require('../src/Groups/groupUtils')
 const userUtils = require('../src/Users/userUtils')
 const Utils = require('../src/Utils');
-const { route } = require('./usersRouter');
 
 router.use(groupUtils.validateRequest)
 router.use(Utils.isRequestValid)

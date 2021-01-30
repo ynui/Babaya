@@ -6,7 +6,7 @@ class User {
         this.userId = data.userId
         this.phoneNumber = data.phoneNumber
         this.email = data.email
-        this.languageID = data.languageID
+        this.languageId = data.languageId
         this.userType = data.userType
         this.firstNameEng = data.firstNameEng
         this.lastNameEng = data.lastNameEng
@@ -31,7 +31,7 @@ class User {
     static RequestValidators = {
         register: {
             required: [
-                'phoneNumber', 'email', 'password', 'languageID',
+                'phoneNumber', 'email', 'password', 'languageId',
                 'userType', 'firstNameEng', 'lastNameEng'
             ],
             optional: [
@@ -46,11 +46,10 @@ class User {
                 // 'userId'
             ],
             optional: [
-                'phoneNumber', 'languageID', 'userType', 'firstNameEng',
+                'phoneNumber', 'languageId', 'userType', 'firstNameEng',
                 'lastNameEng', 'firstNameHeb', 'lastNameHeb', 'firstNameArb',
-                'lastNameArb', 'genderId', 'maritalStatus', 'demographic',
-                'dateOfBirth', 'demographicsOther', 'workingPlace', 'areaOfInterest',
-                'expertise', 'groups'
+                'lastNameArb', 'genderId', 'maritalStatus', 'dateOfBirth',
+                'workingPlace', 'areaOfInterest', 'expertise', 'groups'
             ]
         },
         login: {
@@ -67,7 +66,7 @@ class User {
         },
         removeGroup: {
             required: [
-                ['groupId']
+                'groupId'
             ],
             optional: []
         },
@@ -82,6 +81,16 @@ class User {
         updateDemographic: {
             required: Demographic.RequestValidators.update.required,
             optional: Demographic.RequestValidators.update.optional
+        },
+        createGroup: {
+            required: [
+                'name', 'description', 'publicity'
+            ],
+            optional: [
+                'groupManager', 'rulesList', 'rulesText', 'workingPlace',
+                'areaOfInterest', 'expertise', 'demographicInfo', 'users',
+                'events', 'discussion'
+            ]
         }
     }
 

@@ -11,7 +11,7 @@
 
         td,
         th {
-            border: 1px solid #ddd;
+            border: 1px solid #bbb;
             padding: 8px;
         }
 
@@ -190,7 +190,7 @@
                 <li>phoneNumber</li>
                 <li>email</li>
                 <li>password</li>
-                <li>languageID</li>
+                <li>languageId</li>
                 <li>userType</li>
                 <li>firstNameEng</li>
                 <li>lastNameEng</li>
@@ -207,27 +207,27 @@
                     demographic:
                 </li>
                 <pre>
-                    {
-                        countryId: Required
-                        countyId: Optional
-                        cityId: Optional
-                        streetId: Optional
-                    }
+Single demigraphic:
+{
+    countryId: Required
+    countyId: Optional
+    cityId: Optional
+    streetId: Optional
+}
                 </pre>
-                <li>dateOfBirth</li>
                 <li>demographicsOther</li>
                 <pre>
-                    Array of demographics:
-                    [
-                     {
-                      countryId: Required
-                      countyId: Optional
-                      cityId: Optional
-                      streetId: Optional
-                     },
-                     {...}
-                    ]
+Array of demographics:
+[
+    {
+        Demographic 1
+    },
+    {
+        Demographic 2
+    }...
+]
                 </pre>
+                <li>dateOfBirth</li>
                 <li>workingPlace</li>
                 <li>areaOfInterest</li>
                 <li>expertise</li>
@@ -273,12 +273,11 @@
             <td>/:{userId}</td>
             <!--Required-->
             <td title="Required">
-                <li> userId</li>
             </td>
             <!--Optional-->
             <td title="Optional">
                 <li>phoneNumber</li>
-                <li>languageID</li>
+                <li>languageId</li>
                 <li>userType</li>
                 <li>firstNameEng</li>
                 <li>lastNameEng</li>
@@ -288,9 +287,7 @@
                 <li>lastNameArb</li>
                 <li>genderId</li>
                 <li>maritalStatus</li>
-                <li>demographic</li>
                 <li>dateOfBirth</li>
-                <li>demographicsOther</li>
                 <li>workingPlace</li>
                 <li>areaOfInterest</li>
                 <li>expertise</li>
@@ -306,14 +303,13 @@
         </tr>
         <tr>
             <!--Route-->
-            <td>Add Group</td>
+            <td>Get Groups</td>
             <!--Method-->
-            <td>POST</td>
+            <td>GET</td>
             <!--Path-->
             <td>/:{userId}/group</td>
             <!--Required-->
             <td title="Required">
-                <li>groupId</li>
             </td>
             <!--Optional-->
             <td>
@@ -321,7 +317,59 @@
             </td>
             <!--Response-->
             <td>
-                <li>user</li>
+                <li>User's groups list</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Create Group</td>
+            <!--Method-->
+            <td>POST</td>
+            <!--Path-->
+            <td>/:{userId}/group</td>
+            <!--Required-->
+            <td title="Required">
+                <li>name</li>
+                <li>description</li>
+                <li>publicity</li>
+            </td>
+            <!--Optional-->
+            <td>
+                <li>groupManager</li>
+                <li>rulesList</li>
+                <li>rulesText</li>
+                <li>workingPlace</li>
+                <li>areaOfInterest</li>
+                <li>expertise</li>
+                <li>users</li>
+                <li>events</li>
+                <li>discussion</li>
+            </td>
+            <!--Response-->
+            <td>
+                <li>group</li>
+            </td>
+            <!--Errors-->
+            <td>-</td>
+        </tr>
+        <tr>
+            <!--Route-->
+            <td>Update Group List</td>
+            <!--Method-->
+            <td>PUT</td>
+            <!--Path-->
+            <td>/:{userId}/group</td>
+            <!--Required-->
+            <td title="Required">
+                <li>groupId</li>
+            </td>
+            <!--Optional-->
+            <td title="Optional">
+            </td>
+            <!--Response-->
+            <td>
                 <li>group</li>
             </td>
             <!--Errors-->
@@ -343,7 +391,6 @@
             </td>
             <!--Response-->
             <td>
-                <li>user</li>
                 <li>group</li>
             </td>
             <!--Errors-->
@@ -373,7 +420,7 @@
             <!--Route-->
             <td>Update Demographic</td>
             <!--Method-->
-            <td>POST</td>
+            <td>PUT</td>
             <!--Path-->
             <td>/:{userId}/demographic</td>
             <!--Required-->
@@ -388,7 +435,7 @@
             </td>
             <!--Response-->
             <td>
-                <li>demographic</li>
+                <li>user</li>
             </td>
             <!--Errors-->
             <td>-</td>
@@ -402,14 +449,13 @@
             <td>/:{userId}/demographic</td>
             <!--Required-->
             <td title="Required">
-                <li>demographicId</li>
             </td>
             <!--Optional-->
             <td title="Optional">
             </td>
             <!--Response-->
             <td>
-                <li>demographic</li>
+                <li>Boolean</li>
             </td>
             <!--Errors-->
             <td>-</td>
@@ -429,7 +475,7 @@
             </td>
             <!--Response-->
             <td>
-                <li>demographic</li>
+                <li>[demographics]</li>
             </td>
             <!--Errors-->
             <td>-</td>
@@ -453,7 +499,7 @@
             </td>
             <!--Response-->
             <td>
-                <li>demographic</li>
+                <li>User</li>
             </td>
             <!--Errors-->
             <td>-</td>
@@ -474,7 +520,7 @@
             </td>
             <!--Response-->
             <td>
-                <li>demographic</li>
+                <li>Boolean</li>
             </td>
             <!--Errors-->
             <td>-</td>
@@ -514,7 +560,7 @@
             </td>
             <!--Response-->
             <td>
-                <li>demographic</li>
+                <li>[demographics]</li>
             </td>
             <!--Errors-->
             <td>-</td>

@@ -26,7 +26,7 @@ function generateId() {
     return resID;
 }
 
-function generateSha1Id(input) {
+function generateHashId(input) {
     return crypto.createHash(ENCRYPTION).update(JSON.stringify(input)).digest('hex')
 }
 
@@ -124,7 +124,7 @@ function applyMiddleware(middleware, req, res, next) {
 
 module.exports = {
     generateId,
-    generateSha1Id,
+    generateHashId,
     validateRequest,
     validateDataWrite,
     createError,

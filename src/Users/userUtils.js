@@ -33,24 +33,22 @@ async function registerUser(data) {
 
 async function generateObjects(data) {
     let demographic = null
-    let demographicsOther = []
+    let demographicsOther = null
     let demoOtherIds = []
     try {
         if (data.demographic) {
             demographic = await demographicUtils.createDemographic(data.demographic, data.userId)
-            // data.demographic = demographic.demographicId
         }
         if (data.demographicsOther) {
             demographicsOther = await demographicUtils.createDemographicsOther(data.demographicsOther, data.userId)
             for (var demo of demographicsOther) {
                 demoOtherIds.push(demo.demographicId)
             }
-            // data.demographicsOther = demoOtherIds
         }
     } catch (error) {
         console.error(error)
     }
-    data.demographic = demographic
+    data.demographic = demographic.demographicId
     data.demographicsOther = demoOtherIds
     return data
 }
@@ -164,14 +162,16 @@ async function getUser(userId) {
 
 async function getReadableUser(userId, langId = '1') {
     let user = null;
+    let readableLanguage = null
     await DB_Utils.getDocument(COLLECTION_USERS_DETAILS, userId)
         .then(async (found) => {
             if (found) {
                 let translatedFields = await translateFields(found, langId)
+                readableLanguage = { itemId: translatedFields.requestLanguage.itemId, value: translatedFields.requestLanguage.value }
                 for (var field in translatedFields) {
-                    if (found[field])
+                    if (!(found[field] === null))
                         found[field] = {
-                            id: translatedFields[field].itemId,
+                            itemId: translatedFields[field].itemId,
                             value: translatedFields[field].value
                         }
                 }
@@ -181,7 +181,7 @@ async function getReadableUser(userId, langId = '1') {
             }
         })
     return {
-        langId,
+        langId: readableLanguage,
         user
     }
 }
@@ -192,14 +192,16 @@ async function translateFields(user, langId) {
     let readableDemographicsOther = []
     try {
         if (user.demographic) {
-            let demographic = await getDemographic(user.demographic)
-            readableDemographic = await demographicUtils.getReadableDemographic(demographic.demographicId, langId)
+            readableDemographic = await demographicUtils.getReadableDemographic(user.demographic, langId)
         }
         if (user.demographicsOther) {
-            readableDemographicsOther = await demographicUtils.getManyReadableDemographic(user.demographicsOther, langId)
+            readableDemographicsOther = await demographicUtils.getReadableDemographic(user.demographicsOther, langId)
         }
         resault = {
+            requestLanguage: Translator.getItem('language', langId, langId) || null,
+            languageId: Translator.getItem('language', user.languageId, langId) || null,
             genderId: Translator.getItem('gender', user.genderId, langId) || null,
+            userType: Translator.getItem('userTypes', user.userType, langId) || null,
             workingPlace: Translator.getItem('workingPlace', user.workingPlace, langId) || null,
             expertise: Translator.getItem('expertise', user.expertise, langId) || null,
             areaOfInterest: Translator.getItem('areaOfInterest', user.areaOfInterest, langId) || null,
@@ -288,14 +290,14 @@ async function addDemographic(userId, data) {
     return user
 }
 
-async function removeDemographic(userId, groupId) {
+async function removeDemographic(userId) {
     let success = false
     let user = null
     try {
         user = await getUser(userId)
         await demographicUtils.removeUser(user.demographic, userId)
-        user.removeDemographic(groupId)
-        let updateUser = await updateProfile(userId, { demographic: user.demographic })
+        user.removeDemographic()
+        let updatedUser = await updateProfile(userId, { demographic: user.demographic })
         success = true
     } catch (error) {
         throw error
@@ -318,15 +320,16 @@ async function addDemographicOther(userId, data) {
 }
 
 async function removeDemographicOther(userId, demographicId) {
-    let user = null
+    let success = false
     try {
         user = await getUser(userId)
         user.removeFromDemographicOthers(demographicId)
         let updateUser = await updateProfile(userId, { demographicsOther: user.demographicsOther })
+        success = true
     } catch (error) {
         throw error
     }
-    return user
+    return success
 }
 
 async function resetPassword(email) {
@@ -391,6 +394,14 @@ function validateRequest(req, res, next, required = [], optional = []) {
             required = Demographic.RequestValidators.remove.required
             optional = Demographic.RequestValidators.remove.optional
             break;
+        case '/createGroup':
+            required = User.RequestValidators.createGroup.required
+            optional = User.RequestValidators.createGroup.optional
+            break;
+        case '/createGroup':
+            required = Demographic.RequestValidators.remove.required
+            optional = Demographic.RequestValidators.remove.optional
+            break;
         default:
             if (required.length == 0 && optional.length == 0) {
                 console.warn(`No validators provided for ${originalUrl}`)
@@ -437,10 +448,10 @@ async function deleteUser(userId) {
             .auth()
             .deleteUser(userId)
             .then(() => {
-                console.log('Successfully deleted user');
+                console.log(`Successfully deleted user ${user.uid}`);
             })
             .catch((error) => {
-                console.log('Error deleting user:', error);
+                console.log(`Error deleting user ${user.uid} Error: ${error}`);
             });
         await DB_Utils.deleteDocument(COLLECTION_USERS_DETAILS, userId)
     } catch (error) {
@@ -449,16 +460,20 @@ async function deleteUser(userId) {
 }
 
 async function deleteAllUsers(seriously) {
+    let totalUsers = 0
+    let deleted = 0
+    let notDeleted = 0
     if (seriously) {
         await getAllUsers()
             .then(async (all) => {
+                totalUsers = all.users.length
                 for (user of all.users) {
                     await deleteUser(user.uid)
                         .then(() => {
-                            console.log(`Successfully deleted user ${user.uid}`);
+                            deleted++;
                         })
                         .catch((error) => {
-                            console.log('Error deleting user:', error);
+                            notDeleted++
                         });
                 }
 
@@ -467,6 +482,7 @@ async function deleteAllUsers(seriously) {
     else {
         return 'Your\'e not serious....'
     }
+    return `Total Users: ${totalUsers}\nDeleted Successfully: ${deleted}\nNot Deleted: ${notDeleted}`
 }
 
 module.exports = {

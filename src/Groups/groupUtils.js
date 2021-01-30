@@ -1,10 +1,14 @@
 const Group = require('./Group')
 const DB_Utils = require('../DB/dbUtils')
-const Utils = require('../Utils')
+const Utils = require('../Utils');
+const userUtils = require('../Users/userUtils')
 
 const COLLECTION_GROUPS = 'groups';
 
-async function createGroup(data) {
+async function createGroup(data, createUser = null) {
+    if (createUser) {
+        data.createUser = createUser
+    }
     let newGroup = null
     try {
         newGroup = new Group(data)
@@ -25,6 +29,19 @@ async function getGroup(groupId) {
             }
         })
     return group
+}
+
+async function getAllUserGroups(userId) {
+    let groups = null;
+    try {
+        let user = await userUtils.getUser(userId)
+        let groupIds = user.groups
+        //readable?
+        groups = groupIds
+    } catch (error) {
+        throw error
+    }
+    return groups
 }
 
 async function getAllGroups() {
@@ -161,5 +178,6 @@ module.exports = {
     updateGroup,
     validateRequest,
     removeUser,
-    deleteGroup
+    deleteGroup,
+    getAllUserGroups
 }

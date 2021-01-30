@@ -164,20 +164,42 @@ function validateRequest(req, res, next, required = [], optional = []) {
 }
 
 async function getReadableDemographic(demographicId, langId = '1') {
-    let demographic = null;
+    let resault = null
+    let readableLanguage = null
+    if (demographicId) {
+        readableLanguage = Translator.getReadableLanguage(langId)
+        langId = langId.toString()
+        if (Array.isArray(demographicId))
+            resault = await getManyReadableDemographic(demographicId, langId)
+        else
+            resault = await getSingleReadableDemographic(demographicId, langId)
+    }
+    else {
+        throw Utils.createError(`User do not have demographic information`, 'no-demographic-available')
+    }
+    return {
+        langId: readableLanguage,
+        itemId: resault.itemId,
+        value: resault.value
+    }
+}
+async function getSingleReadableDemographic(demographicId, langId = '1') {
+    let readableDemographic = null;
     if (demographicId) {
         await getDemographic(demographicId)
             .then(async (found) => {
                 if (found) {
-                    let translatedFields = translateFields(found, langId)
-                    for (var field in translatedFields) {
-                        if (!(found[field] === null))
+                    let translatedFields = Translator.getReadableDemographic(found, langId)
+                    for (var field in translatedFields.value) {
+                        if (!(found[field] === null)) {
+                            var item = translatedFields.value[field]
                             found[field] = {
-                                id: translatedFields[field].itemId,
-                                value: translatedFields[field].value
+                                itemId: item.itemId,
+                                value: item.value
                             }
+                        }
                     }
-                    demographic = new Demographic(found)
+                    readableDemographic = new Demographic(found)
                 } else {
                     throw Utils.createError(`No user details document found for ${demographicId}`, 'demographic-not-found')
                 }
@@ -188,7 +210,7 @@ async function getReadableDemographic(demographicId, langId = '1') {
     return {
         langId,
         itemId: demographicId,
-        value: demographic
+        value: readableDemographic
     }
 }
 
@@ -198,8 +220,8 @@ async function getManyReadableDemographic(demographicsIds, langId = '1') {
     try {
         for (var id of demographicsIds) {
             let newDemo = await getReadableDemographic(id, langId)
-            resault.push(newDemo)
-            ids.push(newDemo.demographicId)
+            resault.push(newDemo.value)
+            ids.push(newDemo.itemId)
         }
     } catch (error) {
         throw error
@@ -211,15 +233,15 @@ async function getManyReadableDemographic(demographicsIds, langId = '1') {
     }
 }
 
-function translateFields(demographic, langId) {
-    let resault = {
-        countryId: Translator.getItem('country', demographic.countryId, langId) || null,
-        countyId: Translator.getItem('county', demographic.countyId, langId) || null,
-        cityId: Translator.getItem('city', demographic.cityId, langId) || null,
-        streetId: Translator.getItem('street', demographic.streetId, langId) || null
-    }
-    return resault
-}
+// function translateFields(demographic, langId) {
+//     let resault = {
+//         countryId: Translator.getItem('country', demographic.countryId, langId) || null,
+//         countyId: Translator.getItem('county', demographic.countyId, langId) || null,
+//         cityId: Translator.getItem('city', demographic.cityId, langId) || null,
+//         streetId: Translator.getItem('street', demographic.streetId, langId) || null
+//     }
+//     return resault
+// }
 
 module.exports = {
     createDemographic,

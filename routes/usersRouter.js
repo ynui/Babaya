@@ -91,7 +91,7 @@ router.get('/logout', middleware, async (req, res, next) => {
 
 router.route('/:userId')
   .all((req, res, next) => {
-    if (req.method === 'POST')
+    if (req.method === 'PUT')
       req.customURL = '/update';
     next()
   })
@@ -126,19 +126,38 @@ router.route('/:userId')
 router.route('/:userId/group')
   .all((req, res, next) => {
     if (req.method === 'POST')
+      req.customURL = '/createGroup';
+    else if (req.method === 'PUT')
       req.customURL = '/addGroup';
     else if (req.method === 'DELETE')
       req.customURL = '/removeGroup';
     next()
   })
+  .get(middleware, async (req, res, next) => {
+    try {
+      let groups = await groupUtils.getAllUserGroups(req.params.userId)
+      res.send(groups)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
   .post(middleware, async (req, res, next) => {
+    try {
+      let newGroup = await groupUtils.createGroup(req.body, req.params.userId)
+      let updatedUser = await userUtils.addGroup(newGroup.createUser, newGroup.groupId)
+      let success = await groupUtils.writeGroupDetails(newGroup)
+      res.send(newGroup)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+  .put(middleware, async (req, res, next) => {
     try {
       let user = await userUtils.addGroup(req.params.userId, req.body.groupId)
       let group = await groupUtils.addUser(req.body.groupId, req.params.userId)
-      res.send({
-        user: user,
-        group: group
-      })
+      res.send(user)
       res.end()
     } catch (error) {
       next(error)
@@ -148,10 +167,7 @@ router.route('/:userId/group')
     try {
       let user = await userUtils.removeGroup(req.params.userId, req.body.groupId)
       let group = await groupUtils.removeUser(req.body.groupId, req.params.userId)
-      res.send({
-        user: user,
-        group: group
-      })
+      res.send(user)
       res.end()
     } catch (error) {
       next(error)
@@ -163,21 +179,20 @@ router.route('/:userId/demographic')
     if (req.method === 'POST')
       req.customURL = '/createDemographic';
     if (req.method === 'PUT')
-      req.customURL = '/updateDemographic';
+      req.customURL = '/createDemographic';
     next()
   })
   .get(middleware, async (req, res, next) => {
     try {
       let user = await userUtils.getUser(req.params.userId)
-      let demographicId = user.demographic.demographicId
-      let demographic = await demographicUtils.getReadableDemographic(demographicId)
+      let demographic = await demographicUtils.getReadableDemographic(user.demographic)
       res.send(demographic)
       res.end()
     } catch (error) {
       next(error)
     }
   })
-  .post(middleware, async (req, res, next) => {
+  .put(middleware, async (req, res, next) => {
     try {
       let user = await userUtils.addDemographic(req.params.userId, req.body)
       res.send(user)
@@ -206,6 +221,18 @@ router.route('/:userId/demographic')
 //     next(error)
 //   }
 // })
+router.route('/:userId/demographic/:langId')
+  .get(middleware, async (req, res, next) => {
+    try {
+      let user = await userUtils.getUser(req.params.userId)
+      let demographicId = user.demographic
+      let demographic = await demographicUtils.getReadableDemographic(demographicId, req.params.langId)
+      res.send(demographic)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
 
 router.route('/:userId/demographicOther')
   .all((req, res, next) => {
@@ -218,7 +245,7 @@ router.route('/:userId/demographicOther')
   .get(middleware, async (req, res, next) => {
     try {
       let user = await userUtils.getUser(req.params.userId)
-      let demographics = await demographicUtils.getManyReadableDemographic(user.demographicsOther)
+      let demographics = await demographicUtils.getReadableDemographic(user.demographicsOther)
       res.send(demographics)
       res.end()
     } catch (error) {
@@ -244,37 +271,12 @@ router.route('/:userId/demographicOther')
     }
   })
 
-  router.route('/:userId/demographicOther/:langId')
+router.route('/:userId/demographicOther/:langId')
   .get(middleware, async (req, res, next) => {
     try {
       let user = await userUtils.getUser(req.params.userId)
-      let demographics = await demographicUtils.getManyReadableDemographic(user.demographicsOther, req.params.langId)
+      let demographics = await demographicUtils.getReadableDemographic(user.demographicsOther, req.params.langId)
       res.send(demographics)
-      res.end()
-    } catch (error) {
-      next(error)
-    }
-  })
-
-router.route('/:userId/demographic/:langId')
-  .get(middleware, async (req, res, next) => {
-    try {
-      let user = await userUtils.getUser(req.params.userId)
-      let demographicId = user.demographic
-      let demographic = await demographicUtils.getReadableDemographic(demographicId, req.params.langId)
-      res.send(demographic)
-      res.end()
-    } catch (error) {
-      next(error)
-    }
-  })
-
-
-router.route('/:userId/:langId')
-  .get(middleware, async (req, res, next) => {
-    try {
-      let resault = await userUtils.getReadableUser(req.params.userId, req.params.langId)
-      res.send(resault)
       res.end()
     } catch (error) {
       next(error)
@@ -290,6 +292,17 @@ router.post('/resetPassword', middleware, async (req, res, next) => {
     next(error)
   }
 })
+
+router.route('/:userId/:langId')
+  .get(middleware, async (req, res, next) => {
+    try {
+      let resault = await userUtils.getReadableUser(req.params.userId, req.params.langId)
+      res.send(resault)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
 
 // router.post('/removeGroup', middleware, async (req, res, next) => {
 //   try {

@@ -57,7 +57,7 @@ function getItem(dictionary, query, langId = '1') {
 }
 
 function getSingleItem(dictionary, query, langId = '1') {
-    let resault = null
+    let resault = { langId: null, itemId: null, value: null }
     query = query.toString()
     if (query.match(/^-?\d+$/))
         resault = getSingleItemById(dictionary, query, langId)
@@ -215,45 +215,47 @@ function getDictionary(dictionary) {
     return dict
 }
 
-async function getReadableDemographic(demographic, langId = '1') {
+function getReadableDemographic(demographic, langId = '1') {
     let resault = {}
     let country = null, county = null, city = null, street = null
+    // let requestLanguage = null
     try {
+        // requestLanguage = getItem('language', langId, langId)
         country = getItem('country', demographic.countryId, langId)
         if (country !== null)
-            resault['country'] = {
-                id: demographic.countryId,
+            resault['countryId'] = {
+                itemId: demographic.countryId,
                 value: country.value
             }
         else {
-            resault['country'] = null
+            resault['countryId'] = null
         }
         county = getItem('county', demographic.countyId, langId)
         if (county !== null)
-            resault['county'] = {
-                id: demographic.countyId,
+            resault['countyId'] = {
+                itemId: demographic.countyId,
                 value: county.value
             }
         else {
-            resault['county'] = null
+            resault['countyId'] = null
         }
         city = getItem('city', demographic.cityId, langId)
         if (city !== null)
-            resault['city'] = {
-                id: demographic.cityId,
+            resault['cityId'] = {
+                itemId: demographic.cityId,
                 value: city.value
             }
         else {
-            resault['city'] = null
+            resault['cityId'] = null
         }
         street = getItem('street', demographic.streetId, langId)
         if (street !== null)
-            resault['street'] = {
-                id: demographic.streetId,
+            resault['streetId'] = {
+                itemId: demographic.streetId,
                 value: street.value
             }
         else {
-            resault['street'] = null
+            resault['streetId'] = null
         }
     } catch (error) {
         throw error
@@ -264,9 +266,18 @@ async function getReadableDemographic(demographic, langId = '1') {
     }
 }
 
+function getReadableLanguage(langId) {
+    let item = getItem('language', langId, langId)
+    return {
+        itemId: item.itemId,
+        value: item.value
+    }
+}
+
 module.exports = {
     getItem,
     getAllItems,
     getTranslatorSupportFields,
-    getReadableDemographic
+    getReadableDemographic,
+    getReadableLanguage
 }

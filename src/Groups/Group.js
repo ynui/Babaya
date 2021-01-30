@@ -2,7 +2,7 @@ const Utils = require('../Utils')
 
 class Group {
     constructor(data) {
-        this.numberOfUsers = data.numberOfUsers || 0
+        this.numberOfUsers = data.numberOfUsers || 1
         this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
         this.description = data.description

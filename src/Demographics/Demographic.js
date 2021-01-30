@@ -6,7 +6,7 @@ class Demographic {
         this.countyId = data.countyId || null
         this.cityId = data.cityId || null
         this.streetId = data.streetId || null
-        this.demographicId = data.demographicId || Utils.generateSha1Id(JSON.stringify(this))
+        this.demographicId = data.demographicId || Utils.generateHashId(JSON.stringify(this))
         this.users = data.users || []
         this.numberOfUsers = data.numberOfUsers || 0
         this.createTime = data.createTime || new Date().toISOString()
