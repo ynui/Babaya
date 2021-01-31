@@ -87,6 +87,28 @@ function isCallValid(data, requiredFields, optionalFields) {
     return valid
 }
 
+function validateCall(data, requiredFields, optionalFields) {
+    let resault = false
+    data = convertJsonIntToString(data)
+    let invalidFound = false
+    if (requiredFields && !invalidFound) {
+        for (var field of requiredFields) {
+            if (!data[field]) {
+                // if (reqData[field] === 0) continue;
+                throw createError(`Call must contain field: ${field}`)
+            }
+        }
+    }
+    if (data && !invalidFound) {
+        for (var field in data) {
+            if (!requiredFields.includes(field) && !optionalFields.includes(field)) {
+                throw createError(`Call contains unrelated field: ${field}`, 'unrequired-field')
+            }
+        }
+    }
+    resault = true
+    return resault
+}
 
 function validateDataWrite(data) {
     let success = false;
@@ -122,6 +144,111 @@ function applyMiddleware(middleware, req, res, next) {
     }
 }
 
+function validateUserData(data, validators) {
+    let validatingField = null
+    let valid = true;
+    try {
+        for (var field in data) {
+            validatingField = field
+            let value = data[field]
+            switch (field) {
+                case 'phoneNumber':
+                    valid = isPhoneNumber(value);
+                    break;
+                case 'dataOfBirth':
+                    valid = isDate(value)
+                    break;
+                case 'languageId':
+                case 'userType':
+                case 'genderId':
+                case 'maritalStatus':
+                    valid = isSingleId(value);
+                    break;
+                case 'workingPlace':
+                case 'areaOfInterest':
+                case 'expertise':
+                    valid = isIdsArray(value);
+                    break;
+                case 'demographic':
+                    valid = isDemographic(value, validators.demographic)
+                    break;
+                case 'demographicsOther':
+                    valid = isDemographicsOther(value, validators.demographic)
+                    break;
+                case 'groups':
+                    valid = isGroupsListValid(value)
+                    break;
+                default:
+                    //TODO
+                    break;
+            }
+            if (!valid) break;
+        }
+    } catch (error) {
+        throw createError(`Error on ${validatingField}, ${error.message}`, error.code)
+    }
+    return valid
+}
+
+function isPhoneNumber(number) {
+    number = number.toString()
+    var onlyNumbers = number.replace(/\D/g, "");
+    if (number !== onlyNumbers)
+        throw createError(`Phone number must only contain numbers`, 'input-not-valid')
+    return true
+}
+
+function isDate(date) {
+    //TODO
+    return true;
+}
+
+function isSingleId(id) {
+    if (Array.isArray(id))
+        throw createError(`Array is not a valid input`, 'input-not-valid')
+    let tryParse = Number.parseInt(id)
+    if (Number.isNaN(tryParse))
+        throw createError(`Input is not a number`, 'input-not-valid')
+    return true
+}
+
+function isIdsArray(ids) {
+    if (!Array.isArray(ids))
+        throw createError(`Input is not an array`, 'input-not-valid')
+    for (id of ids) {
+        isSingleId(id)
+    }
+    return true
+}
+
+function isDemographic(data, validators) {
+    let valid = false
+    if (Array.isArray(data))
+        throw createError(`Array is not a valid input`, 'input-not-valid')
+    valid = validateCall(data, validators.required, validators.optional)
+    return valid
+}
+
+function isDemographicsOther(data, validators) {
+    let valid = false
+    if (!Array.isArray(data))
+        throw createError(`Input is not an array`, 'input-not-valid')
+    for (var demog of data) {
+        valid = validateCall(demog, validators.required, validators.optional)
+    }
+    return valid
+}
+
+function isGroupsListValid(groups) {
+    let valid = false
+    if (!Array.isArray(groups))
+        throw createError(`Input is not an array`, 'input-not-valid')
+
+    // TODO
+
+    valid = true;
+    return valid
+}
 module.exports = {
     generateId,
     generateHashId,
@@ -132,5 +259,7 @@ module.exports = {
     removeTrailingSlash,
     applyMiddleware,
     convertJsonIntToString,
-    isCallValid
+    isCallValid,
+    validateUserData,
+    validateCall
 }

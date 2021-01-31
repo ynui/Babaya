@@ -9,6 +9,7 @@ const departments = require('./Departments')
 const expertises = require('./Expertises')
 const genders = require('./Genders')
 const languages = require('./Languages')
+const maritalStatuses = require('./MaritalStatus')
 const rules = require('./Rules')
 const streets = require('./Streets')
 const userTypes = require('./UserTypes')
@@ -40,7 +41,10 @@ function getSupportedLanguages() {
 
 function getSupportedDictionaries() {
     return [
-        'address', 'areaOfInterest', 'city', 'county', 'country', 'department', 'expertise', 'gender', 'language', 'rule', 'street', 'userTypes', 'workingPlace'
+        'address', 'areaOfInterest', 'city', 'county',
+        'country', 'department', 'expertise', 'gender',
+        'language', 'maritalStatuses', 'rule', 'street',
+        'userTypes', 'workingPlace'
     ]
 }
 
@@ -195,6 +199,9 @@ function getDictionary(dictionary) {
             break;
         case 'language':
             dict = languages
+            break;
+        case 'maritalStatuses':
+            dict = maritalStatuses
             break;
         case 'rule':
             dict = rules

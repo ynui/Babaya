@@ -12,23 +12,31 @@ async function registerUser(data) {
     let newUser = null;
     let userId = null
     try {
-        await firebase
-            .auth()
-            .createUserWithEmailAndPassword(data.email, data.password)
-            .then(async (user) => {
-                let registeredUser = user.user
-                userId = registeredUser.uid
-                data.userId = userId
-                data = await generateObjects(data)
-                newUser = new User(data)
-            }).catch((error) => {
-                throw error
-            })
-        // addUserToObjectLists(newUser)
+        if (isUserDataValid(data)) {
+            await firebase
+                .auth()
+                .createUserWithEmailAndPassword(data.email, data.password)
+                .then(async (user) => {
+                    let registeredUser = user.user
+                    userId = registeredUser.uid
+                    data.userId = userId
+                    data = await generateObjects(data)
+                    newUser = new User(data)
+                }).catch((error) => {
+                    throw error
+                })
+        }
+        // else {
+        //     throw 
+        // }
     } catch (error) {
         throw error
     }
     return newUser
+}
+
+function isUserDataValid(data) {
+    return User.isDataValid(data)
 }
 
 async function generateObjects(data) {
@@ -48,8 +56,10 @@ async function generateObjects(data) {
     } catch (error) {
         console.error(error)
     }
-    data.demographic = demographic.demographicId
-    data.demographicsOther = demoOtherIds
+    if (data.demographic)
+        data.demographic = demographic.demographicId
+    if (data.demographicsOther)
+        data.demographicsOther = demoOtherIds
     return data
 }
 
@@ -129,6 +139,7 @@ async function logout() {
 async function updateProfile(userId, data) {
     let success = false;
     try {
+        User.isDataValid(data)
         let user = await getUser(userId)
         if (user) {
             await DB_Utils.updateDocument(COLLECTION_USERS_DETAILS, user.userId, data)

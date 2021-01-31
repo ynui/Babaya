@@ -23,9 +23,6 @@ class User {
         this.expertise = data.expertise || []  // list of [expertise, subExpertise]. can be only expertise without subExpertise 
         this.groups = data.groups || []
         this.demographic = data.demographic || null
-
-
-
     }
 
     static RequestValidators = {
@@ -96,6 +93,12 @@ class User {
 
     get data() {
         return JSON.parse(JSON.stringify(this))
+    }
+
+    static isDataValid(data) {
+        return Utils.validateUserData(data, {
+            demographic: this.RequestValidators.addDemographic
+        })
     }
 
     addToGroupsList(groupId) {
