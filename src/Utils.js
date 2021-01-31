@@ -31,7 +31,7 @@ function generateHashId(input) {
 }
 
 function convertJsonIntToString(data) {
-    for (field in data) {
+    for (var field in data) {
         if (typeof data[field] === 'number')
             data[field] = data[field].toString()
         if (typeof data[field] === 'object')
@@ -153,9 +153,9 @@ function validateUserData(data, validators) {
             let value = data[field]
             switch (field) {
                 case 'phoneNumber':
-                    valid = isPhoneNumber(value);
+                    valid = isOnlyNumbers(value);
                     break;
-                case 'dataOfBirth':
+                case 'dateOfBirth':
                     valid = isDate(value)
                     break;
                 case 'languageId':
@@ -173,7 +173,7 @@ function validateUserData(data, validators) {
                     valid = isDemographic(value, validators.demographic)
                     break;
                 case 'demographicsOther':
-                    valid = isDemographicsOther(value, validators.demographic)
+                    valid = isDemographicsList(value, validators.demographic)
                     break;
                 case 'groups':
                     valid = isGroupsListValid(value)
@@ -190,7 +190,56 @@ function validateUserData(data, validators) {
     return valid
 }
 
-function isPhoneNumber(number) {
+function validateGroupData(data, validators) {
+    let validatingField = null
+    let valid = true;
+    try {
+        for (var field in data) {
+            validatingField = field
+            let value = data[field]
+            switch (field) {
+                case 'name':
+                case 'description':
+                    valid = isString(value)
+                    break;
+                case 'numberOfUsers':
+                    valid = isOnlyNumbers(value);
+                    break;
+                case 'createTime':
+                    valid = isDate(value)
+                    break;
+                case 'publicity':
+                case 'rulesList':
+                    valid = isSingleId(value);
+                    break;
+                case 'rulesText':
+                case 'users':
+                    valid = isStringArray(value)
+                    break;
+                case 'workingPlace':
+                case 'areaOfInterest':
+                case 'expertise':
+                    valid = isIdsArray(value);
+                    break;
+                case 'demographicInfo':
+                    valid = isDemographicsList(value, validators.demographic)
+                    break;
+                case 'groups':
+                    valid = isGroupsListValid(value)
+                    break;
+                default:
+                    //TODO
+                    break;
+            }
+            if (!valid) break;
+        }
+    } catch (error) {
+        throw createError(`Error on ${validatingField}, ${error.message}`, error.code)
+    }
+    return valid
+}
+
+function isOnlyNumbers(number) {
     number = number.toString()
     var onlyNumbers = number.replace(/\D/g, "");
     if (number !== onlyNumbers)
@@ -214,9 +263,18 @@ function isSingleId(id) {
 
 function isIdsArray(ids) {
     if (!Array.isArray(ids))
-        throw createError(`Input is not an array`, 'input-not-valid')
-    for (id of ids) {
+        throw createError(`Input must be an array`, 'input-not-valid')
+    for (var id of ids) {
         isSingleId(id)
+    }
+    return true
+}
+
+function isStringArray(strings) {
+    if (!Array.isArray(strings))
+        throw createError(`Input must be an array`, 'input-not-valid')
+    for (var string of strings) {
+        isString(string)
     }
     return true
 }
@@ -229,10 +287,10 @@ function isDemographic(data, validators) {
     return valid
 }
 
-function isDemographicsOther(data, validators) {
+function isDemographicsList(data, validators) {
     let valid = false
     if (!Array.isArray(data))
-        throw createError(`Input is not an array`, 'input-not-valid')
+        throw createError(`Input must be an array`, 'input-not-valid')
     for (var demog of data) {
         valid = validateCall(demog, validators.required, validators.optional)
     }
@@ -242,13 +300,20 @@ function isDemographicsOther(data, validators) {
 function isGroupsListValid(groups) {
     let valid = false
     if (!Array.isArray(groups))
-        throw createError(`Input is not an array`, 'input-not-valid')
+        throw createError(`Input must be an array`, 'input-not-valid')
 
     // TODO
 
     valid = true;
     return valid
 }
+
+function isString(data) {
+    if (!(typeof data === 'string'))
+        throw createError(`Input must be a string`, 'input-not-valid')
+    return true
+}
+
 module.exports = {
     generateId,
     generateHashId,
@@ -261,5 +326,6 @@ module.exports = {
     convertJsonIntToString,
     isCallValid,
     validateUserData,
+    validateGroupData,
     validateCall
 }

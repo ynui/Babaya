@@ -478,7 +478,7 @@ async function deleteAllUsers(seriously) {
         await getAllUsers()
             .then(async (all) => {
                 totalUsers = all.users.length
-                for (user of all.users) {
+                for (var user of all.users) {
                     await deleteUser(user.uid)
                         .then(() => {
                             deleted++;

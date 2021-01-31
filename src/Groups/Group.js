@@ -1,12 +1,12 @@
 const Utils = require('../Utils')
+const Demographic = require('../Demographics/Demographic')
 
 class Group {
     constructor(data) {
         this.numberOfUsers = data.numberOfUsers || 1
-        this.groupId = data.groupId || Utils.generateId()
         this.name = data.name
         this.description = data.description
-        this.createTime = new Date().toISOString()
+        this.createTime = data.createTime || new Date().toISOString()
         this.createUser = data.createUser
         this.publicity = data.publicity
         this.groupManager = data.groupManager || [data.createUser] //list of user, role (admin, advisor)
@@ -19,6 +19,7 @@ class Group {
         this.users = data.users || [data.createUser]
         this.events = data.events || []
         this.discussion = data.discussion || [] // text/ link/ image / vidio 
+        this.groupId = data.groupId || Utils.generateHashId(JSON.stringify(this))
     }
 
     static RequestValidators = {
@@ -47,6 +48,14 @@ class Group {
                 'groupId', 'userId'
             ],
             optional: []
+        },
+        addDemographic: {
+            required: Demographic.RequestValidators.create.required,
+            optional: Demographic.RequestValidators.create.optional
+        },
+        updateDemographic: {
+            required: Demographic.RequestValidators.update.required,
+            optional: Demographic.RequestValidators.update.optional
         }
     }
 
@@ -54,16 +63,22 @@ class Group {
         return JSON.parse(JSON.stringify(this))
     }
 
+    static isDataValid(data) {
+        return Utils.validateGroupData(data, {
+            demographic: this.RequestValidators.addDemographic
+        })
+    }
+
     addToUsersList(userId) {
         this.numberOfUsers++;
         if (this.users.includes(userId))
-        //  throw Utils.createError(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
-        console.warn(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
+            //  throw Utils.createError(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
+            console.warn(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
         else {
             this.users.push(userId)
         }
     }
-    
+
     removeFromUsersList(userId) {
         this.numberOfUsers--;
         if (!this.users.includes(userId)) throw Utils.createError(`${userId} is not member in ${this.groupId}`, 'group-not-contains-user')

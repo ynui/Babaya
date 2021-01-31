@@ -11,11 +11,20 @@ async function createGroup(data, createUser = null) {
     }
     let newGroup = null
     try {
-        newGroup = new Group(data)
+        if (isGroupDataValid(data)) {
+            newGroup = new Group(data)
+        }
+        else {
+            //TODO
+        }
     } catch (error) {
         throw error
     }
     return newGroup
+}
+
+function isGroupDataValid(data) {
+    return Group.isDataValid(data)
 }
 
 async function getGroup(groupId) {
