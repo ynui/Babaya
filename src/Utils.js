@@ -1,4 +1,3 @@
-const { exec } = require('child_process');
 const crypto = require('crypto');
 
 const ENCRYPTION = 'sha1'
@@ -11,21 +10,6 @@ function createError(message, code = null, status = null) {
     return error
 }
 
-function generateId() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let resID = '';
-    while (resID.length < 20) {
-        const bytes = crypto.randomBytes(40);
-        bytes.forEach(b => {
-            const maxValue = 62 * 4 - 1;
-            if (resID.length < 20 && b <= maxValue) {
-                resID += chars.charAt(b % 62);
-            }
-        });
-    }
-    return resID;
-}
-
 function generateHashId(input) {
     return crypto.createHash(ENCRYPTION).update(JSON.stringify(input)).digest('hex')
 }
@@ -36,7 +20,6 @@ function convertJsonIntToString(data) {
             data[field] = data[field].toString()
         if (typeof data[field] === 'object')
             data[field] = convertJsonIntToString(data[field])
-
     }
     return data
 }
@@ -52,7 +35,6 @@ function validateRequest(req, requiredFields, optionalFields) {
     if (requiredFields && !invalidFound) {
         for (var field of requiredFields) {
             if (!reqData[field]) {
-                // if (reqData[field] === 0) continue;
                 invalidFound = true
                 resault.valid = false
                 resault.error = createError(`${req.method} requset on ${req.originalUrl} must contain field: ${field}`)
@@ -80,6 +62,8 @@ function isCallValid(data, requiredFields, optionalFields) {
     let req = {}
     try {
         req.body = data
+        req.method = 'Call'
+        req.originalUrl = '==='
         valid = validateRequest(req, requiredFields, optionalFields).valid
     } catch (error) {
         throw error
@@ -94,7 +78,6 @@ function validateCall(data, requiredFields, optionalFields) {
     if (requiredFields && !invalidFound) {
         for (var field of requiredFields) {
             if (!data[field]) {
-                // if (reqData[field] === 0) continue;
                 throw createError(`Call must contain field: ${field}`)
             }
         }
@@ -144,97 +127,27 @@ function applyMiddleware(middleware, req, res, next) {
     }
 }
 
-function validateUserData(data, validators) {
-    let validatingField = null
-    let valid = true;
-    try {
-        for (var field in data) {
-            validatingField = field
-            let value = data[field]
-            switch (field) {
-                case 'phoneNumber':
-                    valid = isOnlyNumbers(value);
-                    break;
-                case 'dateOfBirth':
-                    valid = isDate(value)
-                    break;
-                case 'languageId':
-                case 'userType':
-                case 'genderId':
-                case 'maritalStatus':
-                    valid = isSingleId(value);
-                    break;
-                case 'workingPlace':
-                case 'areaOfInterest':
-                case 'expertise':
-                    valid = isIdsArray(value);
-                    break;
-                case 'demographic':
-                    valid = isDemographic(value, validators.demographic)
-                    break;
-                case 'demographicsOther':
-                    valid = isDemographicsList(value, validators.demographic)
-                    break;
-                case 'groups':
-                    valid = isGroupsListValid(value)
-                    break;
-                default:
-                    //TODO
-                    break;
-            }
-            if (!valid) break;
-        }
-    } catch (error) {
-        throw createError(`Error on ${validatingField}, ${error.message}`, error.code)
-    }
-    return valid
-}
-
-function validateGroupData(data, validators) {
-    let validatingField = null
-    let valid = true;
-    try {
-        for (var field in data) {
-            validatingField = field
-            let value = data[field]
-            switch (field) {
-                case 'name':
-                case 'description':
-                    valid = isString(value)
-                    break;
-                case 'numberOfUsers':
-                    valid = isOnlyNumbers(value);
-                    break;
-                case 'createTime':
-                    valid = isDate(value)
-                    break;
-                case 'publicity':
-                case 'rulesList':
-                    valid = isSingleId(value);
-                    break;
-                case 'rulesText':
-                case 'users':
-                    valid = isStringArray(value)
-                    break;
-                case 'workingPlace':
-                case 'areaOfInterest':
-                case 'expertise':
-                    valid = isIdsArray(value);
-                    break;
-                case 'demographicInfo':
-                    valid = isDemographicsList(value, validators.demographic)
-                    break;
-                case 'groups':
-                    valid = isGroupsListValid(value)
-                    break;
-                default:
-                    //TODO
-                    break;
-            }
-            if (!valid) break;
-        }
-    } catch (error) {
-        throw createError(`Error on ${validatingField}, ${error.message}`, error.code)
+function dataValidator(data, validator, isArray = false, additionalData = null) {
+    let valid = false
+    switch (validator) {
+        case 'number':
+            valid = isOnlyNumbers(data)
+            break;
+        case 'date':
+            valid = isDate(data)
+            break;
+        case 'groups':
+            valid = isGroupsListValid(data, additionalData)//additional data will be list of existing groups?
+            break;
+        case 'string':
+            valid = isString(data)
+            break;
+        case 'id':
+            if (isArray)
+                valid = isIdsArray(data)
+            else
+                valid = isSingleId(data)
+            break;
     }
     return valid
 }
@@ -262,39 +175,17 @@ function isSingleId(id) {
 }
 
 function isIdsArray(ids) {
+    let valid = false
     if (!Array.isArray(ids))
         throw createError(`Input must be an array`, 'input-not-valid')
-    for (var id of ids) {
-        isSingleId(id)
+    if (ids.length === 0) {
+        valid = true
+    } else {
+        for (var id of ids) {
+            valid = isSingleId(id)
+        }
     }
     return true
-}
-
-function isStringArray(strings) {
-    if (!Array.isArray(strings))
-        throw createError(`Input must be an array`, 'input-not-valid')
-    for (var string of strings) {
-        isString(string)
-    }
-    return true
-}
-
-function isDemographic(data, validators) {
-    let valid = false
-    if (Array.isArray(data))
-        throw createError(`Array is not a valid input`, 'input-not-valid')
-    valid = validateCall(data, validators.required, validators.optional)
-    return valid
-}
-
-function isDemographicsList(data, validators) {
-    let valid = false
-    if (!Array.isArray(data))
-        throw createError(`Input must be an array`, 'input-not-valid')
-    for (var demog of data) {
-        valid = validateCall(demog, validators.required, validators.optional)
-    }
-    return valid
 }
 
 function isGroupsListValid(groups) {
@@ -308,14 +199,30 @@ function isGroupsListValid(groups) {
     return valid
 }
 
-function isString(data) {
-    if (!(typeof data === 'string'))
-        throw createError(`Input must be a string`, 'input-not-valid')
-    return true
+function isString(data, isArray = false) {
+    let valid = false;
+    if (isArray) {
+        if (!Array.isArray(data))
+            throw createError(`Input must be an array`, 'input-not-valid')
+        for (var str of data) {
+            valid = isString(str)
+            if (!valid) {
+                break;
+            }
+        }
+    } else {
+        if (Array.isArray(data))
+            throw createError(`Array is not a valid input`, 'input-not-valid')
+        if (!(typeof data === 'string'))
+            throw createError(`Input must be a string`, 'input-not-valid')
+        if (data === "")
+            throw createError(`Input must not be empty`, 'input-not-valid')
+        valid = true
+    }
+    return valid
 }
 
 module.exports = {
-    generateId,
     generateHashId,
     validateRequest,
     validateDataWrite,
@@ -325,7 +232,6 @@ module.exports = {
     applyMiddleware,
     convertJsonIntToString,
     isCallValid,
-    validateUserData,
-    validateGroupData,
+    dataValidator,
     validateCall
 }

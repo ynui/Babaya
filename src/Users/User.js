@@ -96,9 +96,49 @@ class User {
     }
 
     static isDataValid(data) {
-        return Utils.validateUserData(data, {
-            demographic: this.RequestValidators.addDemographic
-        })
+        let validatingField = null
+        let valid = true;
+        try {
+            for (var field in data) {
+                validatingField = field
+                let value = data[field]
+                switch (field) {
+                    case 'phoneNumber':
+                        valid = Utils.dataValidator(value, 'number');
+                        break;
+                    case 'dateOfBirth':
+                        valid = Utils.dataValidator(value, 'date')
+                        break;
+                    case 'languageId':
+                    case 'userType':
+                    case 'genderId':
+                    case 'maritalStatus':
+                        valid = Utils.dataValidator(value, 'id');
+                        break;
+                    case 'workingPlace':
+                    case 'areaOfInterest':
+                    case 'expertise':
+                        valid = Utils.dataValidator(value, 'id', true);
+                        break;
+                    case 'demographic':
+                        valid = Demographic.isDemographic(value)
+                        break;
+                    case 'demographicsOther':
+                        valid = Demographic.isDemographic(value, true)
+                        break;
+                    case 'groups':
+                        valid = Utils.isGroupsListValid(value)
+                        break;
+                    default:
+                        //TODO
+                        break;
+                }
+                if (!valid) break;
+            }
+        } catch (error) {
+            throw Utils.createError(`Error on ${validatingField}, ${error.message}`, error.code)
+        }
+        return valid
     }
 
     addToGroupsList(groupId) {

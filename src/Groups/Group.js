@@ -64,15 +64,57 @@ class Group {
     }
 
     static isDataValid(data) {
-        return Utils.validateGroupData(data, {
-            demographic: this.RequestValidators.addDemographic
-        })
+        let validatingField = null
+        let valid = true;
+        try {
+            for (var field in data) {
+                validatingField = field
+                let value = data[field]
+                switch (field) {
+                    case 'name':
+                    case 'description':
+                        valid = Utils.dataValidator(value, 'string')
+                        break;
+                    case 'numberOfUsers':
+                        valid = Utils.dataValidator(value, 'number')
+                        break;
+                    case 'createTime':
+                        valid = Utils.dataValidator(value, 'date')
+                        break;
+                    case 'publicity':
+                    case 'rulesList':
+                        valid = Utils.dataValidator(value, 'id')
+                        break;
+                    case 'rulesText':
+                    case 'users':
+                        valid = Utils.dataValidator(value, 'string')
+                        break;
+                    case 'workingPlace':
+                    case 'areaOfInterest':
+                    case 'expertise':
+                        valid = Utils.dataValidator(value, 'id', true);
+                        break;
+                    case 'demographicInfo':
+                        valid = Demographic.isDemographic(data)
+                        break;
+                    case 'groups':
+                        valid = Utils.dataValidator(value, 'groups')
+                        break;
+                    default:
+                        //TODO
+                        break;
+                }
+                if (!valid) break;
+            }
+        } catch (error) {
+            throw Utils.createError(`Error on ${validatingField}, ${error.message}`, error.code)
+        }
+        return valid
     }
 
     addToUsersList(userId) {
         this.numberOfUsers++;
         if (this.users.includes(userId))
-            //  throw Utils.createError(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
             console.warn(`${this.groupId} already contains user ${userId}`, 'group-already-contains-user')
         else {
             this.users.push(userId)
@@ -81,7 +123,8 @@ class Group {
 
     removeFromUsersList(userId) {
         this.numberOfUsers--;
-        if (!this.users.includes(userId)) throw Utils.createError(`${userId} is not member in ${this.groupId}`, 'group-not-contains-user')
+        if (!this.users.includes(userId))
+            console.warn(`${userId} is not member in ${this.groupId}`, 'group-not-contains-user')
         else {
             var userIndx = this.users.indexOf(userId);
             if (userIndx > -1) {

@@ -44,6 +44,29 @@ class Demographic {
         return JSON.parse(JSON.stringify(this))
     }
 
+    static isDemographic(data, isArray = false) {
+        let valid = false;
+        if (isArray) {
+            if (!Array.isArray(data))
+                throw createError(`Input must be an array`, 'input-not-valid')
+            if (data.length === 0) {
+                valid = true
+            } else {
+                for (var demog of data) {
+                    valid = isDemographic(demog)
+                    if (!valid) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            if (Array.isArray(data))
+                throw createError(`Array is not a valid input`, 'input-not-valid')
+            valid = Utils.validateCall(data, this.RequestValidators.create.required, this.RequestValidators.create.optional)
+        }
+        return valid
+    }
+
     addToUsersList(userId) {
         this.numberOfUsers++;
         if (this.users.includes(userId))
