@@ -166,12 +166,14 @@ function isDate(date) {
 }
 
 function isSingleId(id) {
+    let valid = false
     if (Array.isArray(id))
         throw createError(`Array is not a valid input`, 'input-not-valid')
     let tryParse = Number.parseInt(id)
     if (Number.isNaN(tryParse))
         throw createError(`Input is not a number`, 'input-not-valid')
-    return true
+    valid = true;
+    return valid
 }
 
 function isIdsArray(ids) {
@@ -185,7 +187,7 @@ function isIdsArray(ids) {
             valid = isSingleId(id)
         }
     }
-    return true
+    return valid
 }
 
 function isGroupsListValid(groups) {

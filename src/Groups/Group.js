@@ -82,20 +82,20 @@ class Group {
                         valid = Utils.dataValidator(value, 'date')
                         break;
                     case 'publicity':
-                    case 'rulesList':
                         valid = Utils.dataValidator(value, 'id')
                         break;
                     case 'rulesText':
                     case 'users':
                         valid = Utils.dataValidator(value, 'string')
                         break;
+                    case 'rulesList':
                     case 'workingPlace':
                     case 'areaOfInterest':
                     case 'expertise':
                         valid = Utils.dataValidator(value, 'id', true);
                         break;
                     case 'demographicInfo':
-                        valid = Demographic.isDemographic(data)
+                        valid = Demographic.isDemographic(value, true)
                         break;
                     case 'groups':
                         valid = Utils.dataValidator(value, 'groups')

@@ -127,7 +127,7 @@ class User {
                         valid = Demographic.isDemographic(value, true)
                         break;
                     case 'groups':
-                        valid = Utils.isGroupsListValid(value)
+                        valid = Utils.dataValidator(value, 'groups')
                         break;
                     default:
                         //TODO

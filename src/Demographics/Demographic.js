@@ -53,7 +53,7 @@ class Demographic {
                 valid = true
             } else {
                 for (var demog of data) {
-                    valid = isDemographic(demog)
+                    valid = this.isDemographic(demog)
                     if (!valid) {
                         break;
                     }
@@ -63,6 +63,33 @@ class Demographic {
             if (Array.isArray(data))
                 throw createError(`Array is not a valid input`, 'input-not-valid')
             valid = Utils.validateCall(data, this.RequestValidators.create.required, this.RequestValidators.create.optional)
+            this.isDataValid(data)
+        }
+        return valid
+    }
+
+    static isDataValid(data) {
+        let validatingField = null
+        let valid = true;
+        try {
+            for (var field in data) {
+                validatingField = field
+                let value = data[field]
+                switch (field) {
+                    case 'countryId':
+                    case 'cityId':
+                    case 'countyId':
+                    case 'streetId':
+                        valid = Utils.dataValidator(value, 'id');
+                        break;
+                    default:
+                        //TODO
+                        break;
+                }
+                if (!valid) break;
+            }
+        } catch (error) {
+            throw Utils.createError(`Error on ${validatingField}, ${error.message}`, error.code)
         }
         return valid
     }
